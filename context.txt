@@ -1,0 +1,26 @@
+Me and my teammate got a client.
+
+The context is in the pdf [Screenshot%202026-09-10%20194555%20%281%29.pdf](file;file:///c%3A/Users/HP%20LAPTOP%2015s/lexiaral-demo/Screenshot%202026-09-10%20194555%20%281%29.pdf) where i screenshotted all of our convos and put it in pdf form in order for you to familiarize and understand carefully for the project details.
+I want you to read all the pages of this pdf as it contains all the info or details that we talked about.
+
+I know in some pages, you may notice that the client send a link which is this : https://www.dola.com/building/render/adda6732734db?a=&fbclid=IwcGRvZgFleHRuA2FlbQIxMABicmlkETFOR3Z4MEUxQTYxNjBaMllpc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHkEbqC4exFjkP4UYgT4WQ7xUoieh7km4-IwdWjMoaVcS4gJE4oICEerPoaAb_aem_KE5tNxYsDhFXotgp9TxukA
+I actually opened it and I notice that before they try to find developers, they tried their best to develop on their own. 
+But syempre since they are just educ students, it is expected na vibecode lang ang gawa nila so I think it is the reason why they find a developer talaga
+considering it is for thesis purposes.
+
+Also you will notice that the client also send a project details which is this LEXIARAL_Combined_App_Structure_and_Flow-TRUEEEE.pdf.
+I want you to understand and familiarize carefully for this pdf file too as it contains the project details / requirements.
+
+Once you are done.I want you to now familiarize with our codebase right now. What is this codebase? I don't know what codebase is this but my teammate told me 
+that he initialized it using npx create-react-app . I want you to take a look and tell me if it is really react native app. Medyo nanibago ako kasi diba parang react icon
+dapat ang itsura ng mga files here ? Bakit js files lang hahahaha. I want you to take a look if this initialized codebase is really for 
+app development.
+
+Once you are done, give me a new markdown file containing your perspective on the conversation pdf, project details pdf, and this initialized codebase if it really for 
+app development and is matching the direction of our project requirements.
+
+And lastly I want you to give me feedback on what improvement if needed to implement here in codebase to make sure that we are in app development direction and is 
+aligned with the right direction as the client requires for this project.
+
+Also give me perspective on some things to consider.
+
