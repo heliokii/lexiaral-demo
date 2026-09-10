@@ -1,0 +1,107 @@
+{
+  "id": "lexiaral-demo-v1",
+  "status": "demo",
+  "title": "A Small Garden",
+  "source": "Developer demonstration only. Not verified Grade 3 ARAL content.",
+  "words": [
+    {
+      "id": "seed",
+      "word": "seed",
+      "image_url": "asset://seed",
+      "audio_url": "tts://en-US/seed",
+      "definition": "A small part of a plant that can grow into a new plant.",
+      "example_sentence": "Mia puts a seed in the ground.",
+      "story_context": "Mia put a seed in the soil.",
+      "introduced_level": 1,
+      "sentence_blank": "Mia plants a ____ so a new plant can grow."
+    },
+    {
+      "id": "soil",
+      "word": "soil",
+      "image_url": "asset://soil",
+      "audio_url": "tts://en-US/soil",
+      "definition": "The loose earth in which plants grow.",
+      "example_sentence": "The roots grow in the soil.",
+      "story_context": "Mia put a seed in the soil.",
+      "introduced_level": 1,
+      "sentence_blank": "The roots grow in the brown ____."
+    },
+    {
+      "id": "water",
+      "word": "water",
+      "image_url": "asset://water",
+      "audio_url": "tts://en-US/water",
+      "definition": "A clear liquid that people, animals, and plants need.",
+      "example_sentence": "Mia gives the plant some water.",
+      "story_context": "She gave it a little water each morning.",
+      "introduced_level": 1,
+      "sentence_blank": "The dry plant needs some ____ to drink."
+    },
+    {
+      "id": "sprout",
+      "word": "sprout",
+      "image_url": "asset://sprout",
+      "audio_url": "tts://en-US/sprout",
+      "definition": "A young plant that has just started to grow.",
+      "example_sentence": "A green sprout comes out of the ground.",
+      "story_context": "After a few days, a green sprout came up.",
+      "introduced_level": 1,
+      "sentence_blank": "The tiny new plant is a ____."
+    }
+  ],
+  "story": {
+    "id": "garden-story",
+    "title": "Mia's Little Garden",
+    "text": "On Monday, Mia went to the school garden. She put a seed in the soil. She gave it a little water each morning. After a few days, a green sprout came up. Mia smiled because her new plant was growing.",
+    "target_word_ids": ["seed", "soil", "water", "sprout"],
+    "questions": [
+      {
+        "id": "story-who",
+        "category": "comprehension",
+        "prompt": "Who planted the seed?",
+        "choices": ["Mia", "Ben", "A teacher", "A farmer"],
+        "answer": "Mia",
+        "explanation": "The story says Mia put a seed in the soil."
+      },
+      {
+        "id": "story-where",
+        "category": "comprehension",
+        "prompt": "Where did Mia plant the seed?",
+        "choices": [
+          "In the school garden",
+          "In the kitchen",
+          "At the beach",
+          "On a bus"
+        ],
+        "answer": "In the school garden",
+        "explanation": "Mia went to the school garden to plant the seed."
+      },
+      {
+        "id": "story-when",
+        "category": "comprehension",
+        "prompt": "When did Mia give the seed water?",
+        "choices": [
+          "Each morning",
+          "Only at night",
+          "Once a year",
+          "Only on Sunday"
+        ],
+        "answer": "Each morning",
+        "explanation": "She gave it a little water each morning."
+      },
+      {
+        "id": "story-why",
+        "category": "comprehension",
+        "prompt": "Why did Mia smile?",
+        "choices": [
+          "Her new plant was growing",
+          "She lost her seed",
+          "The garden was gone",
+          "She forgot the water"
+        ],
+        "answer": "Her new plant was growing",
+        "explanation": "Mia smiled because her new plant was growing."
+      }
+    ]
+  }
+}
