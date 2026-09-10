@@ -15,7 +15,7 @@ export function Art({
   label,
   style,
 }) {
-  const xml = assets[name];
+  const xml = assets[name] || assets[name?.replace(/-/g, '_')];
 
   if (!xml) return null;
 

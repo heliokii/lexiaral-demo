@@ -93,9 +93,9 @@ export default function App() {
             <Stack.Screen
               name="Activity"
               component={ActivityScreen}
-              options={{
+              options={({ route }) => ({
                 headerShown: true,
-                title: 'Let’s Learn',
+                title: route.params?.title || 'Let’s Learn',
                 headerShadowVisible: false,
                 headerStyle: { backgroundColor: '#EAE9FC' },
                 headerTintColor: '#8065CE',
@@ -105,7 +105,7 @@ export default function App() {
                   fontSize: 18,
                   color: '#3E3B50',
                 },
-              }}
+              })}
             />
 
             <Stack.Screen

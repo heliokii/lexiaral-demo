@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -10,9 +11,10 @@ import {
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
+import assets from '../assets.generated';
 import { CONTENT, WORDS } from '../content';
 import { illustrations } from '../illustrations';
-import { pronounce, speak } from '../audio';
+import { pronounce, speak, stopAudio } from '../audio';
 import { Art, Icon } from '../Art';
 import {
   Body,
@@ -23,24 +25,89 @@ import {
 } from './ui';
 
 export function WordPicture({ word, height = 170 }) {
-  const key = word.image_url.replace('asset://', '');
+  if (!word) return null;
 
-  return (
-    <View
-      accessible
-      accessibilityRole="image"
-      accessibilityLabel={`Picture of ${word.word}`}
-      style={{ alignItems: 'center' }}
-    >
-      {key === 'basket' ? (
-        <Art name="basket" height={height} />
-      ) : (
+  const rawUrl = word.image_url || '';
+  const key = rawUrl.replace('asset://', '');
+
+  // 1. Direct raster or web image URI (http, https, file, data)
+  if (
+    rawUrl.startsWith('http://') ||
+    rawUrl.startsWith('https://') ||
+    rawUrl.startsWith('data:') ||
+    rawUrl.startsWith('file://')
+  ) {
+    return (
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={`Picture of ${word.word}`}
+        style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height }}
+      >
+        <Image
+          source={{ uri: rawUrl }}
+          style={{ width: '100%', height, resizeMode: 'contain' }}
+        />
+      </View>
+    );
+  }
+
+  // 2. Vector SVG in illustrations.js
+  if (illustrations[key]) {
+    return (
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={`Picture of ${word.word}`}
+        style={{ alignItems: 'center' }}
+      >
         <SvgXml
           xml={illustrations[key]}
           width="100%"
           height={height}
         />
-      )}
+      </View>
+    );
+  }
+
+  // 3. Vector SVG in assets.generated.js
+  const assetXml = assets[key] || assets[key.replace(/-/g, '_')];
+  if (assetXml) {
+    return (
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={`Picture of ${word.word}`}
+        style={{ alignItems: 'center' }}
+      >
+        <SvgXml xml={assetXml} width="100%" height={height} />
+      </View>
+    );
+  }
+
+  // 4. Safe educational fallback card if image is not yet supplied
+  return (
+    <View
+      accessible
+      accessibilityRole="image"
+      accessibilityLabel={`Picture placeholder of ${word.word}`}
+      style={{
+        width: '100%',
+        height,
+        borderRadius: 20,
+        backgroundColor: '#EFF6FF',
+        borderWidth: 2,
+        borderColor: '#CCE2FA',
+        borderStyle: 'dashed',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+      }}
+    >
+      <Icon name="book" size={42} color="#7BA5DF" />
+      <Text style={{ fontFamily: 'Nunito_800ExtraBold', color: '#4B77AE', fontSize: 18 }}>
+        {word.word}
+      </Text>
     </View>
   );
 }
@@ -130,31 +197,53 @@ export function FlashcardQuestionWidget(props) {
   const { question } = props;
   const word = WORDS[question.wordId];
 
+  useEffect(() => {
+    if (question.type === 'listenAndChoose' && word) {
+      pronounce(word);
+    }
+  }, [question.id]);
+
   return (
     <View style={{ gap: 14 }}>
       <Card style={styles.questionCard}>
         <Title style={styles.questionTitle}>
           {question.type === 'pictureToWord'
             ? 'What is this?'
-            : `Find the ${word.word}`}
+            : question.type === 'listenAndChoose'
+              ? 'Listen to the word'
+              : `Find the ${word?.word || 'word'}`}
         </Title>
 
-        {question.type === 'pictureToWord' ? (
-  <WordPicture word={word} height={210} />
-) : (
-  <View style={{ paddingVertical: 36, alignItems: 'center', gap: 10 }}>
-    <Icon name="book" size={44} />
-    <Title style={{ fontSize: 38 }}>{word.word}</Title>
-  </View>
-)}
+        {question.type === 'listenAndChoose' ? (
+          <View style={{ paddingVertical: 20, alignItems: 'center', gap: 12 }}>
+            <Icon name="sound" size={56} color={colors.blue} />
+            <Body style={{ textAlign: 'center', fontSize: 17 }}>
+              Tap below to listen again, then choose the word you heard.
+            </Body>
+            <Button
+              title="🔊 Play Word Sound"
+              onPress={() => pronounce(word)}
+              style={{ minHeight: 46, paddingHorizontal: 22 }}
+            />
+          </View>
+        ) : question.type === 'pictureToWord' ? (
+          <WordPicture word={word} height={210} />
+        ) : (
+          <View style={{ paddingVertical: 36, alignItems: 'center', gap: 10 }}>
+            <Icon name="book" size={44} />
+            <Title style={{ fontSize: 38 }}>{word?.word}</Title>
+          </View>
+        )}
 
-        <Button
-          title="Hear the word"
-          icon="sound"
-          secondary
-          onPress={() => pronounce(word)}
-          style={{ minHeight: 46, alignSelf: 'center' }}
-        />
+        {question.type !== 'listenAndChoose' && word && (
+          <Button
+            title="Hear the word"
+            icon="sound"
+            secondary
+            onPress={() => pronounce(word)}
+            style={{ minHeight: 46, alignSelf: 'center' }}
+          />
+        )}
       </Card>
 
       <AnswerChoices
@@ -167,11 +256,16 @@ export function FlashcardQuestionWidget(props) {
 
 export function SentenceCompletionQuestionWidget(props) {
   const { question } = props;
+  const word = WORDS[question.wordId];
 
   return (
     <View style={{ gap: 14 }}>
       <Card style={styles.questionCard}>
-        <Art name="owl-reading" height={110} />
+        {question.type === 'pictureSentence' && word ? (
+          <WordPicture word={word} height={145} />
+        ) : (
+          <Art name="owl-reading" height={110} />
+        )}
 
         <Title style={styles.questionTitle}>
           {question.sentence}
@@ -179,18 +273,20 @@ export function SentenceCompletionQuestionWidget(props) {
 
         <Body style={{ textAlign: 'center' }}>{question.prompt}</Body>
 
-        <Button
-          title="Read the sentence"
-          icon="sound"
-          secondary
-          onPress={() =>
-            speak(
-              question.sentence.replace('____', 'blank'),
-              'en-US',
-              true
-            )
-          }
-        />
+        {question.type !== 'bestUse' && (
+          <Button
+            title="Read the sentence"
+            icon="sound"
+            secondary
+            onPress={() =>
+              speak(
+                question.sentence.replace('____', 'blank'),
+                'en-US',
+                true
+              )
+            }
+          />
+        )}
       </Card>
 
       <AnswerChoices {...props} />
@@ -237,6 +333,8 @@ export function InteractiveStoryReaderWidget({
 }) {
   const [selectedWord, setSelectedWord] = useState(null);
 
+  const [isReading, setIsReading] = useState(false);
+
   const targets = story.target_word_ids.map((id) => WORDS[id]);
 
   const expression = new RegExp(
@@ -248,6 +346,22 @@ export function InteractiveStoryReaderWidget({
   );
 
   const parts = story.text.split(expression);
+
+  const handleToggleReading = () => {
+    if (isReading) {
+      stopAudio();
+      setIsReading(false);
+    } else {
+      setIsReading(true);
+      speak(story.text, 'en-US', true);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopAudio();
+    };
+  }, []);
 
   return (
     <Card>
@@ -283,10 +397,10 @@ export function InteractiveStoryReaderWidget({
       </Text>
 
       <Button
-        title="Listen to the story"
-        icon="sound"
+        title={isReading ? "Stop reading" : "Listen to the story"}
+        icon={isReading ? "lock" : "sound"}
         secondary
-        onPress={() => speak(story.text, 'en-US', true)}
+        onPress={handleToggleReading}
       />
 
       <Modal

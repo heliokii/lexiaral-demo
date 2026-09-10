@@ -24,6 +24,7 @@ export default function LevelsScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
 
   async function start(level) {
+    const levelObj = LEVELS.find((l) => l.id === level);
     const next = await dispatch({
       type: 'START',
       level,
@@ -31,7 +32,11 @@ export default function LevelsScreen({ navigation }) {
       at: new Date().toISOString(),
     });
 
-    if (next) navigation.navigate('Activity');
+    if (next) {
+      navigation.navigate('Activity', {
+        title: `${levelObj?.name || ''} Level`,
+      });
+    }
   }
 
   function requestStart(level) {
@@ -65,7 +70,12 @@ export default function LevelsScreen({ navigation }) {
           icon="book"
           arrow
           disabled={busy}
-          onPress={() => navigation.navigate('Activity')}
+          onPress={() => {
+            const currentLevel = LEVELS.find((l) => l.id === state.session?.level);
+            navigation.navigate('Activity', {
+              title: `${currentLevel?.name || ''} Level`,
+            });
+          }}
         />
       )}
 
@@ -77,19 +87,31 @@ export default function LevelsScreen({ navigation }) {
           state.session?.level === level.id &&
           state.session.phase !== 'done';
 
-        const status = !unlocked
-          ? 'Locked'
+        const statusLabel = !unlocked
+          ? '🔒 Locked'
           : active
-            ? 'In progress'
+            ? '📊 In Progress'
             : result
-              ? 'Completed'
-              : 'Unlocked';
+              ? '✔ Completed'
+              : '✔ Unlocked';
+
+        const statusStyle = !unlocked
+          ? styles.lockedStatus
+          : active
+            ? styles.inProgressStatus
+            : styles.unlockedStatus;
+
+        const textColor = !unlocked
+          ? '#85818D'
+          : active
+            ? '#D45B45'
+            : '#3B9B74';
 
         return (
           <Pressable
             key={level.id}
             accessibilityRole="button"
-            accessibilityLabel={`Level ${level.id}, ${level.name}. ${status}.`}
+            accessibilityLabel={`Level ${level.id}, ${level.name}. ${statusLabel}.`}
             accessibilityState={{ disabled: !unlocked || busy }}
             disabled={!unlocked || busy}
             onPress={() => requestStart(level.id)}
@@ -99,15 +121,14 @@ export default function LevelsScreen({ navigation }) {
               pressed && { transform: [{ scale: 0.985 }] },
             ]}
           >
-            <View style={[styles.status, !unlocked && styles.lockedStatus]}>
+            <View style={[styles.status, statusStyle]}>
               <Text
                 style={[
                   styles.statusText,
-                  !unlocked && { color: '#85818D' },
+                  { color: textColor },
                 ]}
               >
-                {unlocked ? '● ' : '🔒 '}
-                {status}
+                {statusLabel}
               </Text>
             </View>
 
@@ -131,22 +152,46 @@ export default function LevelsScreen({ navigation }) {
 
               <Text style={styles.description}>{level.title}</Text>
 
-              {result ? (
-                <View style={styles.score}>
-                  <Icon name="star" size={24} color="#F3C55C" />
+              <View style={styles.score}>
+                <Icon
+                  name="star"
+                  size={20}
+                  color={result || unlocked ? '#F3C55C' : '#DDD7E8'}
+                />
+                <Icon
+                  name="star"
+                  size={20}
+                  color={
+                    result && result.total > 0 && result.score / result.total >= 0.5
+                      ? '#F3C55C'
+                      : '#DDD7E8'
+                  }
+                />
+                <Icon
+                  name="star"
+                  size={20}
+                  color={
+                    result && result.total > 0 && result.score / result.total >= 0.8
+                      ? '#F3C55C'
+                      : '#DDD7E8'
+                  }
+                />
+                {result && (
                   <Text style={styles.scoreText}>
                     {result.score}/{result.total} stars
                   </Text>
-                </View>
-              ) : unlocked ? (
-                <Text style={styles.small}>Ready when you are!</Text>
-              ) : (
-                <Text style={styles.small}>
-                  {UNLOCK_PERCENT === 0
-                    ? `Complete ${level.id === 2 ? 'Easy' : 'Average'} to unlock`
-                    : `Earn ${UNLOCK_PERCENT}% in the previous level`}
-                </Text>
-              )}
+                )}
+                {!result && unlocked && (
+                  <Text style={styles.small}>Ready when you are!</Text>
+                )}
+                {!unlocked && (
+                  <Text style={styles.small}>
+                    {UNLOCK_PERCENT === 0
+                      ? `Complete ${level.id === 2 ? 'Easy' : 'Average'} to unlock`
+                      : `Earn ${UNLOCK_PERCENT}% in previous level`}
+                  </Text>
+                )}
+              </View>
             </View>
 
             <View style={styles.chevron}>
@@ -229,7 +274,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 9,
     paddingVertical: 3,
+  },
+  unlockedStatus: {
     backgroundColor: '#E4F6ED',
+  },
+  inProgressStatus: {
+    backgroundColor: '#FFEAE5',
   },
   lockedStatus: {
     backgroundColor: '#E5E1EB',

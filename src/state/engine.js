@@ -255,6 +255,10 @@ export function reduceState(state, action) {
       };
     }
 
+    case 'RESET_PROGRESS': {
+      return initialState();
+    }
+
     default:
       return state;
   }

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Pressable,
   StyleSheet,
   Text,
@@ -508,7 +509,7 @@ export function FinalScreen({ navigation }) {
   );
 }
 
-export function AboutScreen() {
+export function AboutScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
 
   return (
@@ -545,6 +546,40 @@ export function AboutScreen() {
               enabled: !state.audioEnabled,
             })
           }
+        />
+      </Card>
+
+      <Card style={{ borderColor: '#F2BAC9', borderWidth: 1.5, backgroundColor: 'rgba(255,248,250,0.95)' }}>
+        <Title style={{ fontSize: 22, color: '#A03856' }}>
+          Researcher & Teacher Tools
+        </Title>
+        <Body style={{ fontSize: 16 }}>
+          When administering thesis tests or research surveys with multiple Grade 3 pupils, use this tool to clear saved progress between participants.
+        </Body>
+        <Button
+          title="Reset Data for Next Pupil"
+          icon="cards"
+          secondary
+          disabled={busy}
+          onPress={() => {
+            Alert.alert(
+              'Reset learner progress?',
+              'This will clear all saved stars, badges, and completed activities on this device so the next pupil begins with a fresh session.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Reset All Data',
+                  style: 'destructive',
+                  onPress: async () => {
+                    await dispatch({ type: 'RESET_PROGRESS' });
+                    Alert.alert('Progress Reset', 'All learner data has been cleared for the next pupil.');
+                    navigation?.navigate('Home');
+                  },
+                },
+              ]
+            );
+          }}
+          style={{ backgroundColor: '#FFF0F4', borderColor: '#E8A3B8' }}
         />
       </Card>
 

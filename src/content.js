@@ -53,6 +53,24 @@ const wordChoices = (target, offset, useDefinitions = false) => {
   );
 };
 
+const sentenceChoices = (targetWord, offset) => {
+  const otherWords = pack.words.filter((w) => w.id !== targetWord.id);
+  const distractor1 = otherWords[0]
+    ? otherWords[0].example_sentence
+    : `The ${targetWord.word} is flying in the sky.`;
+  const distractor2 = otherWords[1]
+    ? otherWords[1].example_sentence
+    : `We ate a ${targetWord.word} for breakfast.`;
+
+  const options = [
+    { id: targetWord.id, label: targetWord.example_sentence },
+    { id: `${targetWord.id}-wrong1`, label: distractor1 },
+    { id: `${targetWord.id}-wrong2`, label: distractor2 },
+  ];
+
+  return rotate(options, offset);
+};
+
 const easy = pack.words.flatMap((word, index) => [
   {
     id: `easy-picture-${word.id}`,
@@ -74,6 +92,16 @@ const easy = pack.words.flatMap((word, index) => [
     answerId: word.id,
     explanation: word.definition,
   },
+  {
+    id: `easy-listen-${word.id}`,
+    type: 'listenAndChoose',
+    category: 'vocabulary',
+    wordId: word.id,
+    prompt: 'Listen to the word. Which word did you hear?',
+    choices: wordChoices(word, index + 2),
+    answerId: word.id,
+    explanation: `${word.word}: ${word.definition}`,
+  },
 ]);
 
 const average = pack.words.flatMap((word, index) => [
@@ -89,6 +117,17 @@ const average = pack.words.flatMap((word, index) => [
     explanation: `${word.word}: ${word.definition}`,
   },
   {
+    id: `average-pic-${word.id}`,
+    type: 'pictureSentence',
+    category: 'vocabulary',
+    wordId: word.id,
+    sentence: word.sentence_blank,
+    prompt: 'Look at the picture and complete the sentence:',
+    choices: wordChoices(word, index + 1),
+    answerId: word.id,
+    explanation: `${word.word}: ${word.definition}`,
+  },
+  {
     id: `average-meaning-${word.id}`,
     type: 'meaning',
     category: 'vocabulary',
@@ -98,6 +137,17 @@ const average = pack.words.flatMap((word, index) => [
     choices: wordChoices(word, index + 3, true),
     answerId: word.id,
     explanation: word.definition,
+  },
+  {
+    id: `average-best-use-${word.id}`,
+    type: 'bestUse',
+    category: 'vocabulary',
+    wordId: word.id,
+    sentence: `Word: ${word.word}`,
+    prompt: `Which sentence uses "${word.word}" correctly?`,
+    choices: sentenceChoices(word, index + 2),
+    answerId: word.id,
+    explanation: `Correct: "${word.example_sentence}"`,
   },
 ]);
 
