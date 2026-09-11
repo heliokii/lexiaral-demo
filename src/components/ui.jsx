@@ -39,7 +39,8 @@ const NAV_ROUTES = ['Home', 'Levels', 'Progress', 'Badges', 'Review', 'About'];
 
 const tabs = [
   { route: 'Home', label: 'Home', icon: 'home' },
-  { route: 'Levels', label: 'Levels', icon: 'book' },
+  { route: 'Review', label: 'Learn', icon: 'cards' },
+  { route: 'Levels', label: 'Play', icon: 'book' },
   { route: 'Progress', label: 'Progress', icon: 'chart' },
   { route: 'Badges', label: 'Badges', icon: 'badge' },
 ];
@@ -49,11 +50,9 @@ function BottomNavigation() {
   const route = useRoute();
 
   const active =
-    route.name === 'Review'
-      ? 'Levels'
-      : route.name === 'About'
-        ? 'Home'
-        : route.name;
+    route.name === 'About'
+      ? 'Home'
+      : route.name;
 
   const openTab = (destination) => {
     if (destination === route.name) return;
@@ -294,7 +293,7 @@ export function ProgressBar({ value, label, color = colors.purple }) {
 export function Encouragement() {
   return (
     <Text style={styles.encouragement}>
-      You can do it! ♥
+      You can do it!
     </Text>
   );
 }
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 16,
     width: '100%',
-    maxWidth: 720,
+    maxWidth: 540,
     alignSelf: 'center',
     flexGrow: 1,
   },
@@ -401,7 +400,7 @@ const styles = StyleSheet.create({
   },
   navigation: {
     width: '100%',
-    maxWidth: 680,
+    maxWidth: 540,
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'space-around',
