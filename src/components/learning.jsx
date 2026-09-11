@@ -12,7 +12,7 @@ import {
 import { SvgXml } from 'react-native-svg';
 
 import assets from '../assets.generated';
-import { CONTENT, WORDS } from '../content';
+import { CONTENT, WORDS, STORIES } from '../content';
 import { illustrations } from '../illustrations';
 import { pronounce, speak, stopAudio } from '../audio';
 import { Art, Icon } from '../Art';
@@ -180,7 +180,7 @@ export function AnswerChoices({
             )}
 
             {correct && (
-              <Text style={styles.answerStatus}>✓ Correct</Text>
+              <Text style={styles.answerStatus}>Correct</Text>
             )}
 
             {wrong && (
@@ -221,7 +221,8 @@ export function FlashcardQuestionWidget(props) {
               Tap below to listen again, then choose the word you heard.
             </Body>
             <Button
-              title="🔊 Play Word Sound"
+              title="Play Word Sound"
+              icon="sound"
               onPress={() => pronounce(word)}
               style={{ minHeight: 46, paddingHorizontal: 22 }}
             />
@@ -386,7 +387,7 @@ export function MatchingPairsQuestionWidget({
                 </Text>
                 {isMatched && (
                   <View style={styles.checkBadge}>
-                    <Text style={styles.checkText}>✓</Text>
+                    <Icon name="check" size={13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -417,7 +418,7 @@ export function MatchingPairsQuestionWidget({
                 <WordPicture word={WORDS[item.wordId]} height={60} />
                 {isMatched && (
                   <View style={styles.checkBadge}>
-                    <Text style={styles.checkText}>✓</Text>
+                    <Icon name="check" size={13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -469,15 +470,59 @@ export function SentenceCompletionQuestionWidget(props) {
   );
 }
 
-export function ReviewFlashcard({ word }) {
+export function ReviewFlashcard({ word, isPracticed = false }) {
   const [revealed, setRevealed] = useState(false);
 
   return (
     <Card>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 4,
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: 'Nunito_800ExtraBold',
+            fontSize: 13,
+            color: colors.muted,
+            letterSpacing: 0.5,
+          }}
+        >
+          VOCABULARY CARD
+        </Text>
+        {isPracticed && (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              backgroundColor: '#E0F5EB',
+              paddingHorizontal: 8,
+              paddingVertical: 3,
+              borderRadius: 10,
+            }}
+          >
+            <Icon name="check" size={12} color="#2A8E67" />
+            <Text
+              style={{
+                fontFamily: 'Nunito_800ExtraBold',
+                fontSize: 11,
+                color: '#2A8E67',
+              }}
+            >
+              Practiced
+            </Text>
+          </View>
+        )}
+      </View>
+
       <WordPicture word={word} height={170} />
 
       <Button
-        title={revealed ? 'Hide word' : 'Turn the card'}
+        title={revealed ? 'Hide details' : 'Turn the card'}
         secondary
         icon="cards"
         onPress={() => setRevealed((value) => !value)}
@@ -485,9 +530,13 @@ export function ReviewFlashcard({ word }) {
 
       {revealed && (
         <>
-          <Title style={{ textAlign: 'center' }}>{word.word}</Title>
-          <Body>{word.definition}</Body>
-          <Body>{word.example_sentence}</Body>
+          <Title style={{ textAlign: 'center', fontSize: 26 }}>
+            {word.word}
+          </Title>
+          <Body style={{ fontSize: 16 }}>{word.definition}</Body>
+          <Body style={{ fontSize: 15, fontStyle: 'italic', color: '#524B63' }}>
+            "{word.example_sentence}"
+          </Body>
 
           <Button
             title="Hear the word"
@@ -505,22 +554,35 @@ const escapeRegex = (text) =>
 
 export function InteractiveStoryReaderWidget({
   story = CONTENT.story,
+  onSelectStory,
 }) {
   const [selectedWord, setSelectedWord] = useState(null);
-
   const [isReading, setIsReading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
-  const targets = story.target_word_ids.map((id) => WORDS[id]);
+  useEffect(() => {
+    setIsReading(false);
+    return () => {
+      stopAudio();
+    };
+  }, [story?.id]);
 
-  const expression = new RegExp(
-    `\\b(${[...targets]
-      .sort((a, b) => b.word.length - a.word.length)
-      .map((word) => escapeRegex(word.word))
-      .join('|')})\\b`,
-    'gi'
-  );
+  const targets = (story.target_word_ids || [])
+    .map((id) => WORDS[id])
+    .filter(Boolean);
 
-  const parts = story.text.split(expression);
+  const expression =
+    targets.length > 0
+      ? new RegExp(
+          `\\b(${[...targets]
+            .sort((a, b) => b.word.length - a.word.length)
+            .map((word) => escapeRegex(word.word))
+            .join('|')})\\b`,
+          'gi'
+        )
+      : null;
+
+  const parts = expression ? story.text.split(expression) : [story.text];
 
   const handleToggleReading = () => {
     if (isReading) {
@@ -532,17 +594,23 @@ export function InteractiveStoryReaderWidget({
     }
   };
 
-  useEffect(() => {
-    return () => {
-      stopAudio();
-    };
-  }, []);
-
   return (
     <Card>
       <View style={styles.storyHeader}>
         <Icon name="book" size={28} />
         <Title style={{ flex: 1 }}>{story.title}</Title>
+        {onSelectStory && (
+          <Pressable
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel="Choose another story from 20 ARAL stories"
+            onPress={() => setPickerOpen(true)}
+            style={styles.storyPickerBtn}
+          >
+            <Text style={styles.storyPickerBtnText}>Choose Story</Text>
+            <Icon name="arrow" size={14} color="#7548C7" />
+          </Pressable>
+        )}
       </View>
 
       <Body style={styles.hint}>
@@ -558,6 +626,7 @@ export function InteractiveStoryReaderWidget({
           return target ? (
             <Text
               key={index}
+              accessible
               accessibilityRole="button"
               accessibilityLabel={`${part}. Show meaning.`}
               onPress={() => setSelectedWord(target)}
@@ -577,6 +646,107 @@ export function InteractiveStoryReaderWidget({
         secondary
         onPress={handleToggleReading}
       />
+
+      <Modal
+        transparent
+        visible={pickerOpen}
+        animationType="fade"
+        onRequestClose={() => setPickerOpen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View
+            style={[styles.modalCard, { maxHeight: '84%' }]}
+            accessibilityViewIsModal
+          >
+            <View style={styles.storyPickerHeader}>
+              <Title style={{ fontSize: 20, color: colors.darkPurple }}>
+                Choose a Story
+              </Title>
+              <Body style={{ fontSize: 13, color: colors.muted }}>
+                Grade 3 ARAL Official Curriculum (20 Stories)
+              </Body>
+            </View>
+
+            <ScrollView contentContainerStyle={{ padding: 16, gap: 10 }}>
+              {(STORIES || []).map((item, idx) => {
+                const isCurrent = item.id === story.id;
+                const targetLabels = (item.target_word_ids || [])
+                  .map((id) => WORDS[id]?.word || id)
+                  .join(', ');
+
+                return (
+                  <Pressable
+                    key={item.id}
+                    accessible
+                    accessibilityRole="button"
+                    accessibilityLabel={`Story ${idx + 1}: ${item.title}. Target words: ${targetLabels}`}
+                    onPress={() => {
+                      stopAudio();
+                      setIsReading(false);
+                      setPickerOpen(false);
+                      onSelectStory(item.id);
+                    }}
+                    style={[
+                      styles.storyOptionRow,
+                      isCurrent && styles.storyOptionCurrent,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.storyOptionNum,
+                        isCurrent && styles.storyOptionNumCurrent,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.storyOptionNumText,
+                          isCurrent && { color: '#FFF' },
+                        ]}
+                      >
+                        {idx + 1}
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text
+                        style={[
+                          styles.storyOptionTitle,
+                          isCurrent && { color: colors.darkPurple },
+                        ]}
+                      >
+                        {item.title}
+                      </Text>
+                      {targetLabels ? (
+                        <Text style={styles.storyOptionBadge}>
+                          Words: {targetLabels}
+                        </Text>
+                      ) : null}
+                    </View>
+                    {isCurrent ? (
+                      <View style={styles.checkBadge}>
+                        <Icon name="check" size={13} color="#FFFFFF" />
+                      </View>
+                    ) : null}
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+
+            <View
+              style={{
+                padding: 14,
+                borderTopWidth: 1,
+                borderColor: '#EDE6F6',
+              }}
+            >
+              <Button
+                title="Close"
+                secondary
+                onPress={() => setPickerOpen(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         transparent
@@ -785,5 +955,68 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_900Black',
     fontSize: 13,
     lineHeight: 16,
+  },
+  storyPickerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#EDE8FC',
+    borderColor: '#C7B4F3',
+    borderWidth: 1.5,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 16,
+  },
+  storyPickerBtnText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 13,
+    color: '#7548C7',
+  },
+  storyPickerHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderColor: '#EDE6F6',
+  },
+  storyOptionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#E8E1F4',
+  },
+  storyOptionCurrent: {
+    borderColor: colors.purple,
+    backgroundColor: '#F7F3FF',
+  },
+  storyOptionNum: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#EDE8FC',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  storyOptionNumCurrent: {
+    backgroundColor: colors.purple,
+  },
+  storyOptionNumText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 13,
+    color: '#7056BE',
+  },
+  storyOptionTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: colors.text,
+  },
+  storyOptionBadge: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 12,
+    color: '#8372A5',
   },
 });

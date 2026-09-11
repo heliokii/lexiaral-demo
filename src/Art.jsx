@@ -73,9 +73,18 @@ const shapes = {
     <path d="M16 8 Q20 12 16 16 M19 4 Q26 12 19 20"
       stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
   `,
+  mute: `
+    <path d="M3 9 H7 L12 5 V19 L7 15 H3 Z" fill="currentColor"/>
+    <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  `,
   arrow: `
     <path d="M9 5 L16 12 L9 19" stroke="currentColor"
       stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  check: `
+    <polyline points="20 6 9 17 4 12" stroke="currentColor"
+      stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   `,
   cards: `
     <rect x="8" y="2" width="13" height="18" rx="3"
@@ -100,7 +109,6 @@ export function Icon({ name, color = '#8F78D8', size = 24 }) {
       xml={xml}
       width={size}
       height={size}
-      accessible={false}
     />
   );
 }

@@ -88,12 +88,12 @@ export default function LevelsScreen({ navigation }) {
           state.session.phase !== 'done';
 
         const statusLabel = !unlocked
-          ? '🔒 Locked'
+          ? 'Locked'
           : active
-            ? '📊 In Progress'
+            ? 'In Progress'
             : result
-              ? '✔ Completed'
-              : '✔ Unlocked';
+              ? 'Completed'
+              : 'Unlocked';
 
         const statusStyle = !unlocked
           ? styles.lockedStatus
@@ -186,9 +186,15 @@ export default function LevelsScreen({ navigation }) {
                 )}
                 {!unlocked && (
                   <Text style={styles.small}>
-                    {UNLOCK_PERCENT === 0
+                    {(state.masteryThreshold != null
+                      ? state.masteryThreshold
+                      : UNLOCK_PERCENT) === 0
                       ? `Complete ${level.id === 2 ? 'Easy' : 'Average'} to unlock`
-                      : `Earn ${UNLOCK_PERCENT}% in previous level`}
+                      : `Earn ${
+                          state.masteryThreshold != null
+                            ? state.masteryThreshold
+                            : UNLOCK_PERCENT
+                        }% in ${level.id === 2 ? 'Easy' : 'Average'}`}
                   </Text>
                 )}
               </View>
