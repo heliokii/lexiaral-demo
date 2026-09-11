@@ -32,6 +32,7 @@ import {
   AnswerChoices,
   FlashcardQuestionWidget,
   InteractiveStoryReaderWidget,
+  MatchingPairsQuestionWidget,
   SentenceCompletionQuestionWidget,
 } from '../components/learning';
 
@@ -320,7 +321,11 @@ export function ActivityScreen({ navigation }) {
         label="Questions answered"
       />
 
-      {session.level === 1 && (
+      {session.level === 1 && question.type === 'matching' && (
+        <MatchingPairsQuestionWidget {...widgetProps} />
+      )}
+
+      {session.level === 1 && question.type !== 'matching' && (
         <FlashcardQuestionWidget {...widgetProps} />
       )}
 

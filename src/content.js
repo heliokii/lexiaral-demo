@@ -179,8 +179,27 @@ const comprehension = pack.story.questions.map((question, index) => ({
   explanation: question.explanation,
 }));
 
+const easyMatching = {
+  id: 'easy-matching-all',
+  type: 'matching',
+  category: 'vocabulary',
+  prompt: 'Match each target word with its correct picture!',
+  pairs: pack.words.slice(0, 4).map((word) => ({
+    id: word.id,
+    wordId: word.id,
+    word: word.word,
+    image: word.image_url,
+  })),
+  choices: [
+    { id: 'all_matched', label: 'All pairs matched!' },
+    { id: 'keep_matching', label: 'Keep matching' },
+  ],
+  answerId: 'all_matched',
+  explanation: 'All vocabulary words are correctly matched with their pictures.',
+};
+
 export const QUESTIONS = {
-  1: easy,
+  1: [...easy, easyMatching],
   2: average,
   3: [...difficultVocabulary, ...comprehension],
 };

@@ -33,10 +33,11 @@ export const BADGES = [
   },
 ];
 
-export function initialState() {
+export function initialState(pupilName = '') {
   return {
     schemaVersion: 1,
     contentId: CONTENT.id,
+    pupilName: typeof pupilName === 'string' ? pupilName : '',
     audioEnabled: true,
     unlocked: [1],
     badges: [],
@@ -255,8 +256,15 @@ export function reduceState(state, action) {
       };
     }
 
+    case 'SET_PUPIL_NAME': {
+      return {
+        ...state,
+        pupilName: typeof action.name === 'string' ? action.name.trim() : '',
+      };
+    }
+
     case 'RESET_PROGRESS': {
-      return initialState();
+      return initialState(action.nextPupilName || '');
     }
 
     default:
@@ -279,7 +287,8 @@ export function validateSavedState(state) {
     !state ||
     state.schemaVersion !== 1 ||
     state.contentId !== CONTENT.id ||
-    typeof state.audioEnabled !== 'boolean'
+    typeof state.audioEnabled !== 'boolean' ||
+    (state.pupilName !== undefined && typeof state.pupilName !== 'string')
   ) {
     fail();
   }

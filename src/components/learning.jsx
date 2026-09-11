@@ -254,6 +254,181 @@ export function FlashcardQuestionWidget(props) {
   );
 }
 
+export function MatchingPairsQuestionWidget({
+  question,
+  selected,
+  disabled,
+  onAnswer,
+}) {
+  const pairs = question.pairs || [];
+  const [selectedWordId, setSelectedWordId] = useState(null);
+  const [matchedIds, setMatchedIds] = useState([]);
+  const [mismatchPair, setMismatchPair] = useState(null);
+
+  const [wordItems] = useState(() => [...pairs]);
+  const [picItems] = useState(() => {
+    if (pairs.length > 2) {
+      return [...pairs.slice(1), pairs[0]];
+    }
+    return [...pairs].reverse();
+  });
+
+  const isCompleted = selected != null || matchedIds.length === pairs.length;
+
+  const handleSelectWord = (wordId) => {
+    if (disabled || isCompleted || matchedIds.includes(wordId)) return;
+    setSelectedWordId(wordId);
+    const wordObj = WORDS[wordId];
+    if (wordObj) {
+      pronounce(wordObj);
+    }
+  };
+
+  const handleSelectPic = (picWordId) => {
+    if (disabled || isCompleted || matchedIds.includes(picWordId)) return;
+    if (!selectedWordId) {
+      speak('Tap a word on the left first!', 'en-US', true);
+      return;
+    }
+
+    if (selectedWordId === picWordId) {
+      const next = [...matchedIds, selectedWordId];
+      setMatchedIds(next);
+      setSelectedWordId(null);
+      setMismatchPair(null);
+      const wordObj = WORDS[selectedWordId];
+      speak(`Good job! ${wordObj?.word || ''}`, 'en-US', true);
+
+      if (next.length === pairs.length && !selected) {
+        onAnswer(question.answerId);
+      }
+    } else {
+      setMismatchPair({ wordId: selectedWordId, picWordId });
+      speak('Try again', 'en-US', true);
+      setTimeout(() => {
+        setMismatchPair(null);
+        setSelectedWordId(null);
+      }, 700);
+    }
+  };
+
+  return (
+    <View style={{ gap: 14 }}>
+      <Card style={styles.questionCard}>
+        <Title style={styles.questionTitle}>Match Words to Pictures</Title>
+        <Body style={{ textAlign: 'center', fontSize: 16 }}>
+          {question.prompt || 'Tap a word on the left, then tap its matching picture on the right.'}
+        </Body>
+        <Button
+          title="Hear instruction"
+          icon="sound"
+          secondary
+          onPress={() =>
+            speak(
+              'Tap a word on the left, then tap its matching picture on the right.',
+              'en-US',
+              true
+            )
+          }
+          style={{ minHeight: 44, alignSelf: 'center' }}
+        />
+        <View
+          style={{
+            alignSelf: 'center',
+            backgroundColor: '#E8F5EE',
+            paddingHorizontal: 14,
+            paddingVertical: 6,
+            borderRadius: 14,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Nunito_800ExtraBold',
+              color: '#267A59',
+              fontSize: 15,
+            }}
+          >
+            Matched: {isCompleted ? pairs.length : matchedIds.length} of {pairs.length} pairs
+          </Text>
+        </View>
+      </Card>
+
+      <View style={styles.matchingBoard}>
+        <View style={styles.matchingColumn}>
+          <Text style={styles.columnHeader}>WORDS</Text>
+          {wordItems.map((item) => {
+            const isMatched = isCompleted || matchedIds.includes(item.wordId);
+            const isSelected = selectedWordId === item.wordId;
+            const isWrong = mismatchPair?.wordId === item.wordId;
+
+            return (
+              <Pressable
+                key={item.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Word ${item.word}`}
+                disabled={disabled || isMatched}
+                onPress={() => handleSelectWord(item.wordId)}
+                style={[
+                  styles.matchCard,
+                  isSelected && styles.matchCardSelected,
+                  isMatched && styles.matchCardMatched,
+                  isWrong && styles.matchCardWrong,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.matchWordText,
+                    isMatched && { color: '#267A59' },
+                    isSelected && { color: colors.darkPurple },
+                  ]}
+                >
+                  {item.word}
+                </Text>
+                {isMatched && (
+                  <View style={styles.checkBadge}>
+                    <Text style={styles.checkText}>✓</Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.matchingColumn}>
+          <Text style={styles.columnHeader}>PICTURES</Text>
+          {picItems.map((item) => {
+            const isMatched = isCompleted || matchedIds.includes(item.wordId);
+            const isWrong = mismatchPair?.picWordId === item.wordId;
+
+            return (
+              <Pressable
+                key={`pic-${item.id}`}
+                accessibilityRole="button"
+                accessibilityLabel={`Picture for ${item.word}`}
+                disabled={disabled || isMatched}
+                onPress={() => handleSelectPic(item.wordId)}
+                style={[
+                  styles.matchCard,
+                  styles.matchPicCard,
+                  isMatched && styles.matchCardMatched,
+                  isWrong && styles.matchCardWrong,
+                ]}
+              >
+                <WordPicture word={WORDS[item.wordId]} height={60} />
+                {isMatched && (
+                  <View style={styles.checkBadge}>
+                    <Text style={styles.checkText}>✓</Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export function SentenceCompletionQuestionWidget(props) {
   const { question } = props;
   const word = WORDS[question.wordId];
@@ -537,5 +712,78 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFCFF',
     borderRadius: 28,
     overflow: 'hidden',
+  },
+  matchingBoard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  matchingColumn: {
+    flex: 1,
+    gap: 10,
+  },
+  columnHeader: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 14,
+    color: colors.muted,
+    textAlign: 'center',
+    letterSpacing: 1,
+    marginBottom: 2,
+  },
+  matchCard: {
+    minHeight: 74,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    borderWidth: 2,
+    borderColor: '#DCE7F5',
+    shadowColor: '#9986B2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    elevation: 2,
+    position: 'relative',
+  },
+  matchPicCard: {
+    paddingVertical: 6,
+  },
+  matchCardSelected: {
+    borderColor: colors.purple,
+    backgroundColor: '#F3EDFF',
+    borderWidth: 3,
+  },
+  matchCardMatched: {
+    borderColor: '#319F77',
+    backgroundColor: '#E8F8EE',
+  },
+  matchCardWrong: {
+    borderColor: '#D39A50',
+    backgroundColor: '#FFF0D7',
+  },
+  matchWordText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 18,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  checkBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 8,
+    backgroundColor: '#319F77',
+    borderRadius: 12,
+    width: 22,
+    height: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkText: {
+    color: '#FFFFFF',
+    fontFamily: 'Nunito_900Black',
+    fontSize: 13,
+    lineHeight: 16,
   },
 });

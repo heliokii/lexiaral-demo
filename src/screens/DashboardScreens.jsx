@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
@@ -36,21 +37,49 @@ import {
 import { ReviewFlashcard } from '../components/learning';
 
 export function WelcomeScreen({ navigation }) {
+  const { state, dispatch, busy } = useLearning();
+  const [pupilInput, setPupilInput] = useState(state?.pupilName || '');
+
+  const handleStart = async () => {
+    const trimmed = pupilInput.trim();
+    if (trimmed) {
+      await dispatch({ type: 'SET_PUPIL_NAME', name: trimmed });
+    }
+    navigation.replace('Home');
+  };
+
   return (
     <Screen>
       <View style={styles.welcome}>
         <Text style={styles.brand}>LEXIARAL</Text>
-        <Art name="owl-reading" height={280} />
+        <Art name="owl-reading" height={220} />
         <Title style={styles.center}>Learn Words. Play. Grow.</Title>
         <Body style={styles.center}>
-          Your little word adventure starts here.
+          English Vocabulary Game for Grade 3 Learners
         </Body>
+
+        <Card style={styles.pupilCard}>
+          <Text style={styles.pupilInputLabel}>Learner / Pupil ID:</Text>
+          <TextInput
+            value={pupilInput}
+            onChangeText={setPupilInput}
+            placeholder="e.g. Pupil 01, Alex, or Learner"
+            placeholderTextColor="#9EA5B9"
+            style={styles.pupilTextInput}
+            maxLength={28}
+            autoCapitalize="words"
+          />
+          <Body style={styles.pupilInputHint}>
+            Used for tracking research pre-test and post-test scores.
+          </Body>
+        </Card>
 
         <Button
           title="Let’s start!"
           icon="book"
           arrow
-          onPress={() => navigation.replace('Home')}
+          disabled={busy}
+          onPress={handleStart}
         />
       </View>
     </Screen>
@@ -97,11 +126,13 @@ export function HomeScreen({ navigation }) {
 
         <View style={{ flex: 1, gap: 7 }}>
           <Title style={[styles.heroTitle, stacked && styles.center]}>
-            Hi, I’m Lexi!
+            {state.pupilName ? `Hi, ${state.pupilName}!` : 'Hi, I’m Lexi!'}
           </Title>
 
           <Body style={[styles.heroText, stacked && styles.center]}>
-            Ready to learn new words today?
+            {state.pupilName
+              ? 'I’m Lexi. Ready to learn new words today?'
+              : 'Ready to learn new words today?'}
           </Body>
         </View>
       </View>
@@ -198,6 +229,23 @@ export function ProgressScreen({ navigation }) {
     <Screen>
       <Title>Look How You’re Growing!</Title>
       <Body>A little practice makes a big difference.</Body>
+
+      <Card style={styles.researcherPupilCard}>
+        <View style={styles.pupilBadgeRow}>
+          <View style={styles.pupilIconWrap}>
+            <Icon name="medal" size={26} color="#7548C7" />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={styles.pupilLabel}>RESEARCH PARTICIPANT</Text>
+            <Title style={{ fontSize: 22, color: '#3A2758' }}>
+              {state.pupilName || 'Learner (Anonymous)'}
+            </Title>
+            <Body style={{ fontSize: 13, color: colors.muted }}>
+              Rosario East Central School · Grade 3 ARAL Evaluation
+            </Body>
+          </View>
+        </View>
+      </Card>
 
       <Card>
         <View style={styles.progressHero}>
@@ -554,7 +602,13 @@ export function AboutScreen({ navigation }) {
           Researcher & Teacher Tools
         </Title>
         <Body style={{ fontSize: 16 }}>
-          When administering thesis tests or research surveys with multiple Grade 3 pupils, use this tool to clear saved progress between participants.
+          Current Participant:{' '}
+          <Text style={{ fontFamily: 'Nunito_800ExtraBold', color: '#7548C7' }}>
+            {state.pupilName || 'Not Set'}
+          </Text>
+        </Body>
+        <Body style={{ fontSize: 15 }}>
+          When administering thesis tests with multiple Grade 3 pupils, use this tool to clear saved progress and start fresh for the next participant.
         </Body>
         <Button
           title="Reset Data for Next Pupil"
@@ -571,9 +625,9 @@ export function AboutScreen({ navigation }) {
                   text: 'Reset All Data',
                   style: 'destructive',
                   onPress: async () => {
-                    await dispatch({ type: 'RESET_PROGRESS' });
-                    Alert.alert('Progress Reset', 'All learner data has been cleared for the next pupil.');
-                    navigation?.navigate('Home');
+                    await dispatch({ type: 'RESET_PROGRESS', nextPupilName: '' });
+                    Alert.alert('Progress Reset', 'All learner data has been cleared. You will now be redirected to set up the next pupil.');
+                    navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
                   },
                 },
               ]
@@ -782,5 +836,59 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 10,
+  },
+  pupilCard: {
+    width: '100%',
+    padding: 16,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#DCE7F5',
+    gap: 8,
+  },
+  pupilInputLabel: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 15,
+    color: '#3A2758',
+  },
+  pupilTextInput: {
+    minHeight: 48,
+    backgroundColor: '#F4F7FC',
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#CCE0F5',
+    paddingHorizontal: 16,
+    fontSize: 17,
+    fontFamily: 'Nunito_700Bold',
+    color: '#2F2544',
+  },
+  pupilInputHint: {
+    fontSize: 13,
+    color: colors.muted,
+  },
+  researcherPupilCard: {
+    backgroundColor: '#F7F3FF',
+    borderColor: '#DECFFC',
+    borderWidth: 1.5,
+    padding: 16,
+  },
+  pupilBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  pupilIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EBE0FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pupilLabel: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 12,
+    color: '#7548C7',
+    letterSpacing: 0.8,
   },
 });
