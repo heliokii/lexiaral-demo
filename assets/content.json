@@ -227,7 +227,7 @@
   ],
   "story": {
     "id": "story-1-cat",
-    "title": "The Cat",
+    "title": "1. The Cat",
     "text": "Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat near the door. Mia gives her cat some food and water. Mia is happy to have a playful cat.",
     "target_word_ids": [
       "cat",
@@ -247,7 +247,7 @@
           "Sam"
         ],
         "answer": "Mimi",
-        "explanation": "The story states that Mia has a small cat named Mimi."
+        "explanation": "The story explains: Mimi."
       },
       {
         "id": "q1-2",
@@ -260,7 +260,7 @@
           "A book"
         ],
         "answer": "A ball",
-        "explanation": "Mimi likes to play with a ball every morning."
+        "explanation": "The story explains: A ball."
       },
       {
         "id": "q1-3",
@@ -273,7 +273,7 @@
           "Every evening"
         ],
         "answer": "Every morning",
-        "explanation": "The story says Mimi plays every morning."
+        "explanation": "The story explains: Every morning."
       },
       {
         "id": "q1-4",
@@ -286,7 +286,7 @@
           "On a chair"
         ],
         "answer": "On a mat near the door",
-        "explanation": "After playing, the cat sits on a mat near the door."
+        "explanation": "The story explains: On a mat near the door."
       },
       {
         "id": "q1-5",
@@ -299,14 +299,14 @@
           "She walked up a hill"
         ],
         "answer": "She has a playful cat",
-        "explanation": "Mia is happy to have a playful cat."
+        "explanation": "The story explains: She has a playful cat."
       }
     ]
   },
   "stories": [
     {
       "id": "story-1-cat",
-      "title": "The Cat",
+      "title": "1. The Cat",
       "text": "Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat near the door. Mia gives her cat some food and water. Mia is happy to have a playful cat.",
       "target_word_ids": [
         "cat",
@@ -326,7 +326,7 @@
             "Sam"
           ],
           "answer": "Mimi",
-          "explanation": "The story states that Mia has a small cat named Mimi."
+          "explanation": "The story explains: Mimi."
         },
         {
           "id": "q1-2",
@@ -339,7 +339,7 @@
             "A book"
           ],
           "answer": "A ball",
-          "explanation": "Mimi likes to play with a ball every morning."
+          "explanation": "The story explains: A ball."
         },
         {
           "id": "q1-3",
@@ -352,7 +352,7 @@
             "Every evening"
           ],
           "answer": "Every morning",
-          "explanation": "The story says Mimi plays every morning."
+          "explanation": "The story explains: Every morning."
         },
         {
           "id": "q1-4",
@@ -365,7 +365,7 @@
             "On a chair"
           ],
           "answer": "On a mat near the door",
-          "explanation": "After playing, the cat sits on a mat near the door."
+          "explanation": "The story explains: On a mat near the door."
         },
         {
           "id": "q1-5",
@@ -378,13 +378,13 @@
             "She walked up a hill"
           ],
           "answer": "She has a playful cat",
-          "explanation": "Mia is happy to have a playful cat."
+          "explanation": "The story explains: She has a playful cat."
         }
       ]
     },
     {
       "id": "story-2-mat",
-      "title": "The Mat",
+      "title": "2. The Mat",
       "text": "Tom has a clean mat in front of his house. His little cat likes to sit on the mat every afternoon. Tom cleans the mat when it gets dirty. He wants his house to look neat and clean. His cat enjoys resting on the mat.",
       "target_word_ids": [
         "mat",
@@ -404,20 +404,20 @@
             "Sam"
           ],
           "answer": "Tom",
-          "explanation": "Tom has a clean mat in front of his house."
+          "explanation": "The story explains: Tom."
         },
         {
           "id": "q2-2",
           "category": "comprehension",
           "prompt": "Where is the mat?",
           "choices": [
-            "In front of the house",
-            "Inside the kitchen",
+            "In front of his house",
+            "In the kitchen",
             "Under a big tree",
             "On top of a hill"
           ],
-          "answer": "In front of the house",
-          "explanation": "The mat is placed in front of the house."
+          "answer": "In front of his house",
+          "explanation": "The story explains: In front of his house."
         },
         {
           "id": "q2-3",
@@ -430,7 +430,7 @@
             "Only on Sunday"
           ],
           "answer": "Every afternoon",
-          "explanation": "The little cat likes to sit on the mat every afternoon."
+          "explanation": "The story explains: Every afternoon."
         },
         {
           "id": "q2-4",
@@ -440,29 +440,29 @@
             "He cleans the mat",
             "He throws it away",
             "He hides it in a box",
-            "He gives it to a dog"
+            "He gives it away"
           ],
           "answer": "He cleans the mat",
-          "explanation": "Tom cleans the mat when it gets dirty."
+          "explanation": "The story explains: He cleans the mat."
         },
         {
           "id": "q2-5",
           "category": "comprehension",
           "prompt": "Why does Tom clean the mat?",
           "choices": [
-            "He wants the house neat and clean",
+            "He wants his house neat and clean",
             "His mother told him to",
             "To play with his cat",
             "To sell it at the store"
           ],
-          "answer": "He wants the house neat and clean",
-          "explanation": "Tom wants his house to look neat and clean."
+          "answer": "He wants his house neat and clean",
+          "explanation": "The story explains: He wants his house neat and clean."
         }
       ]
     },
     {
       "id": "story-3-hat",
-      "title": "The Hat",
+      "title": "3. The Hat",
       "text": "Ben has a new red hat. He wears his hat when he goes outside to play. One afternoon, the wind blows his hat away. Ben quickly runs after it and picks it up. He smiles because he gets his hat back.",
       "target_word_ids": [
         "hat",
@@ -482,7 +482,7 @@
             "Leo"
           ],
           "answer": "Ben",
-          "explanation": "Ben has a new red hat."
+          "explanation": "The story explains: Ben."
         },
         {
           "id": "q3-2",
@@ -495,7 +495,7 @@
             "Yellow"
           ],
           "answer": "Red",
-          "explanation": "Ben's hat is red."
+          "explanation": "The story explains: Red."
         },
         {
           "id": "q3-3",
@@ -508,7 +508,7 @@
             "When he sits inside"
           ],
           "answer": "When he goes outside to play",
-          "explanation": "He wears his hat when he goes outside to play."
+          "explanation": "The story explains: When he goes outside to play."
         },
         {
           "id": "q3-4",
@@ -521,7 +521,7 @@
             "It gets dirty"
           ],
           "answer": "The wind blows it away",
-          "explanation": "The wind blows his hat away."
+          "explanation": "The story explains: The wind blows it away."
         },
         {
           "id": "q3-5",
@@ -534,13 +534,949 @@
             "His mother called him"
           ],
           "answer": "He gets his hat back",
-          "explanation": "Ben smiles because he gets his hat back."
+          "explanation": "The story explains: He gets his hat back."
+        }
+      ]
+    },
+    {
+      "id": "story-4-rat",
+      "title": "4. The Rat",
+      "text": "A small rat lives near an old box. One morning, the rat sees some food near the box. It runs quickly toward the food. After eating, the rat goes back to its little home. The rat feels safe inside its home.",
+      "target_word_ids": [
+        "rat",
+        "top",
+        "pet",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q4-1",
+          "category": "comprehension",
+          "prompt": "What animal is in the story?",
+          "choices": [
+            "A small rat",
+            "A little bird",
+            "A friendly dog",
+            "A bat"
+          ],
+          "answer": "A small rat",
+          "explanation": "The story explains: A small rat."
+        },
+        {
+          "id": "q4-2",
+          "category": "comprehension",
+          "prompt": "Where does the rat live?",
+          "choices": [
+            "Near an old box",
+            "Inside a den",
+            "On top of a hill",
+            "In the garden"
+          ],
+          "answer": "Near an old box",
+          "explanation": "The story explains: Near an old box."
+        },
+        {
+          "id": "q4-3",
+          "category": "comprehension",
+          "prompt": "What does the rat see one morning?",
+          "choices": [
+            "Some food near the box",
+            "A shiny red hat",
+            "A little pet",
+            "A big cat"
+          ],
+          "answer": "Some food near the box",
+          "explanation": "The story explains: Some food near the box."
+        },
+        {
+          "id": "q4-4",
+          "category": "comprehension",
+          "prompt": "What does the rat do after eating?",
+          "choices": [
+            "Goes back to its little home",
+            "Runs to the park",
+            "Climbs a tree",
+            "Plays with a ball"
+          ],
+          "answer": "Goes back to its little home",
+          "explanation": "The story explains: Goes back to its little home."
+        },
+        {
+          "id": "q4-5",
+          "category": "comprehension",
+          "prompt": "Why does the rat go back home?",
+          "choices": [
+            "It feels safe inside",
+            "It is tired",
+            "It is raining",
+            "It sees the sun"
+          ],
+          "answer": "It feels safe inside",
+          "explanation": "The story explains: It feels safe inside."
+        }
+      ]
+    },
+    {
+      "id": "story-5-bat",
+      "title": "5. The Bat",
+      "text": "A bat lives in a tall tree near a garden. During the day, it stays quiet inside the tree. At night, the bat flies around the garden. It looks for food before returning to the tree. The children enjoy watching the bat from a safe distance.",
+      "target_word_ids": [
+        "bat",
+        "sun",
+        "hill",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q5-1",
+          "category": "comprehension",
+          "prompt": "What animal lives in the tree?",
+          "choices": [
+            "A bat",
+            "A bird",
+            "A rat",
+            "A dog"
+          ],
+          "answer": "A bat",
+          "explanation": "The story explains: A bat."
+        },
+        {
+          "id": "q5-2",
+          "category": "comprehension",
+          "prompt": "Where does the bat live?",
+          "choices": [
+            "In a tall tree near a garden",
+            "Inside a den",
+            "Under a mat",
+            "In a box"
+          ],
+          "answer": "In a tall tree near a garden",
+          "explanation": "The story explains: In a tall tree near a garden."
+        },
+        {
+          "id": "q5-3",
+          "category": "comprehension",
+          "prompt": "When does the bat fly?",
+          "choices": [
+            "At night",
+            "Every morning",
+            "In the afternoon",
+            "At noon"
+          ],
+          "answer": "At night",
+          "explanation": "The story explains: At night."
+        },
+        {
+          "id": "q5-4",
+          "category": "comprehension",
+          "prompt": "What does the bat look for?",
+          "choices": [
+            "Food",
+            "A red hat",
+            "A clean mat",
+            "A toy ball"
+          ],
+          "answer": "Food",
+          "explanation": "The story explains: Food."
+        },
+        {
+          "id": "q5-5",
+          "category": "comprehension",
+          "prompt": "How do the children watch the bat?",
+          "choices": [
+            "From a safe distance",
+            "With a lamp",
+            "Inside their home",
+            "From the hilltop"
+          ],
+          "answer": "From a safe distance",
+          "explanation": "The story explains: From a safe distance."
+        }
+      ]
+    },
+    {
+      "id": "story-6-pet",
+      "title": "6. My Pet",
+      "text": "Ana has a little pet at home. Her pet is small, friendly, and playful. Every morning, Ana gives her pet food and clean water. She also plays with it after school. Ana loves taking care of her pet.",
+      "target_word_ids": [
+        "pet",
+        "happy",
+        "little",
+        "cat"
+      ],
+      "questions": [
+        {
+          "id": "q6-1",
+          "category": "comprehension",
+          "prompt": "Who has a little pet?",
+          "choices": [
+            "Ana",
+            "Mia",
+            "Sara",
+            "Nina"
+          ],
+          "answer": "Ana",
+          "explanation": "The story explains: Ana."
+        },
+        {
+          "id": "q6-2",
+          "category": "comprehension",
+          "prompt": "Where does Ana's pet live?",
+          "choices": [
+            "At home",
+            "In the classroom",
+            "Near the park",
+            "On the hill"
+          ],
+          "answer": "At home",
+          "explanation": "The story explains: At home."
+        },
+        {
+          "id": "q6-3",
+          "category": "comprehension",
+          "prompt": "When does Ana give her pet food?",
+          "choices": [
+            "Every morning",
+            "Only at night",
+            "Once a week",
+            "In the evening"
+          ],
+          "answer": "Every morning",
+          "explanation": "The story explains: Every morning."
+        },
+        {
+          "id": "q6-4",
+          "category": "comprehension",
+          "prompt": "What does Ana give her pet?",
+          "choices": [
+            "Food and clean water",
+            "A red hat",
+            "A storybook",
+            "A shiny toy"
+          ],
+          "answer": "Food and clean water",
+          "explanation": "The story explains: Food and clean water."
+        },
+        {
+          "id": "q6-5",
+          "category": "comprehension",
+          "prompt": "Why does Ana love her pet?",
+          "choices": [
+            "Her pet is playful and friendly",
+            "It can fly",
+            "It sings songs",
+            "It wears a hat"
+          ],
+          "answer": "Her pet is playful and friendly",
+          "explanation": "The story explains: Her pet is playful and friendly."
+        }
+      ]
+    },
+    {
+      "id": "story-7-happy",
+      "title": "7. A Happy Day",
+      "text": "Leo receives a new book from his mother. He opens the book and reads the first page. He shares the book with his sister. They read together and talk about the pictures. Leo feels happy because he loves reading.",
+      "target_word_ids": [
+        "happy",
+        "set",
+        "sit",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q7-1",
+          "category": "comprehension",
+          "prompt": "Who receives a new book?",
+          "choices": [
+            "Leo",
+            "Ben",
+            "Sam",
+            "Dan"
+          ],
+          "answer": "Leo",
+          "explanation": "The story explains: Leo."
+        },
+        {
+          "id": "q7-2",
+          "category": "comprehension",
+          "prompt": "Who gives Leo the book?",
+          "choices": [
+            "His mother",
+            "His teacher",
+            "His sister",
+            "His father"
+          ],
+          "answer": "His mother",
+          "explanation": "The story explains: His mother."
+        },
+        {
+          "id": "q7-3",
+          "category": "comprehension",
+          "prompt": "What does Leo do with his sister?",
+          "choices": [
+            "Reads the book together",
+            "Plays outside",
+            "Walks up the hill",
+            "Cleans the mat"
+          ],
+          "answer": "Reads the book together",
+          "explanation": "The story explains: Reads the book together."
+        },
+        {
+          "id": "q7-4",
+          "category": "comprehension",
+          "prompt": "What do they talk about?",
+          "choices": [
+            "The pictures in the book",
+            "Their little pet",
+            "The bright sun",
+            "The old box"
+          ],
+          "answer": "The pictures in the book",
+          "explanation": "The story explains: The pictures in the book."
+        },
+        {
+          "id": "q7-5",
+          "category": "comprehension",
+          "prompt": "Why is Leo happy?",
+          "choices": [
+            "He loves reading",
+            "He received a toy",
+            "He ate an egg",
+            "He went to the park"
+          ],
+          "answer": "He loves reading",
+          "explanation": "The story explains: He loves reading."
+        }
+      ]
+    },
+    {
+      "id": "story-8-sun",
+      "title": "8. The Sun",
+      "text": "The sun comes up early in the morning. The children prepare to play outside with their friends. They run, laugh, and enjoy the warm sunlight. After playing, they rest under a tree. It is a bright and wonderful day.",
+      "target_word_ids": [
+        "sun",
+        "happy",
+        "top",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q8-1",
+          "category": "comprehension",
+          "prompt": "What comes up early in the morning?",
+          "choices": [
+            "The sun",
+            "The lamp",
+            "The moon",
+            "The bird"
+          ],
+          "answer": "The sun",
+          "explanation": "The story explains: The sun."
+        },
+        {
+          "id": "q8-2",
+          "category": "comprehension",
+          "prompt": "When does the sun come up?",
+          "choices": [
+            "Early in the morning",
+            "At noon",
+            "Late in the evening",
+            "At night"
+          ],
+          "answer": "Early in the morning",
+          "explanation": "The story explains: Early in the morning."
+        },
+        {
+          "id": "q8-3",
+          "category": "comprehension",
+          "prompt": "Where do the children play?",
+          "choices": [
+            "Outside with their friends",
+            "Inside the house",
+            "In the kitchen",
+            "Under the bed"
+          ],
+          "answer": "Outside with their friends",
+          "explanation": "The story explains: Outside with their friends."
+        },
+        {
+          "id": "q8-4",
+          "category": "comprehension",
+          "prompt": "Where do they rest after playing?",
+          "choices": [
+            "Under a tree",
+            "On a chair",
+            "In a den",
+            "Near the door"
+          ],
+          "answer": "Under a tree",
+          "explanation": "The story explains: Under a tree."
+        },
+        {
+          "id": "q8-5",
+          "category": "comprehension",
+          "prompt": "How do the children feel about their day?",
+          "choices": [
+            "It is bright and wonderful",
+            "It is too cold",
+            "It is dark",
+            "They are sad"
+          ],
+          "answer": "It is bright and wonderful",
+          "explanation": "The story explains: It is bright and wonderful."
+        }
+      ]
+    },
+    {
+      "id": "story-9-sit",
+      "title": "9. Sit and Read",
+      "text": "Nina goes to the reading corner in her classroom. Her teacher asks her to sit on a chair. Nina sits quietly and opens her book. She reads the words one by one. After reading, she tells her teacher what she learned.",
+      "target_word_ids": [
+        "sit",
+        "set",
+        "little",
+        "happy"
+      ],
+      "questions": [
+        {
+          "id": "q9-1",
+          "category": "comprehension",
+          "prompt": "Who goes to the reading corner?",
+          "choices": [
+            "Nina",
+            "Ana",
+            "Mia",
+            "Sara"
+          ],
+          "answer": "Nina",
+          "explanation": "The story explains: Nina."
+        },
+        {
+          "id": "q9-2",
+          "category": "comprehension",
+          "prompt": "Where is the reading corner?",
+          "choices": [
+            "In her classroom",
+            "In the garden",
+            "Near the store",
+            "At the park"
+          ],
+          "answer": "In her classroom",
+          "explanation": "The story explains: In her classroom."
+        },
+        {
+          "id": "q9-3",
+          "category": "comprehension",
+          "prompt": "What does Nina sit on?",
+          "choices": [
+            "On a chair",
+            "On a mat",
+            "On the floor",
+            "On a box"
+          ],
+          "answer": "On a chair",
+          "explanation": "The story explains: On a chair."
+        },
+        {
+          "id": "q9-4",
+          "category": "comprehension",
+          "prompt": "What does Nina do after sitting?",
+          "choices": [
+            "Opens her book and reads",
+            "Eats her lunch",
+            "Plays with a toy",
+            "Draws a map"
+          ],
+          "answer": "Opens her book and reads",
+          "explanation": "The story explains: Opens her book and reads."
+        },
+        {
+          "id": "q9-5",
+          "category": "comprehension",
+          "prompt": "What does Nina tell her teacher?",
+          "choices": [
+            "What she learned",
+            "A funny joke",
+            "A song",
+            "A secret"
+          ],
+          "answer": "What she learned",
+          "explanation": "The story explains: What she learned."
+        }
+      ]
+    },
+    {
+      "id": "story-10-set",
+      "title": "10. The Book",
+      "text": "Sam has a new storybook. Before reading, he sets the book carefully on the table. He gets a pencil and sits beside his mother. After lunch, Sam reads the book with her. He enjoys learning new words from the story.",
+      "target_word_ids": [
+        "set",
+        "sit",
+        "happy",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q10-1",
+          "category": "comprehension",
+          "prompt": "What does Sam have?",
+          "choices": [
+            "A new storybook",
+            "A red hat",
+            "A small ball",
+            "A toy car"
+          ],
+          "answer": "A new storybook",
+          "explanation": "The story explains: A new storybook."
+        },
+        {
+          "id": "q10-2",
+          "category": "comprehension",
+          "prompt": "Where does Sam put the book?",
+          "choices": [
+            "Carefully on the table",
+            "Inside a box",
+            "On the floor",
+            "On the mat"
+          ],
+          "answer": "Carefully on the table",
+          "explanation": "The story explains: Carefully on the table."
+        },
+        {
+          "id": "q10-3",
+          "category": "comprehension",
+          "prompt": "Who sits beside Sam?",
+          "choices": [
+            "His mother",
+            "His teacher",
+            "His sister",
+            "His father"
+          ],
+          "answer": "His mother",
+          "explanation": "The story explains: His mother."
+        },
+        {
+          "id": "q10-4",
+          "category": "comprehension",
+          "prompt": "When does Sam read the book?",
+          "choices": [
+            "After lunch",
+            "Early in the morning",
+            "At night",
+            "On Sunday"
+          ],
+          "answer": "After lunch",
+          "explanation": "The story explains: After lunch."
+        },
+        {
+          "id": "q10-5",
+          "category": "comprehension",
+          "prompt": "What does Sam enjoy learning?",
+          "choices": [
+            "New words from the story",
+            "How to draw a map",
+            "How to dig",
+            "How to fly a bat"
+          ],
+          "answer": "New words from the story",
+          "explanation": "The story explains: New words from the story."
+        }
+      ]
+    },
+    {
+      "id": "story-11-lit",
+      "title": "11. The Lamp",
+      "text": "It becomes dark outside in the evening. Ana turns on the lamp beside her bed. The lamp is now lit, so the room becomes bright. Ana gets her book and starts reading. She reads quietly before going to sleep.",
+      "target_word_ids": [
+        "lit",
+        "set",
+        "sit",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q11-1",
+          "category": "comprehension",
+          "prompt": "When does it become dark?",
+          "choices": [
+            "In the evening",
+            "In the morning",
+            "At noon",
+            "In the afternoon"
+          ],
+          "answer": "In the evening",
+          "explanation": "The story explains: In the evening."
+        },
+        {
+          "id": "q11-2",
+          "category": "comprehension",
+          "prompt": "What does Ana turn on?",
+          "choices": [
+            "The lamp beside her bed",
+            "The garden light",
+            "The kitchen stove",
+            "A candle"
+          ],
+          "answer": "The lamp beside her bed",
+          "explanation": "The story explains: The lamp beside her bed."
+        },
+        {
+          "id": "q11-3",
+          "category": "comprehension",
+          "prompt": "Where is the lamp?",
+          "choices": [
+            "Beside her bed",
+            "On top of a box",
+            "Under the table",
+            "Near the door"
+          ],
+          "answer": "Beside her bed",
+          "explanation": "The story explains: Beside her bed."
+        },
+        {
+          "id": "q11-4",
+          "category": "comprehension",
+          "prompt": "Why does Ana turn on the lamp?",
+          "choices": [
+            "So the room becomes bright",
+            "To play with Mimi",
+            "To look for a hat",
+            "To clean the mat"
+          ],
+          "answer": "So the room becomes bright",
+          "explanation": "The story explains: So the room becomes bright."
+        },
+        {
+          "id": "q11-5",
+          "category": "comprehension",
+          "prompt": "What does Ana do before going to sleep?",
+          "choices": [
+            "Reads quietly",
+            "Eats dinner",
+            "Plays outside",
+            "Feeds her pet"
+          ],
+          "answer": "Reads quietly",
+          "explanation": "The story explains: Reads quietly."
+        }
+      ]
+    },
+    {
+      "id": "story-12-little",
+      "title": "12. The Little Bird",
+      "text": "A little bird sits on a branch near the house. Every morning, the bird sings a sweet song. A child watches the bird from the window. The bird flies from one branch to another. The child feels happy while watching it.",
+      "target_word_ids": [
+        "little",
+        "happy",
+        "sun",
+        "top"
+      ],
+      "questions": [
+        {
+          "id": "q12-1",
+          "category": "comprehension",
+          "prompt": "What animal is in the story?",
+          "choices": [
+            "A little bird",
+            "A small cat",
+            "A tiny rat",
+            "A bat"
+          ],
+          "answer": "A little bird",
+          "explanation": "The story explains: A little bird."
+        },
+        {
+          "id": "q12-2",
+          "category": "comprehension",
+          "prompt": "Where does the bird sit?",
+          "choices": [
+            "On a branch near the house",
+            "On a mat",
+            "Inside a den",
+            "On the roof"
+          ],
+          "answer": "On a branch near the house",
+          "explanation": "The story explains: On a branch near the house."
+        },
+        {
+          "id": "q12-3",
+          "category": "comprehension",
+          "prompt": "When does the bird sing?",
+          "choices": [
+            "Every morning",
+            "At noon",
+            "At night",
+            "Only on Monday"
+          ],
+          "answer": "Every morning",
+          "explanation": "The story explains: Every morning."
+        },
+        {
+          "id": "q12-4",
+          "category": "comprehension",
+          "prompt": "Where does the child watch the bird?",
+          "choices": [
+            "From the window",
+            "From the tree",
+            "From the garden",
+            "From the hill"
+          ],
+          "answer": "From the window",
+          "explanation": "The story explains: From the window."
+        },
+        {
+          "id": "q12-5",
+          "category": "comprehension",
+          "prompt": "How does the child feel?",
+          "choices": [
+            "Happy while watching it",
+            "Tired and sleepy",
+            "Afraid",
+            "Sad"
+          ],
+          "answer": "Happy while watching it",
+          "explanation": "The story explains: Happy while watching it."
+        }
+      ]
+    },
+    {
+      "id": "story-13-top",
+      "title": "13. On Top",
+      "text": "Mark has a small toy car. He puts the toy on top of a box. The toy stays there while Mark cleans his room. After cleaning, he carefully gets the toy. Then he puts it back in his toy box.",
+      "target_word_ids": [
+        "top",
+        "set",
+        "little",
+        "happy"
+      ],
+      "questions": [
+        {
+          "id": "q13-1",
+          "category": "comprehension",
+          "prompt": "Who has a toy car?",
+          "choices": [
+            "Mark",
+            "Leo",
+            "Tom",
+            "Dan"
+          ],
+          "answer": "Mark",
+          "explanation": "The story explains: Mark."
+        },
+        {
+          "id": "q13-2",
+          "category": "comprehension",
+          "prompt": "What does Mark put on top of the box?",
+          "choices": [
+            "A small toy car",
+            "A red hat",
+            "A clean mat",
+            "A storybook"
+          ],
+          "answer": "A small toy car",
+          "explanation": "The story explains: A small toy car."
+        },
+        {
+          "id": "q13-3",
+          "category": "comprehension",
+          "prompt": "Where does the toy stay?",
+          "choices": [
+            "On top of a box",
+            "Under the bed",
+            "Inside a bag",
+            "On a chair"
+          ],
+          "answer": "On top of a box",
+          "explanation": "The story explains: On top of a box."
+        },
+        {
+          "id": "q13-4",
+          "category": "comprehension",
+          "prompt": "What does Mark do after cleaning?",
+          "choices": [
+            "Gets the toy carefully",
+            "Takes a nap",
+            "Goes outside",
+            "Reads a story"
+          ],
+          "answer": "Gets the toy carefully",
+          "explanation": "The story explains: Gets the toy carefully."
+        },
+        {
+          "id": "q13-5",
+          "category": "comprehension",
+          "prompt": "Where does Mark put the toy at the end?",
+          "choices": [
+            "Back in his toy box",
+            "Under the table",
+            "On the bed",
+            "On the mat"
+          ],
+          "answer": "Back in his toy box",
+          "explanation": "The story explains: Back in his toy box."
+        }
+      ]
+    },
+    {
+      "id": "story-14-map",
+      "title": "14. The Map",
+      "text": "Ben wants to visit the park with his father. His father brings a map to help them find the way. Ben looks at the map carefully. They follow the directions on the map. Soon, they reach the park and enjoy their afternoon together.",
+      "target_word_ids": [
+        "map",
+        "top",
+        "man",
+        "hill"
+      ],
+      "questions": [
+        {
+          "id": "q14-1",
+          "category": "comprehension",
+          "prompt": "Who wants to visit the park?",
+          "choices": [
+            "Ben",
+            "Dan",
+            "Sam",
+            "Tom"
+          ],
+          "answer": "Ben",
+          "explanation": "The story explains: Ben."
+        },
+        {
+          "id": "q14-2",
+          "category": "comprehension",
+          "prompt": "Who brings the map?",
+          "choices": [
+            "His father",
+            "His teacher",
+            "His mother",
+            "His friend"
+          ],
+          "answer": "His father",
+          "explanation": "The story explains: His father."
+        },
+        {
+          "id": "q14-3",
+          "category": "comprehension",
+          "prompt": "What do they use the map for?",
+          "choices": [
+            "To find the way to the park",
+            "To draw pictures",
+            "To clean the house",
+            "To find a toy"
+          ],
+          "answer": "To find the way to the park",
+          "explanation": "The story explains: To find the way to the park."
+        },
+        {
+          "id": "q14-4",
+          "category": "comprehension",
+          "prompt": "Where do they go?",
+          "choices": [
+            "To the park",
+            "To the school",
+            "To the store",
+            "To the hill"
+          ],
+          "answer": "To the park",
+          "explanation": "The story explains: To the park."
+        },
+        {
+          "id": "q14-5",
+          "category": "comprehension",
+          "prompt": "What do they do at the park?",
+          "choices": [
+            "Enjoy their afternoon together",
+            "Buy an egg",
+            "Dig in the soil",
+            "Read a book"
+          ],
+          "answer": "Enjoy their afternoon together",
+          "explanation": "The story explains: Enjoy their afternoon together."
+        }
+      ]
+    },
+    {
+      "id": "story-15-man",
+      "title": "15. The Kind Man",
+      "text": "A kind man walks to a store one morning. On the way, he sees a child carrying several books. The child looks tired and needs help. The man helps carry some of the books. The child smiles and thanks the kind man.",
+      "target_word_ids": [
+        "man",
+        "little",
+        "happy",
+        "set"
+      ],
+      "questions": [
+        {
+          "id": "q15-1",
+          "category": "comprehension",
+          "prompt": "Who walks to the store?",
+          "choices": [
+            "A kind man",
+            "A little boy",
+            "A farmer",
+            "A teacher"
+          ],
+          "answer": "A kind man",
+          "explanation": "The story explains: A kind man."
+        },
+        {
+          "id": "q15-2",
+          "category": "comprehension",
+          "prompt": "What is the man carrying?",
+          "choices": [
+            "Several books",
+            "A toy car",
+            "A clean mat",
+            "An egg"
+          ],
+          "answer": "Several books",
+          "explanation": "The story explains: Several books."
+        },
+        {
+          "id": "q15-3",
+          "category": "comprehension",
+          "prompt": "What does the child need?",
+          "choices": [
+            "Help carrying the books",
+            "Water to drink",
+            "A red hat",
+            "A map"
+          ],
+          "answer": "Help carrying the books",
+          "explanation": "The story explains: Help carrying the books."
+        },
+        {
+          "id": "q15-4",
+          "category": "comprehension",
+          "prompt": "How does the man help the child?",
+          "choices": [
+            "Carries some of the books",
+            "Gives directions",
+            "Calls a teacher",
+            "Buys food"
+          ],
+          "answer": "Carries some of the books",
+          "explanation": "The story explains: Carries some of the books."
+        },
+        {
+          "id": "q15-5",
+          "category": "comprehension",
+          "prompt": "What does the child say to the man?",
+          "choices": [
+            "Smiles and thanks him",
+            "Says goodbye",
+            "Gives him an apple",
+            "Runs away"
+          ],
+          "answer": "Smiles and thanks him",
+          "explanation": "The story explains: Smiles and thanks him."
         }
       ]
     },
     {
       "id": "story-16-dog",
-      "title": "The Dog",
+      "title": "16. The Dog",
       "text": "Dan has a friendly dog named Max. Every afternoon, Max runs around the yard. Dan plays with his dog after school. They run and play with a small ball. Before going inside, Dan gives Max some water.",
       "target_word_ids": [
         "dog",
@@ -556,11 +1492,11 @@
           "choices": [
             "Max",
             "Mimi",
-            "Ben",
-            "Tom"
+            "Leo",
+            "Dan"
           ],
           "answer": "Max",
-          "explanation": "Dan has a friendly dog named Max."
+          "explanation": "The story explains: Max."
         },
         {
           "id": "q16-2",
@@ -573,7 +1509,7 @@
             "To the store"
           ],
           "answer": "Around the yard",
-          "explanation": "Max runs around the yard every afternoon."
+          "explanation": "The story explains: Around the yard."
         },
         {
           "id": "q16-3",
@@ -586,7 +1522,7 @@
             "Only on Sunday"
           ],
           "answer": "Every afternoon",
-          "explanation": "Max runs around the yard every afternoon."
+          "explanation": "The story explains: Every afternoon."
         },
         {
           "id": "q16-4",
@@ -599,7 +1535,7 @@
             "A toy car"
           ],
           "answer": "A small ball",
-          "explanation": "They run and play with a small ball."
+          "explanation": "The story explains: A small ball."
         },
         {
           "id": "q16-5",
@@ -612,7 +1548,319 @@
             "A clean mat"
           ],
           "answer": "Some water",
-          "explanation": "Dan gives Max some water before going inside."
+          "explanation": "The story explains: Some water."
+        }
+      ]
+    },
+    {
+      "id": "story-17-den",
+      "title": "17. The Dog's Den",
+      "text": "The dog has a small den under a tree. It goes inside the den when it wants to rest. The den keeps the dog comfortable and safe. After sleeping, the dog comes outside to play. When it gets tired again, it returns to its den.",
+      "target_word_ids": [
+        "den",
+        "dog",
+        "pet",
+        "little"
+      ],
+      "questions": [
+        {
+          "id": "q17-1",
+          "category": "comprehension",
+          "prompt": "What does the dog have?",
+          "choices": [
+            "A small den",
+            "A red hat",
+            "A little ball",
+            "A new book"
+          ],
+          "answer": "A small den",
+          "explanation": "The story explains: A small den."
+        },
+        {
+          "id": "q17-2",
+          "category": "comprehension",
+          "prompt": "Where is the den?",
+          "choices": [
+            "Under a tree",
+            "Inside the house",
+            "On a hill",
+            "In the kitchen"
+          ],
+          "answer": "Under a tree",
+          "explanation": "The story explains: Under a tree."
+        },
+        {
+          "id": "q17-3",
+          "category": "comprehension",
+          "prompt": "When does the dog go inside the den?",
+          "choices": [
+            "When it wants to rest",
+            "Early in the morning",
+            "When it wants to play",
+            "At noon"
+          ],
+          "answer": "When it wants to rest",
+          "explanation": "The story explains: When it wants to rest."
+        },
+        {
+          "id": "q17-4",
+          "category": "comprehension",
+          "prompt": "Why does the dog go to its den?",
+          "choices": [
+            "It keeps the dog safe and comfortable",
+            "To find food",
+            "To hide a toy",
+            "To play with children"
+          ],
+          "answer": "It keeps the dog safe and comfortable",
+          "explanation": "The story explains: It keeps the dog safe and comfortable."
+        },
+        {
+          "id": "q17-5",
+          "category": "comprehension",
+          "prompt": "Where does the dog go after sleeping?",
+          "choices": [
+            "Outside to play",
+            "To the store",
+            "Up the hill",
+            "To the park"
+          ],
+          "answer": "Outside to play",
+          "explanation": "The story explains: Outside to play."
+        }
+      ]
+    },
+    {
+      "id": "story-18-dig",
+      "title": "18. Digging",
+      "text": "The dog sees something interesting under the soil. It starts to dig with its paws. It digs near a big tree for a few minutes. Soon, the dog finds its old toy. The dog takes the toy and plays with it again.",
+      "target_word_ids": [
+        "dig",
+        "dog",
+        "pet",
+        "top"
+      ],
+      "questions": [
+        {
+          "id": "q18-1",
+          "category": "comprehension",
+          "prompt": "What does the dog see?",
+          "choices": [
+            "Something interesting under soil",
+            "A red hat",
+            "A little bird",
+            "A clean mat"
+          ],
+          "answer": "Something interesting under soil",
+          "explanation": "The story explains: Something interesting under soil."
+        },
+        {
+          "id": "q18-2",
+          "category": "comprehension",
+          "prompt": "Where does the dog dig?",
+          "choices": [
+            "Under a big tree",
+            "Inside its den",
+            "On the road",
+            "In the house"
+          ],
+          "answer": "Under a big tree",
+          "explanation": "The story explains: Under a big tree."
+        },
+        {
+          "id": "q18-3",
+          "category": "comprehension",
+          "prompt": "What does the dog use to dig?",
+          "choices": [
+            "Its paws",
+            "A small spade",
+            "A stick",
+            "A stone"
+          ],
+          "answer": "Its paws",
+          "explanation": "The story explains: Its paws."
+        },
+        {
+          "id": "q18-4",
+          "category": "comprehension",
+          "prompt": "What does the dog find?",
+          "choices": [
+            "Its old toy",
+            "A shiny coin",
+            "A little egg",
+            "A bone"
+          ],
+          "answer": "Its old toy",
+          "explanation": "The story explains: Its old toy."
+        },
+        {
+          "id": "q18-5",
+          "category": "comprehension",
+          "prompt": "What does the dog do with the toy?",
+          "choices": [
+            "Plays with it again",
+            "Buries it again",
+            "Gives it to Dan",
+            "Hides it in the den"
+          ],
+          "answer": "Plays with it again",
+          "explanation": "The story explains: Plays with it again."
+        }
+      ]
+    },
+    {
+      "id": "story-19-egg",
+      "title": "19. The Egg",
+      "text": "A hen sits quietly in her nest. Beside her is a small egg. The farmer carefully checks the nest every morning. He makes sure the hen is safe and comfortable. The farmer is thankful for the egg.",
+      "target_word_ids": [
+        "egg",
+        "pet",
+        "little",
+        "happy"
+      ],
+      "questions": [
+        {
+          "id": "q19-1",
+          "category": "comprehension",
+          "prompt": "What animal is in the story?",
+          "choices": [
+            "A hen",
+            "A bird",
+            "A cat",
+            "A dog"
+          ],
+          "answer": "A hen",
+          "explanation": "The story explains: A hen."
+        },
+        {
+          "id": "q19-2",
+          "category": "comprehension",
+          "prompt": "Where does the hen sit?",
+          "choices": [
+            "Quietly in her nest",
+            "On a tree branch",
+            "Under a mat",
+            "Inside a box"
+          ],
+          "answer": "Quietly in her nest",
+          "explanation": "The story explains: Quietly in her nest."
+        },
+        {
+          "id": "q19-3",
+          "category": "comprehension",
+          "prompt": "What is beside the hen?",
+          "choices": [
+            "A small egg",
+            "A toy ball",
+            "A little chick",
+            "A seed"
+          ],
+          "answer": "A small egg",
+          "explanation": "The story explains: A small egg."
+        },
+        {
+          "id": "q19-4",
+          "category": "comprehension",
+          "prompt": "When does the farmer check the nest?",
+          "choices": [
+            "Every morning",
+            "Every afternoon",
+            "Only at night",
+            "At noon"
+          ],
+          "answer": "Every morning",
+          "explanation": "The story explains: Every morning."
+        },
+        {
+          "id": "q19-5",
+          "category": "comprehension",
+          "prompt": "Why is the farmer thankful?",
+          "choices": [
+            "He is thankful for the egg",
+            "The hen can fly",
+            "The nest is clean",
+            "The sun is bright"
+          ],
+          "answer": "He is thankful for the egg",
+          "explanation": "The story explains: He is thankful for the egg."
+        }
+      ]
+    },
+    {
+      "id": "story-20-hill",
+      "title": "20. The Hill",
+      "text": "Sara and her brother walk up a small hill. They walk slowly because the path is a little steep. Along the way, they see green trees and colorful flowers. When they reach the top, they look at the beautiful view. They feel proud because they reached the top of the hill.",
+      "target_word_ids": [
+        "hill",
+        "little",
+        "happy",
+        "top"
+      ],
+      "questions": [
+        {
+          "id": "q20-1",
+          "category": "comprehension",
+          "prompt": "Who walks up the hill?",
+          "choices": [
+            "Sara and her brother",
+            "Mia and Mimi",
+            "Ben and his father",
+            "Dan and Max"
+          ],
+          "answer": "Sara and her brother",
+          "explanation": "The story explains: Sara and her brother."
+        },
+        {
+          "id": "q20-2",
+          "category": "comprehension",
+          "prompt": "Why do they walk slowly?",
+          "choices": [
+            "The path is a little steep",
+            "They are tired",
+            "It is raining",
+            "They are carrying books"
+          ],
+          "answer": "The path is a little steep",
+          "explanation": "The story explains: The path is a little steep."
+        },
+        {
+          "id": "q20-3",
+          "category": "comprehension",
+          "prompt": "What do they see along the way?",
+          "choices": [
+            "Green trees and colorful flowers",
+            "Small animals",
+            "Old boxes",
+            "Houses and cars"
+          ],
+          "answer": "Green trees and colorful flowers",
+          "explanation": "The story explains: Green trees and colorful flowers."
+        },
+        {
+          "id": "q20-4",
+          "category": "comprehension",
+          "prompt": "What do they see when they reach the top?",
+          "choices": [
+            "The beautiful view",
+            "The school playground",
+            "A big river",
+            "A farm"
+          ],
+          "answer": "The beautiful view",
+          "explanation": "The story explains: The beautiful view."
+        },
+        {
+          "id": "q20-5",
+          "category": "comprehension",
+          "prompt": "How do they feel after reaching the top?",
+          "choices": [
+            "Proud because they reached the top",
+            "Tired and hungry",
+            "Afraid",
+            "Sad"
+          ],
+          "answer": "Proud because they reached the top",
+          "explanation": "The story explains: Proud because they reached the top."
         }
       ]
     }
