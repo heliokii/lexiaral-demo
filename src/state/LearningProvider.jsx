@@ -124,6 +124,28 @@ export function LearningProvider({ children }) {
             >
               TRY LOADING AGAIN
             </Text>
+
+            <Text
+              accessibilityRole="button"
+              onPress={async () => {
+                await AsyncStorage.removeItem(STORAGE_KEY);
+                const fresh = initialState();
+                stateRef.current = fresh;
+                configureAudio(fresh.audioEnabled);
+                setState(fresh);
+              }}
+              style={{
+                padding: 16,
+                backgroundColor: '#EBE4FA',
+                color: '#6241A4',
+                fontSize: 17,
+                borderRadius: 16,
+                textAlign: 'center',
+                fontWeight: '700',
+              }}
+            >
+              START FRESH
+            </Text>
           </>
         ) : (
           <ActivityIndicator size="large" color="#17437B" />

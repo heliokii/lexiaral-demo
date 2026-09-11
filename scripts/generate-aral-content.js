@@ -1,0 +1,434 @@
+const fs = require('fs');
+const path = require('path');
+
+const words = [
+  {
+    id: 'cat',
+    word: 'cat',
+    image_url: 'asset://cat',
+    audio_url: 'tts://en-US/cat',
+    definition: 'A small, furry animal often kept as a pet.',
+    example_sentence: 'The cat is sitting quietly on the soft mat near the door.',
+    story_context: 'Mia has a small cat named Mimi. The cat sits on a mat near the door.',
+    introduced_level: 1,
+    sentence_blank: 'The ____ is sitting quietly on the soft mat near the door.'
+  },
+  {
+    id: 'mat',
+    word: 'mat',
+    image_url: 'asset://mat',
+    audio_url: 'tts://en-US/mat',
+    definition: 'A piece of fabric placed on the floor to sit or step on.',
+    example_sentence: 'The little cat likes to sleep on the clean mat every afternoon.',
+    story_context: 'After playing, the cat sits on a mat near the door.',
+    introduced_level: 1,
+    sentence_blank: 'The little cat likes to sleep on the clean ____ every afternoon.'
+  },
+  {
+    id: 'hat',
+    word: 'hat',
+    image_url: 'asset://hat',
+    audio_url: 'tts://en-US/hat',
+    definition: 'Something you wear on your head for shade or protection.',
+    example_sentence: 'Ben wears his red hat when he goes outside to play.',
+    story_context: 'Ben has a new red hat. He wears his hat when he goes outside.',
+    introduced_level: 1,
+    sentence_blank: 'Ben wears his red ____ when he goes outside to play.'
+  },
+  {
+    id: 'rat',
+    word: 'rat',
+    image_url: 'asset://rat',
+    audio_url: 'tts://en-US/rat',
+    definition: 'A small furry animal with a long tail.',
+    example_sentence: 'A small rat runs quickly near the box beside the kitchen.',
+    story_context: 'A small rat lives near an old box. It runs quickly toward the food.',
+    introduced_level: 1,
+    sentence_blank: 'A small ____ runs quickly near the box beside the kitchen.'
+  },
+  {
+    id: 'bat',
+    word: 'bat',
+    image_url: 'asset://bat',
+    audio_url: 'tts://en-US/bat',
+    definition: 'A flying animal that is active at night.',
+    example_sentence: 'The bat flies around the trees when the sky becomes dark.',
+    story_context: 'At night, the bat flies around the garden looking for food.',
+    introduced_level: 1,
+    sentence_blank: 'The ____ flies around the trees when the sky becomes dark.'
+  },
+  {
+    id: 'pet',
+    word: 'pet',
+    image_url: 'asset://pet',
+    audio_url: 'tts://en-US/pet',
+    definition: 'A friendly animal that you care for at home.',
+    example_sentence: 'I have a little pet that I feed and care for every day.',
+    story_context: 'Ana has a little pet at home. She gives her pet food and clean water.',
+    introduced_level: 1,
+    sentence_blank: 'I have a little ____ that I feed and care for every day.'
+  },
+  {
+    id: 'happy',
+    word: 'happy',
+    image_url: 'asset://happy',
+    audio_url: 'tts://en-US/happy',
+    definition: 'Feeling joyful, glad, or pleased.',
+    example_sentence: 'The boy is happy because he received a new book from his mother.',
+    story_context: 'Leo feels happy because he loves reading books.',
+    introduced_level: 1,
+    sentence_blank: 'The boy is ____ because he received a new book from his mother.'
+  },
+  {
+    id: 'sun',
+    word: 'sun',
+    image_url: 'asset://sun',
+    audio_url: 'tts://en-US/sun',
+    definition: 'The bright star that gives light and warmth to the earth.',
+    example_sentence: 'The bright sun shines in the sky while the children play outside.',
+    story_context: 'The sun comes up early in the morning and shines in the sky.',
+    introduced_level: 1,
+    sentence_blank: 'The bright ____ shines in the sky while the children play outside.'
+  },
+  {
+    id: 'sit',
+    word: 'sit',
+    image_url: 'asset://sit',
+    audio_url: 'tts://en-US/sit',
+    definition: 'To rest your body on a chair or on the floor.',
+    example_sentence: 'Please sit on your chair and listen carefully to your teacher.',
+    story_context: 'Her teacher asks her to sit on a chair in the reading corner.',
+    introduced_level: 1,
+    sentence_blank: 'Please ____ on your chair and listen carefully to your teacher.'
+  },
+  {
+    id: 'set',
+    word: 'set',
+    image_url: 'asset://set',
+    audio_url: 'tts://en-US/set',
+    definition: 'To put or place something down carefully.',
+    example_sentence: 'I set my book on the table before I start reading.',
+    story_context: 'He sets the book carefully on the table before reading.',
+    introduced_level: 1,
+    sentence_blank: 'I ____ my book on the table before I start reading.'
+  },
+  {
+    id: 'lit',
+    word: 'lit',
+    image_url: 'asset://lit',
+    audio_url: 'tts://en-US/lit',
+    definition: 'Turned on or giving off light.',
+    example_sentence: 'The lamp is lit at night so that I can read my book.',
+    story_context: 'The lamp is now lit, so the room becomes bright.',
+    introduced_level: 1,
+    sentence_blank: 'The lamp is ____ at night so that I can read my book.'
+  },
+  {
+    id: 'little',
+    word: 'little',
+    image_url: 'asset://little',
+    audio_url: 'tts://en-US/little',
+    definition: 'Small in size.',
+    example_sentence: 'I see a little bird sitting quietly on a branch near our house.',
+    story_context: 'A little bird sits on a branch near the house and sings.',
+    introduced_level: 1,
+    sentence_blank: 'I see a ____ bird sitting quietly on a branch near our house.'
+  },
+  {
+    id: 'top',
+    word: 'top',
+    image_url: 'asset://top',
+    audio_url: 'tts://en-US/top',
+    definition: 'The highest part or surface of something.',
+    example_sentence: 'The toy is on top of the box beside the bookshelf.',
+    story_context: 'He puts the toy on top of a box while cleaning.',
+    introduced_level: 1,
+    sentence_blank: 'The toy is on ____ of the box beside the bookshelf.'
+  },
+  {
+    id: 'map',
+    word: 'map',
+    image_url: 'asset://map',
+    audio_url: 'tts://en-US/map',
+    definition: 'A drawing that shows places, roads, and directions.',
+    example_sentence: 'I look at the map carefully to find the way to the park.',
+    story_context: 'His father brings a map to help them find the way to the park.',
+    introduced_level: 1,
+    sentence_blank: 'I look at the ____ carefully to find the way to the park.'
+  },
+  {
+    id: 'man',
+    word: 'man',
+    image_url: 'asset://man',
+    audio_url: 'tts://en-US/man',
+    definition: 'An adult male person.',
+    example_sentence: 'The kind man walks to the store to buy some food for his family.',
+    story_context: 'The kind man helps carry some of the books for the child.',
+    introduced_level: 1,
+    sentence_blank: 'The kind ____ walks to the store to buy some food for his family.'
+  },
+  {
+    id: 'dog',
+    word: 'dog',
+    image_url: 'asset://dog',
+    audio_url: 'tts://en-US/dog',
+    definition: 'A friendly four-legged pet that barks.',
+    example_sentence: 'The friendly dog runs around the yard and plays with the children.',
+    story_context: 'Dan has a friendly dog named Max. Max runs around the yard.',
+    introduced_level: 1,
+    sentence_blank: 'The friendly ____ runs around the yard and plays with the children.'
+  },
+  {
+    id: 'den',
+    word: 'den',
+    image_url: 'asset://den',
+    audio_url: 'tts://en-US/den',
+    definition: 'A cozy shelter or resting house for an animal.',
+    example_sentence: 'The dog sleeps inside its small den when it wants to rest.',
+    story_context: 'The dog has a small den under a tree that keeps it safe.',
+    introduced_level: 1,
+    sentence_blank: 'The dog sleeps inside its small ____ when it wants to rest.'
+  },
+  {
+    id: 'dig',
+    word: 'dig',
+    image_url: 'asset://dig',
+    audio_url: 'tts://en-US/dig',
+    definition: 'To break up and move dirt or soil with paws or hands.',
+    example_sentence: 'The dog likes to dig in the soil under the big tree.',
+    story_context: 'It starts to dig with its paws in the soil under the tree.',
+    introduced_level: 1,
+    sentence_blank: 'The dog likes to ____ in the soil under the big tree.'
+  },
+  {
+    id: 'egg',
+    word: 'egg',
+    image_url: 'asset://egg',
+    audio_url: 'tts://en-US/egg',
+    definition: 'An oval object laid by a female bird with a shell.',
+    example_sentence: "The hen has an egg in her nest near the farmer's house.",
+    story_context: 'A hen sits quietly in her nest. Beside her is a small egg.',
+    introduced_level: 1,
+    sentence_blank: "The hen has an ____ in her nest near the farmer's house."
+  },
+  {
+    id: 'hill',
+    word: 'hill',
+    image_url: 'asset://hill',
+    audio_url: 'tts://en-US/hill',
+    definition: 'A raised area of land smaller than a mountain.',
+    example_sentence: 'We walk slowly up the hill while enjoying the trees and flowers.',
+    story_context: 'Sara and her brother walk slowly up a small hill to see the view.',
+    introduced_level: 1,
+    sentence_blank: 'We walk slowly up the ____ while enjoying the trees and flowers.'
+  }
+];
+
+const stories = [
+  {
+    id: 'story-1-cat',
+    title: 'The Cat',
+    text: 'Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat near the door. Mia gives her cat some food and water. Mia is happy to have a playful cat.',
+    target_word_ids: ['cat', 'mat', 'pet', 'happy'],
+    questions: [
+      {
+        id: 'q1-1',
+        category: 'comprehension',
+        prompt: "What is the name of Mia's cat?",
+        choices: ['Mimi', 'Max', 'Leo', 'Sam'],
+        answer: 'Mimi',
+        explanation: "The story states that Mia has a small cat named Mimi."
+      },
+      {
+        id: 'q1-2',
+        category: 'comprehension',
+        prompt: 'What does Mimi like to play with?',
+        choices: ['A ball', 'A hat', 'A box', 'A book'],
+        answer: 'A ball',
+        explanation: 'Mimi likes to play with a ball every morning.'
+      },
+      {
+        id: 'q1-3',
+        category: 'comprehension',
+        prompt: 'When does Mimi play?',
+        choices: ['Every morning', 'Only at night', 'At noon', 'Every evening'],
+        answer: 'Every morning',
+        explanation: 'The story says Mimi plays every morning.'
+      },
+      {
+        id: 'q1-4',
+        category: 'comprehension',
+        prompt: 'Where does Mimi sit after playing?',
+        choices: ['On a mat near the door', 'On top of a box', 'Under a tree', 'On a chair'],
+        answer: 'On a mat near the door',
+        explanation: 'After playing, the cat sits on a mat near the door.'
+      },
+      {
+        id: 'q1-5',
+        category: 'comprehension',
+        prompt: 'Why is Mia happy?',
+        choices: ['She has a playful cat', 'She found a red hat', 'She ate an egg', 'She walked up a hill'],
+        answer: 'She has a playful cat',
+        explanation: 'Mia is happy to have a playful cat.'
+      }
+    ]
+  },
+  {
+    id: 'story-2-mat',
+    title: 'The Mat',
+    text: 'Tom has a clean mat in front of his house. His little cat likes to sit on the mat every afternoon. Tom cleans the mat when it gets dirty. He wants his house to look neat and clean. His cat enjoys resting on the mat.',
+    target_word_ids: ['mat', 'cat', 'little', 'sit'],
+    questions: [
+      {
+        id: 'q2-1',
+        category: 'comprehension',
+        prompt: 'Who has a clean mat?',
+        choices: ['Tom', 'Ben', 'Dan', 'Sam'],
+        answer: 'Tom',
+        explanation: 'Tom has a clean mat in front of his house.'
+      },
+      {
+        id: 'q2-2',
+        category: 'comprehension',
+        prompt: 'Where is the mat?',
+        choices: ['In front of the house', 'Inside the kitchen', 'Under a big tree', 'On top of a hill'],
+        answer: 'In front of the house',
+        explanation: 'The mat is placed in front of the house.'
+      },
+      {
+        id: 'q2-3',
+        category: 'comprehension',
+        prompt: 'When does the cat sit on the mat?',
+        choices: ['Every afternoon', 'Every morning', 'Only at night', 'Only on Sunday'],
+        answer: 'Every afternoon',
+        explanation: 'The little cat likes to sit on the mat every afternoon.'
+      },
+      {
+        id: 'q2-4',
+        category: 'comprehension',
+        prompt: 'What does Tom do when the mat gets dirty?',
+        choices: ['He cleans the mat', 'He throws it away', 'He hides it in a box', 'He gives it to a dog'],
+        answer: 'He cleans the mat',
+        explanation: 'Tom cleans the mat when it gets dirty.'
+      },
+      {
+        id: 'q2-5',
+        category: 'comprehension',
+        prompt: 'Why does Tom clean the mat?',
+        choices: ['He wants the house neat and clean', 'His mother told him to', 'To play with his cat', 'To sell it at the store'],
+        answer: 'He wants the house neat and clean',
+        explanation: 'Tom wants his house to look neat and clean.'
+      }
+    ]
+  },
+  {
+    id: 'story-3-hat',
+    title: 'The Hat',
+    text: 'Ben has a new red hat. He wears his hat when he goes outside to play. One afternoon, the wind blows his hat away. Ben quickly runs after it and picks it up. He smiles because he gets his hat back.',
+    target_word_ids: ['hat', 'happy', 'sun', 'little'],
+    questions: [
+      {
+        id: 'q3-1',
+        category: 'comprehension',
+        prompt: 'Who has a new red hat?',
+        choices: ['Ben', 'Tom', 'Dan', 'Leo'],
+        answer: 'Ben',
+        explanation: 'Ben has a new red hat.'
+      },
+      {
+        id: 'q3-2',
+        category: 'comprehension',
+        prompt: "What color is Ben's hat?",
+        choices: ['Red', 'Blue', 'Green', 'Yellow'],
+        answer: 'Red',
+        explanation: "Ben's hat is red."
+      },
+      {
+        id: 'q3-3',
+        category: 'comprehension',
+        prompt: 'When does Ben wear his hat?',
+        choices: ['When he goes outside to play', 'When he goes to bed', 'Only when it rains', 'When he sits inside'],
+        answer: 'When he goes outside to play',
+        explanation: 'He wears his hat when he goes outside to play.'
+      },
+      {
+        id: 'q3-4',
+        category: 'comprehension',
+        prompt: 'What happens to the hat?',
+        choices: ['The wind blows it away', 'A dog takes it', 'It falls in water', 'It gets dirty'],
+        answer: 'The wind blows it away',
+        explanation: 'The wind blows his hat away.'
+      },
+      {
+        id: 'q3-5',
+        category: 'comprehension',
+        prompt: 'Why does Ben smile?',
+        choices: ['He gets his hat back', 'He ate sweet fruits', 'He saw a little bird', 'His mother called him'],
+        answer: 'He gets his hat back',
+        explanation: 'Ben smiles because he gets his hat back.'
+      }
+    ]
+  },
+  {
+    id: 'story-16-dog',
+    title: 'The Dog',
+    text: 'Dan has a friendly dog named Max. Every afternoon, Max runs around the yard. Dan plays with his dog after school. They run and play with a small ball. Before going inside, Dan gives Max some water.',
+    target_word_ids: ['dog', 'pet', 'happy', 'den'],
+    questions: [
+      {
+        id: 'q16-1',
+        category: 'comprehension',
+        prompt: "What is the name of Dan's dog?",
+        choices: ['Max', 'Mimi', 'Ben', 'Tom'],
+        answer: 'Max',
+        explanation: "Dan has a friendly dog named Max."
+      },
+      {
+        id: 'q16-2',
+        category: 'comprehension',
+        prompt: 'Where does Max run?',
+        choices: ['Around the yard', 'Inside the house', 'Up the hill', 'To the store'],
+        answer: 'Around the yard',
+        explanation: 'Max runs around the yard every afternoon.'
+      },
+      {
+        id: 'q16-3',
+        category: 'comprehension',
+        prompt: 'When does Max run around the yard?',
+        choices: ['Every afternoon', 'Only in the morning', 'At midnight', 'Only on Sunday'],
+        answer: 'Every afternoon',
+        explanation: 'Max runs around the yard every afternoon.'
+      },
+      {
+        id: 'q16-4',
+        category: 'comprehension',
+        prompt: 'What do Dan and Max play with?',
+        choices: ['A small ball', 'A red hat', 'A little box', 'A toy car'],
+        answer: 'A small ball',
+        explanation: 'They run and play with a small ball.'
+      },
+      {
+        id: 'q16-5',
+        category: 'comprehension',
+        prompt: 'What does Dan give Max before going inside?',
+        choices: ['Some water', 'An egg', 'A book', 'A clean mat'],
+        answer: 'Some water',
+        explanation: 'Dan gives Max some water before going inside.'
+      }
+    ]
+  }
+];
+
+const content = {
+  id: 'lexiaral-aral-v1',
+  status: 'official',
+  title: 'Grade 3 ARAL English Vocabulary',
+  source: 'Official Grade 3 ARAL English Curriculum, Rosario West & East Districts, SY 2026-2027',
+  words: words,
+  story: stories[0],
+  stories: stories
+};
+
+const outputPath = path.join(__dirname, '..', 'assets', 'content.json');
+fs.writeFileSync(outputPath, JSON.stringify(content, null, 2), 'utf8');
+console.log('Successfully generated official assets/content.json with', words.length, 'words!');

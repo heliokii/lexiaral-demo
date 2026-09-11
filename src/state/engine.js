@@ -3,6 +3,8 @@ import {
   QUESTIONS,
   WORDS,
   UNLOCK_PERCENT,
+  STORIES,
+  getQuestionsForStory,
 } from '../content';
 
 export const BADGES = [
@@ -33,10 +35,13 @@ export const BADGES = [
   },
 ];
 
-export function initialState() {
+export function initialState(pupilName = '', masteryThreshold = 0, selectedStoryId = 'story-cat') {
   return {
     schemaVersion: 1,
     contentId: CONTENT.id,
+    pupilName: typeof pupilName === 'string' ? pupilName : '',
+    masteryThreshold: typeof masteryThreshold === 'number' ? masteryThreshold : 0,
+    selectedStoryId: typeof selectedStoryId === 'string' ? selectedStoryId : (CONTENT.story?.id || 'story-cat'),
     audioEnabled: true,
     unlocked: [1],
     badges: [],
@@ -65,9 +70,21 @@ export function bestAttempt(state, level) {
     );
 }
 
+export function sessionQuestions(session) {
+  if (!session) return [];
+  if (session.level === 3) {
+    const storyId = session.storyId || CONTENT.story?.id || 'story-cat';
+    const story = (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
+    return getQuestionsForStory(story);
+  }
+  return QUESTIONS[session.level] || [];
+}
+
 export function currentQuestion(state) {
   const session = state.session;
-  return session ? QUESTIONS[session.level][session.index] : null;
+  if (!session) return null;
+  const questions = sessionQuestions(session);
+  return questions[session.index] || null;
 }
 
 export function currentAnswer(state) {
@@ -123,6 +140,11 @@ export function reduceState(state, action) {
         session: {
           id: action.id,
           level: action.level,
+          storyId:
+            action.storyId ||
+            (action.level === 3
+              ? state.selectedStoryId || CONTENT.story?.id || 'story-cat'
+              : null),
           phase: 'instructions',
           index: 0,
           answers: [],
@@ -213,7 +235,7 @@ export function reduceState(state, action) {
         return state;
       }
 
-      const questions = QUESTIONS[session.level];
+      const questions = sessionQuestions(session);
 
       if (session.index < questions.length - 1) {
         return {
@@ -235,9 +257,12 @@ export function reduceState(state, action) {
 
       let unlocked = [...state.unlocked];
 
+      const passThreshold =
+        state.masteryThreshold != null ? state.masteryThreshold : UNLOCK_PERCENT;
+
       if (
         session.level < 3 &&
-        (attempt.score / attempt.total) * 100 >= UNLOCK_PERCENT
+        (attempt.score / attempt.total) * 100 >= passThreshold
       ) {
         unlocked = addUnique(unlocked, session.level + 1);
       }
@@ -253,6 +278,47 @@ export function reduceState(state, action) {
         ...completedState,
         badges: awardCompletionBadges(completedState),
       };
+    }
+
+    case 'SET_PUPIL_NAME': {
+      return {
+        ...state,
+        pupilName: typeof action.name === 'string' ? action.name.trim() : '',
+      };
+    }
+
+    case 'SET_MASTERY_THRESHOLD': {
+      return {
+        ...state,
+        masteryThreshold:
+          typeof action.threshold === 'number' ? action.threshold : 0,
+      };
+    }
+
+    case 'SELECT_STORY': {
+      const storyId = action.storyId;
+      if (!storyId) return state;
+      return {
+        ...state,
+        selectedStoryId: storyId,
+        session:
+          state.session && state.session.level === 3
+            ? {
+                ...state.session,
+                storyId,
+                index: 0,
+                answers: [],
+              }
+            : state.session,
+      };
+    }
+
+    case 'RESET_PROGRESS': {
+      return initialState(
+        action.nextPupilName || '',
+        state.masteryThreshold || 0,
+        state.selectedStoryId || 'story-cat'
+      );
     }
 
     default:
@@ -275,7 +341,12 @@ export function validateSavedState(state) {
     !state ||
     state.schemaVersion !== 1 ||
     state.contentId !== CONTENT.id ||
-    typeof state.audioEnabled !== 'boolean'
+    typeof state.audioEnabled !== 'boolean' ||
+    (state.pupilName !== undefined && typeof state.pupilName !== 'string') ||
+    (state.masteryThreshold !== undefined &&
+      typeof state.masteryThreshold !== 'number') ||
+    (state.selectedStoryId !== undefined &&
+      typeof state.selectedStoryId !== 'string')
   ) {
     fail();
   }
@@ -307,23 +378,25 @@ export function validateSavedState(state) {
     fail();
   }
 
-  const validAnswers = (level, answers) => {
-    const questions = QUESTIONS[level];
-
-    return (
-      questions &&
-      Array.isArray(answers) &&
-      answers.length <= questions.length &&
-      answers.every((answer, index) => {
-        const question = questions[index];
-
-        return (
-          answer.questionId === question.id &&
-          question.choices.some((choice) => choice.id === answer.choiceId) &&
-          answer.correct === (answer.choiceId === question.answerId)
-        );
-      })
+  const validAnswers = (sessionOrLevel, answers) => {
+    const questions = sessionQuestions(
+      typeof sessionOrLevel === 'number'
+        ? { level: sessionOrLevel }
+        : sessionOrLevel
     );
+
+    if (!Array.isArray(answers)) return false;
+
+    return answers.every((answer, index) => {
+      if (!answer || typeof answer.choiceId !== 'string') return false;
+      const question = questions[index];
+      if (!question) return true;
+      return (
+        answer.questionId === question.id &&
+        question.choices.some((choice) => choice.id === answer.choiceId) &&
+        answer.correct === (answer.choiceId === question.answerId)
+      );
+    });
   };
 
   const ids = new Set();
@@ -333,10 +406,12 @@ export function validateSavedState(state) {
       !attempt ||
       typeof attempt.id !== 'string' ||
       ids.has(attempt.id) ||
-      !validAnswers(attempt.level, attempt.answers) ||
-      attempt.total !== QUESTIONS[attempt.level].length ||
+      !Array.isArray(attempt.answers) ||
+      !Number.isInteger(attempt.total) ||
+      attempt.total <= 0 ||
       attempt.answers.length !== attempt.total ||
-      attempt.score !== attempt.answers.filter((answer) => answer.correct).length
+      attempt.score !==
+        attempt.answers.filter((answer) => answer.correct).length
     ) {
       fail();
     }
@@ -347,15 +422,16 @@ export function validateSavedState(state) {
   if (state.session) {
     const session = state.session;
     const phases = ['instructions', 'story', 'quiz', 'done'];
+    const questions = sessionQuestions(session);
 
     if (
       typeof session.id !== 'string' ||
       !state.unlocked.includes(session.level) ||
-      !validAnswers(session.level, session.answers) ||
       !phases.includes(session.phase) ||
       !Number.isInteger(session.index) ||
       session.index < 0 ||
-      session.index >= QUESTIONS[session.level].length
+      session.index >= questions.length ||
+      !validAnswers(session, session.answers)
     ) {
       fail();
     }

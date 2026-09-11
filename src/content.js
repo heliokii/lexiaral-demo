@@ -53,6 +53,24 @@ const wordChoices = (target, offset, useDefinitions = false) => {
   );
 };
 
+const sentenceChoices = (targetWord, offset) => {
+  const otherWords = pack.words.filter((w) => w.id !== targetWord.id);
+  const distractor1 = otherWords[0]
+    ? otherWords[0].example_sentence
+    : `The ${targetWord.word} is flying in the sky.`;
+  const distractor2 = otherWords[1]
+    ? otherWords[1].example_sentence
+    : `We ate a ${targetWord.word} for breakfast.`;
+
+  const options = [
+    { id: targetWord.id, label: targetWord.example_sentence },
+    { id: `${targetWord.id}-wrong1`, label: distractor1 },
+    { id: `${targetWord.id}-wrong2`, label: distractor2 },
+  ];
+
+  return rotate(options, offset);
+};
+
 const easy = pack.words.flatMap((word, index) => [
   {
     id: `easy-picture-${word.id}`,
@@ -74,6 +92,16 @@ const easy = pack.words.flatMap((word, index) => [
     answerId: word.id,
     explanation: word.definition,
   },
+  {
+    id: `easy-listen-${word.id}`,
+    type: 'listenAndChoose',
+    category: 'vocabulary',
+    wordId: word.id,
+    prompt: 'Listen to the word. Which word did you hear?',
+    choices: wordChoices(word, index + 2),
+    answerId: word.id,
+    explanation: `${word.word}: ${word.definition}`,
+  },
 ]);
 
 const average = pack.words.flatMap((word, index) => [
@@ -89,6 +117,17 @@ const average = pack.words.flatMap((word, index) => [
     explanation: `${word.word}: ${word.definition}`,
   },
   {
+    id: `average-pic-${word.id}`,
+    type: 'pictureSentence',
+    category: 'vocabulary',
+    wordId: word.id,
+    sentence: word.sentence_blank,
+    prompt: 'Look at the picture and complete the sentence:',
+    choices: wordChoices(word, index + 1),
+    answerId: word.id,
+    explanation: `${word.word}: ${word.definition}`,
+  },
+  {
     id: `average-meaning-${word.id}`,
     type: 'meaning',
     category: 'vocabulary',
@@ -98,6 +137,17 @@ const average = pack.words.flatMap((word, index) => [
     choices: wordChoices(word, index + 3, true),
     answerId: word.id,
     explanation: word.definition,
+  },
+  {
+    id: `average-best-use-${word.id}`,
+    type: 'bestUse',
+    category: 'vocabulary',
+    wordId: word.id,
+    sentence: `Word: ${word.word}`,
+    prompt: `Which sentence uses "${word.word}" correctly?`,
+    choices: sentenceChoices(word, index + 2),
+    answerId: word.id,
+    explanation: `Correct: "${word.example_sentence}"`,
   },
 ]);
 
@@ -129,9 +179,88 @@ const comprehension = pack.story.questions.map((question, index) => ({
   explanation: question.explanation,
 }));
 
+const easyMatching = {
+  id: 'easy-matching-all',
+  type: 'matching',
+  category: 'vocabulary',
+  prompt: 'Match each target word with its correct picture!',
+  pairs: pack.words.slice(0, 4).map((word) => ({
+    id: word.id,
+    wordId: word.id,
+    word: word.word,
+    image: word.image_url,
+  })),
+  choices: [
+    { id: 'all_matched', label: 'All pairs matched!' },
+    { id: 'keep_matching', label: 'Keep matching' },
+  ],
+  answerId: 'all_matched',
+  explanation: 'All vocabulary words are correctly matched with their pictures.',
+};
+
+export const STORIES = pack.stories || [pack.story];
+
+export function getQuestionsForStory(story) {
+  if (!story) return [...difficultVocabulary, ...comprehension];
+  const storyTargetWords = (story.target_word_ids || [])
+    .map((id) => WORDS[id])
+    .filter(Boolean);
+
+  const vocab = storyTargetWords.map((word, index) => ({
+    id: `${story.id}-vocab-${word.id}`,
+    type: 'storyQuestion',
+    category: 'vocabulary',
+    wordId: word.id,
+    prompt: `In the story, what does "${word.word}" mean?`,
+    choices: wordChoices(word, index + 1, true),
+    answerId: word.id,
+    explanation: `${word.story_context} ${word.definition}`,
+  }));
+
+  const comp = (story.questions || []).map((question, index) => ({
+    id: `${story.id}-${question.id}`,
+    type: 'storyQuestion',
+    category: question.category,
+    prompt: question.prompt,
+    choices: rotate(
+      question.choices.map((label) => ({ id: label, label })),
+      index + 1
+    ),
+    answerId: question.answer,
+    explanation: question.explanation,
+  }));
+
+  return [...vocab, ...comp];
+}
+
+// Child-friendly 10-question balanced sessions for Grade 3 attention spans (Section 20 & 21)
 export const QUESTIONS = {
-  1: easy,
-  2: average,
+  1: [
+    easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'cat'),
+    easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'mat'),
+    easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'hat'),
+    easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'dog'),
+    easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'sun'),
+    easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'egg'),
+    easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'hill'),
+    easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'pet'),
+    easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'happy'),
+    easyMatching,
+  ].filter(Boolean),
+
+  2: [
+    average.find((q) => q.type === 'sentence' && q.wordId === 'cat'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'mat'),
+    average.find((q) => q.type === 'meaning' && q.wordId === 'hat'),
+    average.find((q) => q.type === 'bestUse' && q.wordId === 'dog'),
+    average.find((q) => q.type === 'sentence' && q.wordId === 'sun'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'egg'),
+    average.find((q) => q.type === 'meaning' && q.wordId === 'hill'),
+    average.find((q) => q.type === 'bestUse' && q.wordId === 'happy'),
+    average.find((q) => q.type === 'sentence' && q.wordId === 'pet'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'den'),
+  ].filter(Boolean),
+
   3: [...difficultVocabulary, ...comprehension],
 };
 

@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Internal planning & gap analysis docs
+LEXIARAL_*.md
+

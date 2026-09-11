@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import {
+  CONTENT,
   LEVELS,
   QUESTIONS,
+  STORIES,
   UNLOCK_PERCENT,
   answerLabel,
   feedbackFor,
@@ -15,6 +17,7 @@ import {
   currentAnswer,
   currentQuestion,
   latestAttempt,
+  sessionQuestions,
   sessionScore,
 } from '../state/engine';
 import {
@@ -32,6 +35,7 @@ import {
   AnswerChoices,
   FlashcardQuestionWidget,
   InteractiveStoryReaderWidget,
+  MatchingPairsQuestionWidget,
   SentenceCompletionQuestionWidget,
 } from '../components/learning';
 
@@ -104,7 +108,7 @@ export function LevelsScreen({ navigation }) {
         return (
           <Card key={level.id}>
             <Title>
-              {unlocked ? '📚' : '🔒'} Level {level.id}: {level.name}
+              Level {level.id}: {level.name}
             </Title>
 
             <Body>{level.title}</Body>
@@ -118,9 +122,9 @@ export function LevelsScreen({ navigation }) {
 
             {!unlocked && (
               <Body>
-                {UNLOCK_PERCENT === 0
+                {(state.masteryThreshold != null ? state.masteryThreshold : UNLOCK_PERCENT) === 0
                   ? 'Complete the previous level to unlock this one.'
-                  : `Complete the previous level with at least ${UNLOCK_PERCENT}% to unlock this one.`}
+                  : `Complete the previous level with at least ${state.masteryThreshold != null ? state.masteryThreshold : UNLOCK_PERCENT}% to unlock this one.`}
               </Body>
             )}
 
@@ -192,7 +196,8 @@ export function ActivityScreen({ navigation }) {
         </Card>
 
         <Button
-          title="🔊 HEAR INSTRUCTIONS"
+          title="Hear instructions"
+          icon="sound"
           secondary
           onPress={() =>
             speak(INSTRUCTIONS[session.level], 'en-US', true)
@@ -212,9 +217,19 @@ export function ActivityScreen({ navigation }) {
   }
 
   if (session.phase === 'story') {
+    const activeStory =
+      (STORIES || []).find(
+        (s) => s.id === (session.storyId || state.selectedStoryId)
+      ) || CONTENT.story;
+
     return (
       <Screen>
-        <InteractiveStoryReaderWidget />
+        <InteractiveStoryReaderWidget
+          story={activeStory}
+          onSelectStory={(storyId) =>
+            dispatch({ type: 'SELECT_STORY', storyId })
+          }
+        />
 
         <Button
           title="NEXT: ANSWER QUESTIONS"
@@ -230,7 +245,7 @@ export function ActivityScreen({ navigation }) {
 
   const question = currentQuestion(state);
   const answer = currentAnswer(state);
-  const total = QUESTIONS[session.level].length;
+  const total = sessionQuestions(session).length;
   const feedback = answer ? feedbackFor(question, answer.correct) : '';
 
   const submitAnswer = async (choiceId) => {
@@ -320,7 +335,11 @@ export function ActivityScreen({ navigation }) {
         label="Questions answered"
       />
 
-      {session.level === 1 && (
+      {session.level === 1 && question.type === 'matching' && (
+        <MatchingPairsQuestionWidget {...widgetProps} />
+      )}
+
+      {session.level === 1 && question.type !== 'matching' && (
         <FlashcardQuestionWidget {...widgetProps} />
       )}
 
@@ -336,13 +355,25 @@ export function ActivityScreen({ navigation }) {
             onPress={() => setShowStory((value) => !value)}
           />
 
-          {showStory && <InteractiveStoryReaderWidget />}
+          {showStory && (
+            <InteractiveStoryReaderWidget
+              story={
+                (STORIES || []).find(
+                  (s) => s.id === (session.storyId || state.selectedStoryId)
+                ) || CONTENT.story
+              }
+              onSelectStory={(storyId) =>
+                dispatch({ type: 'SELECT_STORY', storyId })
+              }
+            />
+          )}
 
           <Card>
             <Body>{question.prompt}</Body>
 
             <Button
-              title="🔊 HEAR THE QUESTION"
+              title="Hear the question"
+              icon="sound"
               secondary
               onPress={() => speak(question.prompt, 'en-US', true)}
             />
@@ -363,7 +394,8 @@ export function ActivityScreen({ navigation }) {
           <Body accessibilityLiveRegion="polite">{feedback}</Body>
 
           <Button
-            title="🔊 HEAR FEEDBACK"
+            title="Hear feedback"
+            icon="sound"
             secondary
             onPress={() => speak(feedback, 'en-US', true)}
           />

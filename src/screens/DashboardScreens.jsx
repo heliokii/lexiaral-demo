@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Alert,
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
@@ -35,21 +37,49 @@ import {
 import { ReviewFlashcard } from '../components/learning';
 
 export function WelcomeScreen({ navigation }) {
+  const { state, dispatch, busy } = useLearning();
+  const [pupilInput, setPupilInput] = useState(state?.pupilName || '');
+
+  const handleStart = async () => {
+    const trimmed = pupilInput.trim();
+    if (trimmed) {
+      await dispatch({ type: 'SET_PUPIL_NAME', name: trimmed });
+    }
+    navigation.replace('Home');
+  };
+
   return (
     <Screen>
       <View style={styles.welcome}>
         <Text style={styles.brand}>LEXIARAL</Text>
-        <Art name="owl-reading" height={280} />
+        <Art name="owl-reading" height={220} />
         <Title style={styles.center}>Learn Words. Play. Grow.</Title>
         <Body style={styles.center}>
-          Your little word adventure starts here.
+          English Vocabulary Game for Grade 3 Learners
         </Body>
+
+        <Card style={styles.pupilCard}>
+          <Text style={styles.pupilInputLabel}>Learner / Pupil ID:</Text>
+          <TextInput
+            value={pupilInput}
+            onChangeText={setPupilInput}
+            placeholder="e.g. Pupil 01, Alex, or Learner"
+            placeholderTextColor="#9EA5B9"
+            style={styles.pupilTextInput}
+            maxLength={28}
+            autoCapitalize="words"
+          />
+          <Body style={styles.pupilInputHint}>
+            Used for tracking research pre-test and post-test scores.
+          </Body>
+        </Card>
 
         <Button
           title="Let’s start!"
           icon="book"
           arrow
-          onPress={() => navigation.replace('Home')}
+          disabled={busy}
+          onPress={handleStart}
         />
       </View>
     </Screen>
@@ -96,45 +126,91 @@ export function HomeScreen({ navigation }) {
 
         <View style={{ flex: 1, gap: 7 }}>
           <Title style={[styles.heroTitle, stacked && styles.center]}>
-            Hi, I’m Lexi!
+            {state.pupilName ? `Hi, ${state.pupilName}!` : 'Hi, I’m Lexi!'}
           </Title>
 
           <Body style={[styles.heroText, stacked && styles.center]}>
-            Ready to learn new words today?
+            {state.pupilName
+              ? 'I’m Lexi. Ready to learn new words today?'
+              : 'Ready to learn new words today?'}
           </Body>
         </View>
       </View>
 
-      <Button
-        title="Start Learning"
-        icon="book"
-        arrow
-        onPress={() => navigation.navigate('Levels')}
-      />
+      <View style={styles.mainActionRow}>
+        <Pressable
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel="Learn: Word Flashcards"
+          onPress={() => navigation.navigate('Review')}
+          style={({ pressed }) => [
+            styles.mainActionCard,
+            styles.learnCard,
+            pressed && { opacity: 0.88 },
+          ]}
+        >
+          <View style={styles.mainActionIconWrap}>
+            <Icon name="cards" size={34} color="#7548C7" />
+          </View>
+          <View style={{ gap: 2, alignItems: 'center' }}>
+            <Text style={styles.mainActionTitle}>LEARN</Text>
+            <Text style={styles.mainActionSub}>Word Flashcards</Text>
+          </View>
+          <View style={styles.actionPillLearn}>
+            <Text style={styles.actionPillTextLearn}>Study 20 Words</Text>
+          </View>
+        </Pressable>
+
+        <Pressable
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel="Play: 3 Learning Levels"
+          onPress={() => navigation.navigate('Levels')}
+          style={({ pressed }) => [
+            styles.mainActionCard,
+            styles.playCard,
+            pressed && { opacity: 0.88 },
+          ]}
+        >
+          <View style={styles.mainActionIconWrapPlay}>
+            <Icon name="book" size={34} color="#24865E" />
+          </View>
+          <View style={{ gap: 2, alignItems: 'center' }}>
+            <Text style={styles.mainActionTitle}>PLAY</Text>
+            <Text style={styles.mainActionSub}>3 Game Levels</Text>
+          </View>
+          <View style={styles.actionPillPlay}>
+            <Text style={styles.actionPillTextPlay}>Easy · Avg · Diff</Text>
+          </View>
+        </Pressable>
+      </View>
 
       {state.session && state.session.phase !== 'done' && (
         <Button
-          title="Resume my activity"
+          title="Resume active level"
+          icon="arrow"
           secondary
           onPress={() => navigation.navigate('Activity')}
         />
       )}
 
-      <View style={styles.homeTiles}>
-        <HomeTile
-          title={'Vocabulary\nReview'}
-          icon="cards"
-          backgroundColor="#FAD7E3"
-          onPress={() => navigation.navigate('Review')}
-        />
-
-        <HomeTile
-          title="My Progress"
-          icon="chart"
-          backgroundColor="#D5F2E8"
-          onPress={() => navigation.navigate('Progress')}
-        />
-      </View>
+      <Pressable
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel="My Progress Dashboard"
+        onPress={() => navigation.navigate('Progress')}
+        style={({ pressed }) => [
+          styles.progressTile,
+          pressed && { opacity: 0.85 },
+        ]}
+      >
+        <Icon name="chart" size={26} color="#458971" />
+        <View style={{ flex: 1, gap: 1 }}>
+          <Text style={styles.progressTileTitle}>My Learning Progress</Text>
+          <Text style={styles.progressTileSub}>View scores, stars, and level history</Text>
+        </View>
+        <Icon name="arrow" size={16} color="#7F948B" />
+      </Pressable>
 
       <Card style={styles.statsCard}>
         <View style={styles.stat}>
@@ -165,27 +241,106 @@ export function HomeScreen({ navigation }) {
   );
 }
 
-export function ReviewScreen() {
+export function ReviewScreen({ navigation }) {
   const { state } = useLearning();
-  const words = state.encounteredWordIds.map((id) => WORDS[id]);
+  const [filter, setFilter] = useState('all');
+
+  const allWords = CONTENT.words || [];
+  const practicedIds = new Set(state.encounteredWordIds || []);
+  const practicedWords = allWords.filter((w) => practicedIds.has(w.id));
+
+  const displayWords = filter === 'practiced' ? practicedWords : allWords;
 
   return (
     <Screen>
-      <Title>My Word Collection</Title>
-      <Body>Turn a card. Say the word. Try it in a sentence!</Body>
+      <View style={{ gap: 4 }}>
+        <Title>Learn: Word Flashcards</Title>
+        <Body style={{ fontSize: 16, color: colors.muted }}>
+          Study all 20 Grade 3 ARAL words with pictures, definitions, and sound.
+        </Body>
+      </View>
 
-      {!words.length && (
-        <Card>
+      <View style={styles.flashcardFilterRow}>
+        <Pressable
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`All ${allWords.length} words`}
+          onPress={() => setFilter('all')}
+          style={[
+            styles.flashcardFilterBtn,
+            filter === 'all' && styles.flashcardFilterBtnActive,
+          ]}
+        >
+          <Text
+            style={[
+              styles.flashcardFilterText,
+              filter === 'all' && styles.flashcardFilterTextActive,
+            ]}
+          >
+            All Words ({allWords.length})
+          </Text>
+        </Pressable>
+
+        <Pressable
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`Practiced ${practicedWords.length} words`}
+          onPress={() => setFilter('practiced')}
+          style={[
+            styles.flashcardFilterBtn,
+            filter === 'practiced' && styles.flashcardFilterBtnActive,
+          ]}
+        >
+          <Text
+            style={[
+              styles.flashcardFilterText,
+              filter === 'practiced' && styles.flashcardFilterTextActive,
+            ]}
+          >
+            Practiced ({practicedWords.length})
+          </Text>
+        </Pressable>
+      </View>
+
+      {filter === 'practiced' && !practicedWords.length && (
+        <Card style={{ alignItems: 'center', padding: 24, gap: 12 }}>
           <Art name="owl-reading" height={150} />
-          <Body style={styles.center}>
-            Play your first vocabulary activity to collect review cards.
+          <Title style={{ fontSize: 20, textAlign: 'center' }}>
+            No practiced words yet
+          </Title>
+          <Body style={{ textAlign: 'center' }}>
+            Play the quiz games in Play mode to practice words, or switch to "All Words" to study now!
           </Body>
+          <Button
+            title="Go to Play Mode"
+            icon="book"
+            onPress={() => navigation.navigate('Levels')}
+          />
         </Card>
       )}
 
-      {words.map((word) => (
-        <ReviewFlashcard key={word.id} word={word} />
+      {displayWords.map((word) => (
+        <ReviewFlashcard
+          key={word.id}
+          word={word}
+          isPracticed={practicedIds.has(word.id)}
+        />
       ))}
+
+      <Card style={{ backgroundColor: '#F6F2FD', borderColor: '#D9CBF7', borderWidth: 1.5, gap: 10 }}>
+        <Title style={{ fontSize: 18, color: colors.darkPurple }}>
+          Ready to play and test yourself?
+        </Title>
+        <Body style={{ fontSize: 14 }}>
+          Jump into Play mode to earn stars and complete all three Grade 3 ARAL levels!
+        </Body>
+        <Button
+          title="Play Learning Levels"
+          icon="book"
+          tone="mint"
+          onPress={() => navigation.navigate('Levels')}
+        />
+      </Card>
     </Screen>
   );
 }
@@ -197,6 +352,23 @@ export function ProgressScreen({ navigation }) {
     <Screen>
       <Title>Look How You’re Growing!</Title>
       <Body>A little practice makes a big difference.</Body>
+
+      <Card style={styles.researcherPupilCard}>
+        <View style={styles.pupilBadgeRow}>
+          <View style={styles.pupilIconWrap}>
+            <Icon name="medal" size={26} color="#7548C7" />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={styles.pupilLabel}>RESEARCH PARTICIPANT</Text>
+            <Title style={{ fontSize: 22, color: '#3A2758' }}>
+              {state.pupilName || 'Learner (Anonymous)'}
+            </Title>
+            <Body style={{ fontSize: 13, color: colors.muted }}>
+              Rosario East Central School · Grade 3 ARAL Evaluation
+            </Body>
+          </View>
+        </View>
+      </Card>
 
       <Card>
         <View style={styles.progressHero}>
@@ -508,7 +680,7 @@ export function FinalScreen({ navigation }) {
   );
 }
 
-export function AboutScreen() {
+export function AboutScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
 
   return (
@@ -546,6 +718,100 @@ export function AboutScreen() {
             })
           }
         />
+      </Card>
+
+      <Card style={{ borderColor: '#F2BAC9', borderWidth: 1.5, backgroundColor: 'rgba(255,248,250,0.95)' }}>
+        <Title style={{ fontSize: 22, color: '#A03856' }}>
+          Researcher & Teacher Tools
+        </Title>
+        <Body style={{ fontSize: 16 }}>
+          Current Participant:{' '}
+          <Text style={{ fontFamily: 'Nunito_800ExtraBold', color: '#7548C7' }}>
+            {state.pupilName || 'Not Set'}
+          </Text>
+        </Body>
+        <Body style={{ fontSize: 15 }}>
+          When administering thesis tests with multiple Grade 3 pupils, use this tool to clear saved progress and start fresh for the next participant.
+        </Body>
+        <Button
+          title="Reset Data for Next Pupil"
+          icon="cards"
+          secondary
+          disabled={busy}
+          onPress={() => {
+            Alert.alert(
+              'Reset learner progress?',
+              'This will clear all saved stars, badges, and completed activities on this device so the next pupil begins with a fresh session.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Reset All Data',
+                  style: 'destructive',
+                  onPress: async () => {
+                    await dispatch({ type: 'RESET_PROGRESS', nextPupilName: '' });
+                    Alert.alert('Progress Reset', 'All learner data has been cleared. You will now be redirected to set up the next pupil.');
+                    navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
+                  },
+                },
+              ]
+            );
+          }}
+          style={{ backgroundColor: '#FFF0F4', borderColor: '#E8A3B8' }}
+        />
+
+        <View style={{ marginTop: 10, gap: 6, paddingTop: 12, borderTopWidth: 1, borderColor: '#F5D0DC' }}>
+          <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, color: '#3A2758' }}>
+            Mastery Passing Threshold:
+          </Text>
+          <Body style={{ fontSize: 14, color: colors.muted }}>
+            Required score to unlock Level 2 and Level 3 during testing:
+          </Body>
+          <View style={styles.thresholdRow}>
+            {[
+              { label: '0% Demo', value: 0, desc: 'Any completion' },
+              { label: '75% DepEd', value: 75, desc: 'DepEd standard' },
+              { label: '80% Thesis', value: 80, desc: 'Mastery benchmark' },
+            ].map((option) => {
+              const active = (state.masteryThreshold || 0) === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  accessible
+                  accessibilityRole="button"
+                  accessibilityLabel={`Set passing threshold to ${option.label}`}
+                  disabled={busy}
+                  onPress={() =>
+                    dispatch({
+                      type: 'SET_MASTERY_THRESHOLD',
+                      threshold: option.value,
+                    })
+                  }
+                  style={[
+                    styles.thresholdBtn,
+                    active && styles.thresholdBtnActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.thresholdBtnText,
+                      active && styles.thresholdBtnTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.thresholdBtnSub,
+                      active && styles.thresholdBtnSubActive,
+                    ]}
+                  >
+                    {option.desc}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
       </Card>
 
       <Card>
@@ -627,6 +893,141 @@ const styles = StyleSheet.create({
   heroText: {
     fontSize: 18,
     lineHeight: 25,
+  },
+  mainActionRow: {
+    flexDirection: 'row',
+    gap: 14,
+  },
+  mainActionCard: {
+    flex: 1,
+    minHeight: 180,
+    borderRadius: 24,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 2,
+    shadowColor: '#8C77B0',
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
+  },
+  learnCard: {
+    backgroundColor: '#FAF7FF',
+    borderColor: '#D4C2F8',
+  },
+  playCard: {
+    backgroundColor: '#F2FCF7',
+    borderColor: '#BAEAD4',
+  },
+  mainActionIconWrap: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#EAE1FC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  mainActionIconWrapPlay: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#D7F5E7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  mainActionTitle: {
+    fontFamily: 'Nunito_900Black',
+    fontSize: 22,
+    letterSpacing: 0.5,
+    color: colors.text,
+  },
+  mainActionSub: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 13,
+    color: colors.muted,
+  },
+  actionPillLearn: {
+    backgroundColor: '#EDE5FD',
+    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#D9C8FA',
+  },
+  actionPillTextLearn: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 12,
+    color: '#6536BC',
+  },
+  actionPillPlay: {
+    backgroundColor: '#DEFAEC',
+    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#B0ECCB',
+  },
+  actionPillTextPlay: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 12,
+    color: '#1B734E',
+  },
+  progressTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#F3FBF7',
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#CCEFE0',
+    gap: 14,
+    shadowColor: '#80BCA3',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+  },
+  progressTileTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+    color: colors.text,
+  },
+  progressTileSub: {
+    fontFamily: 'Nunito_600SemiBold',
+    fontSize: 13,
+    color: '#5C7C6F',
+  },
+  flashcardFilterRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  flashcardFilterBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#E2D9F3',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flashcardFilterBtnActive: {
+    borderColor: colors.purple,
+    backgroundColor: '#F3EDFF',
+  },
+  flashcardFilterText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 14,
+    color: colors.muted,
+  },
+  flashcardFilterTextActive: {
+    color: colors.darkPurple,
   },
   homeTiles: {
     flexDirection: 'row',
@@ -747,5 +1148,98 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 10,
+  },
+  pupilCard: {
+    width: '100%',
+    padding: 16,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#DCE7F5',
+    gap: 8,
+  },
+  pupilInputLabel: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 15,
+    color: '#3A2758',
+  },
+  pupilTextInput: {
+    minHeight: 48,
+    backgroundColor: '#F4F7FC',
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#CCE0F5',
+    paddingHorizontal: 16,
+    fontSize: 17,
+    fontFamily: 'Nunito_700Bold',
+    color: '#2F2544',
+  },
+  pupilInputHint: {
+    fontSize: 13,
+    color: colors.muted,
+  },
+  researcherPupilCard: {
+    backgroundColor: '#F7F3FF',
+    borderColor: '#DECFFC',
+    borderWidth: 1.5,
+    padding: 16,
+  },
+  pupilBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  pupilIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EBE0FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pupilLabel: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 12,
+    color: '#7548C7',
+    letterSpacing: 0.8,
+  },
+  thresholdRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  thresholdBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: '#E2D5F5',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+  },
+  thresholdBtnActive: {
+    borderColor: colors.purple,
+    backgroundColor: '#F3EDFF',
+  },
+  thresholdBtnText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 13,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  thresholdBtnTextActive: {
+    color: colors.darkPurple,
+  },
+  thresholdBtnSub: {
+    fontFamily: 'Nunito_600SemiBold',
+    fontSize: 10,
+    color: colors.muted,
+    textAlign: 'center',
+  },
+  thresholdBtnSubActive: {
+    color: colors.darkPurple,
   },
 });
