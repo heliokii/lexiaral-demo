@@ -5,12 +5,26 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#BEA5DA"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lexiaral.learning"
+      "bundleIdentifier": "com.lexiaral.learning",
+      "icon": "./assets/icon.png"
     },
     "android": {
-      "package": "com.lexiaral.learning"
+      "package": "com.lexiaral.learning",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#BEA5DA"
+      }
     },
     "plugins": [
       "expo-font"
