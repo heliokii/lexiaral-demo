@@ -19,20 +19,25 @@ import { Icon } from '../Art';
 import { useLearning } from '../state/LearningProvider';
 
 export const colors = {
-  blue: '#8065CE',
-  purple: '#9C83EB',
-  darkPurple: '#7056BE',
-  background: '#F2EEFD',
-  text: '#343546',
-  muted: '#77748B',
-  green: '#249C77',
-  mint: '#D7F2E9',
-  paleGreen: '#E2F6EB',
-  pink: '#FADBE5',
-  yellow: '#FFF0C8',
-  orange: '#956322',
-  paleOrange: '#FFF0D7',
-  border: '#E7E0F3',
+  primary: '#6C47C7',
+  blue: '#6C47C7',
+  purple: '#7E57C2',
+  darkPurple: '#4A2F8A',
+  background: '#F3EFFC',
+  text: '#2D2738',
+  muted: '#766D88',
+  green: '#20A464',
+  mint: '#E4F8EE',
+  paleGreen: '#EAF8F1',
+  pink: '#F582AE',
+  yellow: '#F5A623',
+  paleYellow: '#FFF7DB',
+  coral: '#E85A71',
+  paleCoral: '#FFF0F3',
+  orange: '#E07A22',
+  paleOrange: '#FFF3E8',
+  border: '#E5DEF2',
+  cardBg: '#FFFFFF',
 };
 
 const NAV_ROUTES = ['Home', 'Levels', 'Progress', 'Badges', 'Review', 'About'];
@@ -75,6 +80,7 @@ function BottomNavigation() {
         return (
           <Pressable
             key={tab.route}
+            testID={`nav-tab-${tab.route.toLowerCase()}`}
             accessibilityRole="tab"
             accessibilityLabel={tab.label}
             accessibilityState={{ selected }}
@@ -83,14 +89,14 @@ function BottomNavigation() {
           >
             <Icon
               name={tab.icon}
-              color={selected ? colors.blue : '#ABA9B8'}
+              color={selected ? colors.primary : '#ABA9B8'}
               size={24}
             />
 
             <Text
               style={[
                 styles.tabLabel,
-                selected && { color: colors.blue },
+                selected && { color: colors.primary },
               ]}
             >
               {tab.label}
@@ -107,8 +113,15 @@ function BottomNavigation() {
 /**
  * Layout used by all screens.
  * Assessment screens intentionally omit the bottom tabs.
+ * Supports sticky bottomSlot to eliminate scroll dependency for feedback and next actions.
  */
-export function Screen({ children, scrollRef }) {
+export function Screen({
+  children,
+  scrollRef,
+  bottomSlot,
+  scrollEnabled = true,
+  testID,
+}) {
   const { busy, error } = useLearning();
   const route = useRoute();
   const insets = useSafeAreaInsets();
@@ -117,7 +130,10 @@ export function Screen({ children, scrollRef }) {
   const hasNativeHeader = ['Activity', 'Results'].includes(route.name);
 
   return (
-    <View style={styles.screen}>
+    <View
+      testID={testID || `screen-${route.name.toLowerCase()}`}
+      style={styles.screen}
+    >
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <SvgXml
           xml={assets.landscape}
@@ -129,25 +145,26 @@ export function Screen({ children, scrollRef }) {
 
       <ScrollView
         ref={scrollRef}
+        scrollEnabled={scrollEnabled}
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: hasNativeHeader ? 16 : insets.top + 12,
-            paddingBottom: 26,
+            paddingTop: hasNativeHeader ? 14 : insets.top + 10,
+            paddingBottom: bottomSlot ? 14 : 26,
           },
         ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         {CONTENT.status === 'demo' && (
-          <View style={styles.demoPill}>
+          <View testID="demo-status-pill" style={styles.demoPill}>
             <Text style={styles.demoText}>DEMO · Not yet ARAL-verified</Text>
           </View>
         )}
 
         {busy && (
           <Text accessibilityLiveRegion="polite" style={styles.saving}>
-            Saving your progress…
+            Saving your progress...
           </Text>
         )}
 
@@ -160,8 +177,21 @@ export function Screen({ children, scrollRef }) {
         {children}
       </ScrollView>
 
-      {hasTabs ? (
+      {bottomSlot ? (
         <View
+          testID="bottom-slot-container"
+          style={[
+            styles.bottomSlotWrapper,
+            {
+              paddingBottom: Math.max(insets.bottom, 12),
+            },
+          ]}
+        >
+          {bottomSlot}
+        </View>
+      ) : hasTabs ? (
+        <View
+          testID="bottom-navigation-container"
           style={{
             paddingHorizontal: 16,
             paddingBottom: Math.max(insets.bottom, 10),
@@ -177,24 +207,32 @@ export function Screen({ children, scrollRef }) {
   );
 }
 
-export function Title({ children, style }) {
+export function Title({ children, style, testID }) {
   return (
-    <Text accessibilityRole="header" style={[styles.title, style]}>
+    <Text
+      testID={testID}
+      accessibilityRole="header"
+      style={[styles.title, style]}
+    >
       {children}
     </Text>
   );
 }
 
-export function Body({ children, style, ...props }) {
+export function Body({ children, style, testID, ...props }) {
   return (
-    <Text style={[styles.body, style]} {...props}>
+    <Text testID={testID} style={[styles.body, style]} {...props}>
       {children}
     </Text>
   );
 }
 
-export function Card({ children, style }) {
-  return <View style={[styles.card, style]}>{children}</View>;
+export function Card({ children, style, testID }) {
+  return (
+    <View testID={testID || "ui-card"} style={[styles.card, style]}>
+      {children}
+    </View>
+  );
 }
 
 export function Button({
@@ -207,16 +245,23 @@ export function Button({
   arrow = false,
   tone = 'purple',
   style,
+  testID,
 }) {
-  const background =
-    secondary
-      ? 'rgba(255,255,255,.9)'
-      : tone === 'mint'
-        ? '#4CCFA1'
-        : colors.purple;
+  const background = secondary
+    ? 'rgba(255,255,255,.94)'
+    : tone === 'mint' || tone === 'green'
+      ? colors.green
+      : tone === 'coral'
+        ? colors.coral
+        : tone === 'amber'
+          ? colors.yellow
+          : colors.primary;
+
+  const textColor = secondary ? colors.primary : '#FFFFFF';
 
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel || title}
       accessibilityState={{ disabled }}
@@ -229,7 +274,7 @@ export function Button({
         style,
         disabled && { opacity: 0.45 },
         pressed && !disabled && {
-          opacity: 0.85,
+          opacity: 0.88,
           transform: [{ scale: 0.985 }],
         },
       ]}
@@ -237,15 +282,15 @@ export function Button({
       {icon && (
         <Icon
           name={icon}
-          color={secondary ? colors.blue : 'white'}
-          size={25}
+          color={secondary ? colors.primary : '#FFFFFF'}
+          size={22}
         />
       )}
 
       <Text
         style={[
           styles.buttonText,
-          secondary && { color: colors.blue },
+          { color: textColor },
         ]}
       >
         {title}
@@ -254,19 +299,20 @@ export function Button({
       {arrow && (
         <Icon
           name="arrow"
-          color={secondary ? colors.blue : 'white'}
-          size={20}
+          color={secondary ? colors.primary : '#FFFFFF'}
+          size={18}
         />
       )}
     </Pressable>
   );
 }
 
-export function ProgressBar({ value, label, color = colors.purple }) {
+export function ProgressBar({ value, label, color = colors.purple, testID }) {
   const safeValue = Math.max(0, Math.min(1, value));
 
   return (
     <View
+      testID={testID || "progress-bar"}
       accessible
       accessibilityRole="progressbar"
       accessibilityLabel={label}
@@ -290,9 +336,9 @@ export function ProgressBar({ value, label, color = colors.purple }) {
   );
 }
 
-export function Encouragement() {
+export function Encouragement({ testID }) {
   return (
-    <Text style={styles.encouragement}>
+    <Text testID={testID || "encouragement-text"} style={styles.encouragement}>
       You can do it!
     </Text>
   );
@@ -438,5 +484,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     transform: [{ rotate: '-5deg' }],
     paddingVertical: 12,
+  },
+  bottomSlotWrapper: {
+    width: '100%',
+    maxWidth: 540,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 8,
   },
 });

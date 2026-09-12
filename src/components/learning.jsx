@@ -112,13 +112,6 @@ export function WordPicture({ word, height = 170 }) {
   );
 }
 
-const tileColors = [
-  '#DDD2FA',
-  '#FADBE4',
-  '#D5F0E8',
-  '#FFF0C8',
-];
-
 export function AnswerChoices({
   question,
   selected,
@@ -149,6 +142,7 @@ export function AnswerChoices({
         return (
           <Pressable
             key={choice.id}
+            testID={`choice-btn-${choice.id}`}
             accessibilityRole="button"
             accessibilityLabel={
               pictures
@@ -163,28 +157,41 @@ export function AnswerChoices({
             onPress={() => onAnswer(choice.id)}
             style={({ pressed }) => [
               styles.answer,
-              { backgroundColor: tileColors[index % tileColors.length] },
               grid && styles.gridTile,
+              chosen && !revealed && styles.answerSelected,
               correct && styles.correct,
               wrong && styles.wrong,
-              pressed && { transform: [{ scale: 0.97 }] },
+              pressed && !revealed && { transform: [{ scale: 0.98 }] },
             ]}
           >
             {pictures ? (
               <>
                 <Text style={styles.pictureLabel}>Picture {index + 1}</Text>
-                <WordPicture word={WORDS[choice.wordId]} height={108} />
+                <WordPicture word={WORDS[choice.wordId]} height={92} />
               </>
             ) : (
-              <Text style={styles.answerText}>{choice.label}</Text>
+              <Text
+                style={[
+                  styles.answerText,
+                  correct && { color: '#176640' },
+                  wrong && { color: '#8A2B1D' },
+                ]}
+              >
+                {choice.label}
+              </Text>
             )}
 
             {correct && (
-              <Text style={styles.answerStatus}>Correct</Text>
+              <View style={styles.choiceFeedbackTagCorrect}>
+                <Icon name="check" size={12} color="#FFFFFF" />
+                <Text style={styles.choiceFeedbackTextCorrect}>Correct</Text>
+              </View>
             )}
 
             {wrong && (
-              <Text style={styles.answerStatus}>Nice try!</Text>
+              <View style={styles.choiceFeedbackTagWrong}>
+                <Text style={styles.choiceFeedbackTextWrong}>Nice try</Text>
+              </View>
             )}
           </Pressable>
         );
@@ -204,46 +211,51 @@ export function FlashcardQuestionWidget(props) {
   }, [question.id]);
 
   return (
-    <View style={{ gap: 14 }}>
+    <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
-        <Title style={styles.questionTitle}>
-          {question.type === 'pictureToWord'
-            ? 'What is this?'
-            : question.type === 'listenAndChoose'
-              ? 'Listen to the word'
-              : `Find the ${word?.word || 'word'}`}
-        </Title>
+        <View style={styles.questionHeaderRow}>
+          <Title style={styles.questionTitle}>
+            {question.type === 'pictureToWord'
+              ? 'What is this?'
+              : question.type === 'listenAndChoose'
+                ? 'Listen to the word'
+                : `Find the "${word?.word || 'word'}"`}
+          </Title>
+
+          {word && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Hear the word"
+              onPress={() => pronounce(word)}
+              style={styles.speakerBtn}
+            >
+              <Icon name="sound" size={20} color={colors.primary} />
+            </Pressable>
+          )}
+        </View>
 
         {question.type === 'listenAndChoose' ? (
-          <View style={{ paddingVertical: 20, alignItems: 'center', gap: 12 }}>
-            <Icon name="sound" size={56} color={colors.blue} />
-            <Body style={{ textAlign: 'center', fontSize: 17 }}>
-              Tap below to listen again, then choose the word you heard.
+          <View style={{ paddingVertical: 14, alignItems: 'center', gap: 10 }}>
+            <Icon name="sound" size={46} color={colors.primary} />
+            <Body style={{ textAlign: 'center', fontSize: 15, color: colors.muted }}>
+              Tap the sound button above or below, then choose the word you heard.
             </Body>
             <Button
               title="Play Word Sound"
               icon="sound"
               onPress={() => pronounce(word)}
-              style={{ minHeight: 46, paddingHorizontal: 22 }}
+              style={{ minHeight: 44, paddingHorizontal: 20 }}
             />
           </View>
         ) : question.type === 'pictureToWord' ? (
-          <WordPicture word={word} height={210} />
+          <WordPicture word={word} height={140} />
         ) : (
-          <View style={{ paddingVertical: 36, alignItems: 'center', gap: 10 }}>
-            <Icon name="book" size={44} />
-            <Title style={{ fontSize: 38 }}>{word?.word}</Title>
+          <View style={{ paddingVertical: 18, alignItems: 'center', gap: 8 }}>
+            <Icon name="book" size={36} color={colors.primary} />
+            <Title style={{ fontSize: 32, color: colors.darkPurple }}>
+              {word?.word}
+            </Title>
           </View>
-        )}
-
-        {question.type !== 'listenAndChoose' && word && (
-          <Button
-            title="Hear the word"
-            icon="sound"
-            secondary
-            onPress={() => pronounce(word)}
-            style={{ minHeight: 46, alignSelf: 'center' }}
-          />
         )}
       </Card>
 
@@ -314,39 +326,44 @@ export function MatchingPairsQuestionWidget({
   };
 
   return (
-    <View style={{ gap: 14 }}>
+    <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
-        <Title style={styles.questionTitle}>Match Words to Pictures</Title>
-        <Body style={{ textAlign: 'center', fontSize: 16 }}>
+        <View style={styles.questionHeaderRow}>
+          <Text style={styles.questionBadge}>Match Words to Pictures</Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Hear instruction"
+            onPress={() =>
+              speak(
+                'Tap a word on the left, then tap its matching picture on the right.',
+                'en-US',
+                true
+              )
+            }
+            style={styles.speakerBtn}
+          >
+            <Icon name="sound" size={20} color={colors.primary} />
+          </Pressable>
+        </View>
+
+        <Body style={{ textAlign: 'center', fontSize: 15, color: colors.text }}>
           {question.prompt || 'Tap a word on the left, then tap its matching picture on the right.'}
         </Body>
-        <Button
-          title="Hear instruction"
-          icon="sound"
-          secondary
-          onPress={() =>
-            speak(
-              'Tap a word on the left, then tap its matching picture on the right.',
-              'en-US',
-              true
-            )
-          }
-          style={{ minHeight: 44, alignSelf: 'center' }}
-        />
+
         <View
           style={{
             alignSelf: 'center',
-            backgroundColor: '#E8F5EE',
-            paddingHorizontal: 14,
-            paddingVertical: 6,
-            borderRadius: 14,
+            backgroundColor: '#E8F8F0',
+            paddingHorizontal: 12,
+            paddingVertical: 4,
+            borderRadius: 12,
           }}
         >
           <Text
             style={{
               fontFamily: 'Nunito_800ExtraBold',
-              color: '#267A59',
-              fontSize: 15,
+              color: '#20A464',
+              fontSize: 13.5,
             }}
           >
             Matched: {isCompleted ? pairs.length : matchedIds.length} of {pairs.length} pairs
@@ -435,34 +452,42 @@ export function SentenceCompletionQuestionWidget(props) {
   const word = WORDS[question.wordId];
 
   return (
-    <View style={{ gap: 14 }}>
+    <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
-        {question.type === 'pictureSentence' && word ? (
-          <WordPicture word={word} height={145} />
-        ) : (
-          <Art name="owl-reading" height={110} />
+        <View style={styles.questionHeaderRow}>
+          <Text style={styles.questionBadge}>Level 2: Use the Word</Text>
+
+          {question.type !== 'bestUse' && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Read the sentence"
+              onPress={() =>
+                speak(
+                  question.sentence.replace('____', 'blank'),
+                  'en-US',
+                  true
+                )
+              }
+              style={styles.speakerBtn}
+            >
+              <Icon name="sound" size={20} color={colors.primary} />
+            </Pressable>
+          )}
+        </View>
+
+        {question.type === 'pictureSentence' && word && (
+          <WordPicture word={word} height={125} />
         )}
 
-        <Title style={styles.questionTitle}>
-          {question.sentence}
-        </Title>
+        <View style={styles.sentenceBox}>
+          <Text style={styles.sentenceText}>
+            {question.sentence}
+          </Text>
+        </View>
 
-        <Body style={{ textAlign: 'center' }}>{question.prompt}</Body>
-
-        {question.type !== 'bestUse' && (
-          <Button
-            title="Read the sentence"
-            icon="sound"
-            secondary
-            onPress={() =>
-              speak(
-                question.sentence.replace('____', 'blank'),
-                'en-US',
-                true
-              )
-            }
-          />
-        )}
+        <Body style={{ textAlign: 'center', fontSize: 15, color: colors.muted }}>
+          {question.prompt}
+        </Body>
       </Card>
 
       <AnswerChoices {...props} />
@@ -474,7 +499,7 @@ export function ReviewFlashcard({ word, isPracticed = false }) {
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <Card>
+    <Card testID={`flashcard-card-${word.id}`}>
       <View
         style={{
           flexDirection: 'row',
@@ -495,6 +520,7 @@ export function ReviewFlashcard({ word, isPracticed = false }) {
         </Text>
         {isPracticed && (
           <View
+            testID={`flashcard-practiced-badge-${word.id}`}
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -522,6 +548,7 @@ export function ReviewFlashcard({ word, isPracticed = false }) {
       <WordPicture word={word} height={170} />
 
       <Button
+        testID={`flashcard-turn-btn-${word.id}`}
         title={revealed ? 'Hide details' : 'Turn the card'}
         secondary
         icon="cards"
@@ -539,6 +566,7 @@ export function ReviewFlashcard({ word, isPracticed = false }) {
           </Body>
 
           <Button
+            testID={`flashcard-hear-btn-${word.id}`}
             title="Hear the word"
             icon="sound"
             onPress={() => pronounce(word)}
@@ -787,64 +815,142 @@ export function InteractiveStoryReaderWidget({
 
 const styles = StyleSheet.create({
   questionCard: {
-    paddingTop: 20,
-    paddingBottom: 16,
-    gap: 12,
+    paddingTop: 16,
+    paddingBottom: 14,
+    paddingHorizontal: 16,
+    gap: 10,
+    borderRadius: 22,
+  },
+  questionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  questionBadge: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 13,
+    color: colors.primary,
+    backgroundColor: '#F0EBF9',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  speakerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F0EBF9',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   questionTitle: {
-    color: colors.text,
-    fontSize: 27,
+    color: colors.darkPurple,
+    fontSize: 22,
+    lineHeight: 28,
+    fontFamily: 'Nunito_900Black',
+  },
+  sentenceBox: {
+    backgroundColor: '#F8F6FD',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#ECE4F7',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginVertical: 4,
+  },
+  sentenceText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 19,
+    lineHeight: 27,
+    color: colors.darkPurple,
     textAlign: 'center',
   },
   answers: {
-    gap: 12,
+    gap: 10,
   },
   answerGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    rowGap: 10,
   },
   answer: {
-    minHeight: 76,
-    paddingVertical: 20,
-    paddingHorizontal: 14,
+    minHeight: 62,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 22,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    gap: 8,
-    shadowColor: '#9986B2',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: '#E7DFEE',
+    backgroundColor: '#FFFFFF',
+    gap: 4,
+    shadowColor: '#8E7DA7',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 5,
     elevation: 2,
+    position: 'relative',
   },
   gridTile: {
-    width: '48%',
+    width: '48.5%',
+  },
+  answerSelected: {
+    borderColor: colors.primary,
+    backgroundColor: '#F6F2FD',
   },
   answerText: {
     fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 20,
+    fontSize: 17,
     color: colors.text,
     textAlign: 'center',
   },
   pictureLabel: {
     fontFamily: 'Nunito_700Bold',
-    fontSize: 15,
+    fontSize: 12,
     color: colors.muted,
   },
   correct: {
-    borderColor: '#319F77',
-    backgroundColor: '#DDF5E6',
+    borderColor: '#20A464',
+    borderWidth: 2,
+    backgroundColor: '#EBF8F1',
   },
   wrong: {
-    borderColor: '#D39A50',
-    backgroundColor: '#FFF0D7',
+    borderColor: '#E85A71',
+    borderWidth: 2,
+    backgroundColor: '#FFF0F3',
+  },
+  choiceFeedbackTagCorrect: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#20A464',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginTop: 2,
+  },
+  choiceFeedbackTextCorrect: {
+    color: '#FFFFFF',
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 10.5,
+  },
+  choiceFeedbackTagWrong: {
+    backgroundColor: '#E85A71',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginTop: 2,
+  },
+  choiceFeedbackTextWrong: {
+    color: '#FFFFFF',
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 10.5,
   },
   answerStatus: {
     fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 15,
+    fontSize: 14,
     color: colors.text,
   },
   storyHeader: {

@@ -35,7 +35,14 @@ export const BADGES = [
   },
 ];
 
+export function isLevelUnlocked(state, levelId) {
+  if (!state) return levelId === 1;
+  if (state.masteryThreshold === 0) return true;
+  return Array.isArray(state.unlocked) && state.unlocked.includes(levelId);
+}
+
 export function initialState(pupilName = '', masteryThreshold = 0, selectedStoryId = 'story-cat') {
+  const isDemo = typeof masteryThreshold === 'number' && masteryThreshold === 0;
   return {
     schemaVersion: 1,
     contentId: CONTENT.id,
@@ -43,7 +50,7 @@ export function initialState(pupilName = '', masteryThreshold = 0, selectedStory
     masteryThreshold: typeof masteryThreshold === 'number' ? masteryThreshold : 0,
     selectedStoryId: typeof selectedStoryId === 'string' ? selectedStoryId : (CONTENT.story?.id || 'story-cat'),
     audioEnabled: true,
-    unlocked: [1],
+    unlocked: isDemo ? [1, 2, 3] : [1],
     badges: [],
     encounteredWordIds: [],
     learnedWordIds: [],
@@ -127,8 +134,12 @@ export function reduceState(state, action) {
       return { ...state, audioEnabled: Boolean(action.enabled) };
 
     case 'START': {
+      const isUnlocked =
+        state.masteryThreshold === 0 ||
+        state.unlocked.includes(action.level);
+
       if (
-        !state.unlocked.includes(action.level) ||
+        !isUnlocked ||
         !QUESTIONS[action.level] ||
         !action.id
       ) {
@@ -288,10 +299,29 @@ export function reduceState(state, action) {
     }
 
     case 'SET_MASTERY_THRESHOLD': {
+      const threshold = typeof action.threshold === 'number' ? action.threshold : 0;
+      let unlocked = state.unlocked;
+
+      if (threshold === 0) {
+        unlocked = [1, 2, 3];
+      } else {
+        let newUnlocked = [1];
+        for (const attempt of state.history) {
+          const pass =
+            attempt &&
+            attempt.total > 0 &&
+            attempt.score / attempt.total >= threshold / 100;
+          if (pass && attempt.level < 3) {
+            newUnlocked = addUnique(newUnlocked, attempt.level + 1);
+          }
+        }
+        unlocked = newUnlocked;
+      }
+
       return {
         ...state,
-        masteryThreshold:
-          typeof action.threshold === 'number' ? action.threshold : 0,
+        masteryThreshold: threshold,
+        unlocked,
       };
     }
 

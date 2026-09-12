@@ -23,22 +23,18 @@ import { Art, Icon } from './src/Art';
 import { stopAudio } from './src/audio';
 import { LearningProvider, useLearning } from './src/state/LearningProvider';
 
-import LevelsScreen from './src/screens/LevelsScreen';
-
-import {
-  ActivityScreen,
-  ResultsScreen,
-} from './src/screens/LearningScreens';
-
 import {
   AboutScreen,
+  ActivityScreen,
   BadgesScreen,
   FinalScreen,
   HomeScreen,
+  LevelsScreen,
   ProgressScreen,
+  ResultsScreen,
   ReviewScreen,
   WelcomeScreen,
-} from './src/screens/DashboardScreens';
+} from './src/screens';
 
 const Stack = createNativeStackNavigator();
 
