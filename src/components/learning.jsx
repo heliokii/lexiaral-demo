@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Image,
   Modal,
   Pressable,
@@ -8,45 +9,44 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
-import { SvgXml } from 'react-native-svg';
+} from "react-native";
+import { SvgXml } from "react-native-svg";
 
-import assets from '../assets.generated';
-import { CONTENT, WORDS, STORIES } from '../content';
-import { illustrations } from '../illustrations';
-import { pronounce, speak, stopAudio } from '../audio';
-import { Art, Icon } from '../Art';
-import {
-  Body,
-  Button,
-  Card,
-  Title,
-  colors,
-} from './ui';
+import assets from "../assets.generated";
+import { CONTENT, WORDS, STORIES } from "../content";
+import { illustrations } from "../illustrations";
+import { pronounce, speak, stopAudio } from "../audio";
+import { Art, Icon } from "../Art";
+import { Body, Button, Card, Title, colors, fonts } from "./ui";
 
 export function WordPicture({ word, height = 170 }) {
   if (!word) return null;
 
-  const rawUrl = word.image_url || '';
-  const key = rawUrl.replace('asset://', '');
+  const rawUrl = word.image_url || "";
+  const key = rawUrl.replace("asset://", "");
 
   // 1. Direct raster or web image URI (http, https, file, data)
   if (
-    rawUrl.startsWith('http://') ||
-    rawUrl.startsWith('https://') ||
-    rawUrl.startsWith('data:') ||
-    rawUrl.startsWith('file://')
+    rawUrl.startsWith("http://") ||
+    rawUrl.startsWith("https://") ||
+    rawUrl.startsWith("data:") ||
+    rawUrl.startsWith("file://")
   ) {
     return (
       <View
         accessible
         accessibilityRole="image"
         accessibilityLabel={`Picture of ${word.word}`}
-        style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height }}
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height,
+        }}
       >
         <Image
           source={{ uri: rawUrl }}
-          style={{ width: '100%', height, resizeMode: 'contain' }}
+          style={{ width: "100%", height, resizeMode: "contain" }}
         />
       </View>
     );
@@ -59,26 +59,22 @@ export function WordPicture({ word, height = 170 }) {
         accessible
         accessibilityRole="image"
         accessibilityLabel={`Picture of ${word.word}`}
-        style={{ alignItems: 'center' }}
+        style={{ alignItems: "center" }}
       >
-        <SvgXml
-          xml={illustrations[key]}
-          width="100%"
-          height={height}
-        />
+        <SvgXml xml={illustrations[key]} width="100%" height={height} />
       </View>
     );
   }
 
   // 3. Vector SVG in assets.generated.js
-  const assetXml = assets[key] || assets[key.replace(/-/g, '_')];
+  const assetXml = assets[key] || assets[key.replace(/-/g, "_")];
   if (assetXml) {
     return (
       <View
         accessible
         accessibilityRole="image"
         accessibilityLabel={`Picture of ${word.word}`}
-        style={{ alignItems: 'center' }}
+        style={{ alignItems: "center" }}
       >
         <SvgXml xml={assetXml} width="100%" height={height} />
       </View>
@@ -92,20 +88,26 @@ export function WordPicture({ word, height = 170 }) {
       accessibilityRole="image"
       accessibilityLabel={`Picture placeholder of ${word.word}`}
       style={{
-        width: '100%',
+        width: "100%",
         height,
         borderRadius: 20,
-        backgroundColor: '#EFF6FF',
+        backgroundColor: "#EFF6FF",
         borderWidth: 2,
-        borderColor: '#CCE2FA',
-        borderStyle: 'dashed',
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderColor: "#CCE2FA",
+        borderStyle: "dashed",
+        alignItems: "center",
+        justifyContent: "center",
         gap: 8,
       }}
     >
       <Icon name="book" size={42} color="#7BA5DF" />
-      <Text style={{ fontFamily: 'Nunito_800ExtraBold', color: '#4B77AE', fontSize: 18 }}>
+      <Text
+        style={{
+          fontFamily: "Nunito_800ExtraBold",
+          color: "#4B77AE",
+          fontSize: 18,
+        }}
+      >
         {word.word}
       </Text>
     </View>
@@ -122,14 +124,11 @@ export function AnswerChoices({
   const { width, fontScale } = useWindowDimensions();
 
   const compactAnswers = question.choices.every(
-    (choice) => choice.label.length <= 18
+    (choice) => choice.label.length <= 18,
   );
 
   // Larger accessibility text switches to one column.
-  const grid =
-    width >= 340 &&
-    fontScale < 1.35 &&
-    (pictures || compactAnswers);
+  const grid = width >= 340 && fontScale < 1.35 && (pictures || compactAnswers);
 
   return (
     <View style={[styles.answers, grid && styles.answerGrid]}>
@@ -173,8 +172,8 @@ export function AnswerChoices({
               <Text
                 style={[
                   styles.answerText,
-                  correct && { color: '#176640' },
-                  wrong && { color: '#8A2B1D' },
+                  correct && { color: "#176640" },
+                  wrong && { color: "#8A2B1D" },
                 ]}
               >
                 {choice.label}
@@ -205,7 +204,7 @@ export function FlashcardQuestionWidget(props) {
   const word = WORDS[question.wordId];
 
   useEffect(() => {
-    if (question.type === 'listenAndChoose' && word) {
+    if (question.type === "listenAndChoose" && word) {
       pronounce(word);
     }
   }, [question.id]);
@@ -215,11 +214,11 @@ export function FlashcardQuestionWidget(props) {
       <Card style={styles.questionCard}>
         <View style={styles.questionHeaderRow}>
           <Title style={styles.questionTitle}>
-            {question.type === 'pictureToWord'
-              ? 'What is this?'
-              : question.type === 'listenAndChoose'
-                ? 'Listen to the word'
-                : `Find the "${word?.word || 'word'}"`}
+            {question.type === "pictureToWord"
+              ? "What is this?"
+              : question.type === "listenAndChoose"
+                ? "Listen to the word"
+                : `Find the "${word?.word || "word"}"`}
           </Title>
 
           {word && (
@@ -234,11 +233,14 @@ export function FlashcardQuestionWidget(props) {
           )}
         </View>
 
-        {question.type === 'listenAndChoose' ? (
-          <View style={{ paddingVertical: 14, alignItems: 'center', gap: 10 }}>
+        {question.type === "listenAndChoose" ? (
+          <View style={{ paddingVertical: 14, alignItems: "center", gap: 10 }}>
             <Icon name="sound" size={46} color={colors.primary} />
-            <Body style={{ textAlign: 'center', fontSize: 15, color: colors.muted }}>
-              Tap the sound button above or below, then choose the word you heard.
+            <Body
+              style={{ textAlign: "center", fontSize: 15, color: colors.muted }}
+            >
+              Tap the sound button above or below, then choose the word you
+              heard.
             </Body>
             <Button
               title="Play Word Sound"
@@ -247,10 +249,10 @@ export function FlashcardQuestionWidget(props) {
               style={{ minHeight: 44, paddingHorizontal: 20 }}
             />
           </View>
-        ) : question.type === 'pictureToWord' ? (
+        ) : question.type === "pictureToWord" ? (
           <WordPicture word={word} height={140} />
         ) : (
-          <View style={{ paddingVertical: 18, alignItems: 'center', gap: 8 }}>
+          <View style={{ paddingVertical: 18, alignItems: "center", gap: 8 }}>
             <Icon name="book" size={36} color={colors.primary} />
             <Title style={{ fontSize: 32, color: colors.darkPurple }}>
               {word?.word}
@@ -259,10 +261,7 @@ export function FlashcardQuestionWidget(props) {
         )}
       </Card>
 
-      <AnswerChoices
-        {...props}
-        pictures={question.type === 'wordToPicture'}
-      />
+      <AnswerChoices {...props} pictures={question.type === "wordToPicture"} />
     </View>
   );
 }
@@ -300,7 +299,7 @@ export function MatchingPairsQuestionWidget({
   const handleSelectPic = (picWordId) => {
     if (disabled || isCompleted || matchedIds.includes(picWordId)) return;
     if (!selectedWordId) {
-      speak('Tap a word on the left first!', 'en-US', true);
+      speak("Tap a word on the left first!", "en-US", true);
       return;
     }
 
@@ -310,14 +309,14 @@ export function MatchingPairsQuestionWidget({
       setSelectedWordId(null);
       setMismatchPair(null);
       const wordObj = WORDS[selectedWordId];
-      speak(`Good job! ${wordObj?.word || ''}`, 'en-US', true);
+      speak(`Good job! ${wordObj?.word || ""}`, "en-US", true);
 
       if (next.length === pairs.length && !selected) {
         onAnswer(question.answerId);
       }
     } else {
       setMismatchPair({ wordId: selectedWordId, picWordId });
-      speak('Try again', 'en-US', true);
+      speak("Try again", "en-US", true);
       setTimeout(() => {
         setMismatchPair(null);
         setSelectedWordId(null);
@@ -335,9 +334,9 @@ export function MatchingPairsQuestionWidget({
             accessibilityLabel="Hear instruction"
             onPress={() =>
               speak(
-                'Tap a word on the left, then tap its matching picture on the right.',
-                'en-US',
-                true
+                "Tap a word on the left, then tap its matching picture on the right.",
+                "en-US",
+                true,
               )
             }
             style={styles.speakerBtn}
@@ -346,14 +345,15 @@ export function MatchingPairsQuestionWidget({
           </Pressable>
         </View>
 
-        <Body style={{ textAlign: 'center', fontSize: 15, color: colors.text }}>
-          {question.prompt || 'Tap a word on the left, then tap its matching picture on the right.'}
+        <Body style={{ textAlign: "center", fontSize: 15, color: colors.text }}>
+          {question.prompt ||
+            "Tap a word on the left, then tap its matching picture on the right."}
         </Body>
 
         <View
           style={{
-            alignSelf: 'center',
-            backgroundColor: '#E8F8F0',
+            alignSelf: "center",
+            backgroundColor: "#E8F8F0",
             paddingHorizontal: 12,
             paddingVertical: 4,
             borderRadius: 12,
@@ -361,12 +361,13 @@ export function MatchingPairsQuestionWidget({
         >
           <Text
             style={{
-              fontFamily: 'Nunito_800ExtraBold',
-              color: '#20A464',
+              fontFamily: "Nunito_800ExtraBold",
+              color: "#20A464",
               fontSize: 13.5,
             }}
           >
-            Matched: {isCompleted ? pairs.length : matchedIds.length} of {pairs.length} pairs
+            Matched: {isCompleted ? pairs.length : matchedIds.length} of{" "}
+            {pairs.length} pairs
           </Text>
         </View>
       </Card>
@@ -396,7 +397,7 @@ export function MatchingPairsQuestionWidget({
                 <Text
                   style={[
                     styles.matchWordText,
-                    isMatched && { color: '#267A59' },
+                    isMatched && { color: "#267A59" },
                     isSelected && { color: colors.darkPurple },
                   ]}
                 >
@@ -457,16 +458,12 @@ export function SentenceCompletionQuestionWidget(props) {
         <View style={styles.questionHeaderRow}>
           <Text style={styles.questionBadge}>Level 2: Use the Word</Text>
 
-          {question.type !== 'bestUse' && (
+          {question.type !== "bestUse" && (
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Read the sentence"
               onPress={() =>
-                speak(
-                  question.sentence.replace('____', 'blank'),
-                  'en-US',
-                  true
-                )
+                speak(question.sentence.replace("____", "blank"), "en-US", true)
               }
               style={styles.speakerBtn}
             >
@@ -475,17 +472,17 @@ export function SentenceCompletionQuestionWidget(props) {
           )}
         </View>
 
-        {question.type === 'pictureSentence' && word && (
+        {question.type === "pictureSentence" && word && (
           <WordPicture word={word} height={125} />
         )}
 
         <View style={styles.sentenceBox}>
-          <Text style={styles.sentenceText}>
-            {question.sentence}
-          </Text>
+          <Text style={styles.sentenceText}>{question.sentence}</Text>
         </View>
 
-        <Body style={{ textAlign: 'center', fontSize: 15, color: colors.muted }}>
+        <Body
+          style={{ textAlign: "center", fontSize: 15, color: colors.muted }}
+        >
           {question.prompt}
         </Body>
       </Card>
@@ -495,90 +492,156 @@ export function SentenceCompletionQuestionWidget(props) {
   );
 }
 
-export function ReviewFlashcard({ word, isPracticed = false }) {
-  const [revealed, setRevealed] = useState(false);
+export function ReviewFlashcard({ word }) {
+  const flipAnim = useRef(new Animated.Value(0)).current;
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  useEffect(() => {
+    flipAnim.setValue(0);
+    setIsFlipped(false);
+  }, [word?.id]);
+
+  const handleFlip = () => {
+    if (isFlipped) {
+      Animated.spring(flipAnim, {
+        toValue: 0,
+        friction: 8,
+        tension: 10,
+        useNativeDriver: true,
+      }).start();
+      setIsFlipped(false);
+    } else {
+      Animated.spring(flipAnim, {
+        toValue: 180,
+        friction: 8,
+        tension: 10,
+        useNativeDriver: true,
+      }).start();
+      setIsFlipped(true);
+    }
+  };
+
+  const frontRotate = flipAnim.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["0deg", "180deg"],
+  });
+  const backRotate = flipAnim.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["180deg", "360deg"],
+  });
+
+  const frontOpacity = flipAnim.interpolate({
+    inputRange: [89, 90],
+    outputRange: [1, 0],
+  });
+  const backOpacity = flipAnim.interpolate({
+    inputRange: [90, 91],
+    outputRange: [0, 1],
+  });
 
   return (
-    <Card testID={`flashcard-card-${word.id}`}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 4,
-        }}
+    <View testID={`flashcard-card-${word.id}`} style={styles.flashcardContainer}>
+      <Pressable
+        testID={`flashcard-flip-btn-${word.id}`}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={
+          isFlipped
+            ? `Word card for ${word.word}: ${word.definition}. Tap to see picture.`
+            : `Picture of ${word.word}. Tap to flip and see word definition.`
+        }
+        onPress={handleFlip}
+        style={styles.flashcardPressable}
       >
-        <Text
-          style={{
-            fontFamily: 'Nunito_800ExtraBold',
-            fontSize: 13,
-            color: colors.muted,
-            letterSpacing: 0.5,
-          }}
+        {/* FRONT SIDE (Picture) */}
+        <Animated.View
+          pointerEvents={isFlipped ? "none" : "auto"}
+          style={[
+            styles.flashcardSide,
+            {
+              transform: [{ perspective: 1000 }, { rotateY: frontRotate }],
+              opacity: frontOpacity,
+            },
+          ]}
         >
-          VOCABULARY CARD
-        </Text>
-        {isPracticed && (
-          <View
-            testID={`flashcard-practiced-badge-${word.id}`}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 4,
-              backgroundColor: '#E0F5EB',
-              paddingHorizontal: 8,
-              paddingVertical: 3,
-              borderRadius: 10,
-            }}
-          >
-            <Icon name="check" size={12} color="#2A8E67" />
-            <Text
-              style={{
-                fontFamily: 'Nunito_800ExtraBold',
-                fontSize: 11,
-                color: '#2A8E67',
+          <View style={styles.flashcardHeaderRow}>
+            <Text style={styles.flashcardSideBadge}>PICTURE</Text>
+            <Pressable
+              testID={`flashcard-sound-front-${word.id}`}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel={`Hear pronunciation of ${word.word}`}
+              onPress={(e) => {
+                e?.stopPropagation?.();
+                pronounce(word);
               }}
+              style={({ pressed }) => [
+                styles.flashcardSpeakerBtn,
+                pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+              ]}
             >
-              Practiced
-            </Text>
+              <Icon name="sound" size={18} color={colors.primary} />
+            </Pressable>
           </View>
-        )}
-      </View>
 
-      <WordPicture word={word} height={170} />
+          <View style={styles.flashcardFrontBody}>
+            <WordPicture word={word} height={180} />
+          </View>
+        </Animated.View>
 
-      <Button
-        testID={`flashcard-turn-btn-${word.id}`}
-        title={revealed ? 'Hide details' : 'Turn the card'}
-        secondary
-        icon="cards"
-        onPress={() => setRevealed((value) => !value)}
-      />
+        {/* BACK SIDE (Word + Description) */}
+        <Animated.View
+          pointerEvents={isFlipped ? "auto" : "none"}
+          style={[
+            styles.flashcardSide,
+            {
+              transform: [{ perspective: 1000 }, { rotateY: backRotate }],
+              opacity: backOpacity,
+            },
+          ]}
+        >
+          <View style={styles.flashcardHeaderRow}>
+            <Text style={styles.flashcardSideBadge}>WORD & MEANING</Text>
+            <Pressable
+              testID={`flashcard-sound-back-${word.id}`}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel={`Hear meaning of ${word.word}`}
+              onPress={(e) => {
+                e?.stopPropagation?.();
+                speak(
+                  `${word.word}. ${word.definition}. ${word.example_sentence}`,
+                  "en-US",
+                  true,
+                );
+              }}
+              style={({ pressed }) => [
+                styles.flashcardSpeakerBtn,
+                pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+              ]}
+            >
+              <Icon name="sound" size={18} color={colors.primary} />
+            </Pressable>
+          </View>
 
-      {revealed && (
-        <>
-          <Title style={{ textAlign: 'center', fontSize: 26 }}>
-            {word.word}
-          </Title>
-          <Body style={{ fontSize: 16 }}>{word.definition}</Body>
-          <Body style={{ fontSize: 15, fontStyle: 'italic', color: '#524B63' }}>
-            "{word.example_sentence}"
-          </Body>
-
-          <Button
-            testID={`flashcard-hear-btn-${word.id}`}
-            title="Hear the word"
-            icon="sound"
-            onPress={() => pronounce(word)}
-          />
-        </>
-      )}
-    </Card>
+          <View style={styles.flashcardBackBody}>
+            <Title style={styles.flashcardBackWord}>{word.word}</Title>
+            <Text style={styles.flashcardBackDefinition}>
+              {word.definition}
+            </Text>
+            <View style={styles.flashcardExampleBox}>
+              <Text style={styles.flashcardExampleText}>
+                "{word.example_sentence}"
+              </Text>
+            </View>
+          </View>
+        </Animated.View>
+      </Pressable>
+    </View>
   );
 }
 
-const escapeRegex = (text) =>
-  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function InteractiveStoryReaderWidget({
   story = CONTENT.story,
@@ -605,8 +668,8 @@ export function InteractiveStoryReaderWidget({
           `\\b(${[...targets]
             .sort((a, b) => b.word.length - a.word.length)
             .map((word) => escapeRegex(word.word))
-            .join('|')})\\b`,
-          'gi'
+            .join("|")})\\b`,
+          "gi",
         )
       : null;
 
@@ -618,7 +681,7 @@ export function InteractiveStoryReaderWidget({
       setIsReading(false);
     } else {
       setIsReading(true);
-      speak(story.text, 'en-US', true);
+      speak(story.text, "en-US", true);
     }
   };
 
@@ -648,7 +711,7 @@ export function InteractiveStoryReaderWidget({
       <Text style={styles.story}>
         {parts.map((part, index) => {
           const target = targets.find(
-            (word) => word.word.toLowerCase() === part.toLowerCase()
+            (word) => word.word.toLowerCase() === part.toLowerCase(),
           );
 
           return target ? (
@@ -683,7 +746,7 @@ export function InteractiveStoryReaderWidget({
       >
         <View style={styles.modalBackdrop}>
           <View
-            style={[styles.modalCard, { maxHeight: '84%' }]}
+            style={[styles.modalCard, { maxHeight: "84%" }]}
             accessibilityViewIsModal
           >
             <View style={styles.storyPickerHeader}>
@@ -700,7 +763,7 @@ export function InteractiveStoryReaderWidget({
                 const isCurrent = item.id === story.id;
                 const targetLabels = (item.target_word_ids || [])
                   .map((id) => WORDS[id]?.word || id)
-                  .join(', ');
+                  .join(", ");
 
                 return (
                   <Pressable
@@ -728,7 +791,7 @@ export function InteractiveStoryReaderWidget({
                       <Text
                         style={[
                           styles.storyOptionNumText,
-                          isCurrent && { color: '#FFF' },
+                          isCurrent && { color: "#FFF" },
                         ]}
                       >
                         {idx + 1}
@@ -763,7 +826,7 @@ export function InteractiveStoryReaderWidget({
               style={{
                 padding: 14,
                 borderTopWidth: 1,
-                borderColor: '#EDE6F6',
+                borderColor: "#EDE6F6",
               }}
             >
               <Button
@@ -822,16 +885,16 @@ const styles = StyleSheet.create({
     borderRadius: 22,
   },
   questionHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: 8,
   },
   questionBadge: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
     color: colors.primary,
-    backgroundColor: '#F0EBF9',
+    backgroundColor: "#F0EBF9",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 10,
@@ -840,122 +903,122 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#F0EBF9',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F0EBF9",
+    alignItems: "center",
+    justifyContent: "center",
   },
   questionTitle: {
     color: colors.darkPurple,
     fontSize: 22,
     lineHeight: 28,
-    fontFamily: 'Nunito_900Black',
+    fontFamily: "Nunito_900Black",
   },
   sentenceBox: {
-    backgroundColor: '#F8F6FD',
+    backgroundColor: "#F8F6FD",
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: '#ECE4F7',
+    borderColor: "#ECE4F7",
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginVertical: 4,
   },
   sentenceText: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 19,
-    lineHeight: 27,
+    fontFamily: fonts.reading,
+    fontSize: 20,
+    lineHeight: 28,
     color: colors.darkPurple,
-    textAlign: 'center',
+    textAlign: "center",
   },
   answers: {
     gap: 10,
   },
   answerGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     rowGap: 10,
   },
   answer: {
     minHeight: 62,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 18,
     borderWidth: 1.5,
-    borderColor: '#E7DFEE',
-    backgroundColor: '#FFFFFF',
+    borderColor: "#E7DFEE",
+    backgroundColor: "#FFFFFF",
     gap: 4,
-    shadowColor: '#8E7DA7',
+    shadowColor: "#8E7DA7",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 5,
     elevation: 2,
-    position: 'relative',
+    position: "relative",
   },
   gridTile: {
-    width: '48.5%',
+    width: "48.5%",
   },
   answerSelected: {
     borderColor: colors.primary,
-    backgroundColor: '#F6F2FD',
+    backgroundColor: "#F6F2FD",
   },
   answerText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: fonts.reading,
     fontSize: 17,
     color: colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
   pictureLabel: {
-    fontFamily: 'Nunito_700Bold',
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: colors.muted,
   },
   correct: {
-    borderColor: '#20A464',
+    borderColor: "#20A464",
     borderWidth: 2,
-    backgroundColor: '#EBF8F1',
+    backgroundColor: "#EBF8F1",
   },
   wrong: {
-    borderColor: '#E85A71',
+    borderColor: "#E85A71",
     borderWidth: 2,
-    backgroundColor: '#FFF0F3',
+    backgroundColor: "#FFF0F3",
   },
   choiceFeedbackTagCorrect: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
-    backgroundColor: '#20A464',
+    backgroundColor: "#20A464",
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 6,
     marginTop: 2,
   },
   choiceFeedbackTextCorrect: {
-    color: '#FFFFFF',
-    fontFamily: 'Nunito_800ExtraBold',
+    color: "#FFFFFF",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 10.5,
   },
   choiceFeedbackTagWrong: {
-    backgroundColor: '#E85A71',
+    backgroundColor: "#E85A71",
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 6,
     marginTop: 2,
   },
   choiceFeedbackTextWrong: {
-    color: '#FFFFFF',
-    fontFamily: 'Nunito_800ExtraBold',
+    color: "#FFFFFF",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 10.5,
   },
   answerStatus: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: colors.text,
   },
   storyHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   hint: {
@@ -963,35 +1026,36 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   story: {
-    fontFamily: 'Nunito_600SemiBold',
-    fontSize: 24,
-    lineHeight: 39,
+    fontFamily: fonts.reading,
+    fontSize: 22,
+    lineHeight: 36,
     color: colors.text,
   },
   targetWord: {
-    fontFamily: 'Nunito_900Black',
+    fontFamily: fonts.vocab,
+    fontWeight: "bold",
     color: colors.darkPurple,
-    textDecorationLine: 'underline',
-    backgroundColor: '#EEE6FD',
+    textDecorationLine: "underline",
+    backgroundColor: "#EEE6FD",
   },
   modalBackdrop: {
     flex: 1,
     padding: 22,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(54,40,77,.45)',
+    justifyContent: "center",
+    backgroundColor: "rgba(54,40,77,.45)",
   },
   modalCard: {
-    width: '100%',
+    width: "100%",
     maxWidth: 600,
-    maxHeight: '88%',
-    alignSelf: 'center',
-    backgroundColor: '#FFFCFF',
+    maxHeight: "88%",
+    alignSelf: "center",
+    backgroundColor: "#FFFCFF",
     borderRadius: 28,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   matchingBoard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
   },
   matchingColumn: {
@@ -999,10 +1063,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   columnHeader: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: colors.muted,
-    textAlign: 'center',
+    textAlign: "center",
     letterSpacing: 1,
     marginBottom: 2,
   },
@@ -1010,119 +1074,223 @@ const styles = StyleSheet.create({
     minHeight: 74,
     paddingVertical: 12,
     paddingHorizontal: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 18,
     borderWidth: 2,
-    borderColor: '#DCE7F5',
-    shadowColor: '#9986B2',
+    borderColor: "#DCE7F5",
+    shadowColor: "#9986B2",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 5,
     elevation: 2,
-    position: 'relative',
+    position: "relative",
   },
   matchPicCard: {
     paddingVertical: 6,
   },
   matchCardSelected: {
     borderColor: colors.purple,
-    backgroundColor: '#F3EDFF',
+    backgroundColor: "#F3EDFF",
     borderWidth: 3,
   },
   matchCardMatched: {
-    borderColor: '#319F77',
-    backgroundColor: '#E8F8EE',
+    borderColor: "#319F77",
+    backgroundColor: "#E8F8EE",
   },
   matchCardWrong: {
-    borderColor: '#D39A50',
-    backgroundColor: '#FFF0D7',
+    borderColor: "#D39A50",
+    backgroundColor: "#FFF0D7",
   },
   matchWordText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
     color: colors.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
   checkBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 6,
     right: 8,
-    backgroundColor: '#319F77',
+    backgroundColor: "#319F77",
     borderRadius: 12,
     width: 22,
     height: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   checkText: {
-    color: '#FFFFFF',
-    fontFamily: 'Nunito_900Black',
+    color: "#FFFFFF",
+    fontFamily: "Nunito_900Black",
     fontSize: 13,
     lineHeight: 16,
   },
   storyPickerBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
-    backgroundColor: '#EDE8FC',
-    borderColor: '#C7B4F3',
+    backgroundColor: "#EDE8FC",
+    borderColor: "#C7B4F3",
     borderWidth: 1.5,
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 16,
   },
   storyPickerBtnText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: '#7548C7',
+    color: "#7548C7",
   },
   storyPickerHeader: {
     paddingHorizontal: 20,
     paddingTop: 18,
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderColor: '#EDE6F6',
+    borderColor: "#EDE6F6",
   },
   storyOptionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     padding: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: '#E8E1F4',
+    borderColor: "#E8E1F4",
   },
   storyOptionCurrent: {
     borderColor: colors.purple,
-    backgroundColor: '#F7F3FF',
+    backgroundColor: "#F7F3FF",
   },
   storyOptionNum: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#EDE8FC',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#EDE8FC",
+    alignItems: "center",
+    justifyContent: "center",
   },
   storyOptionNumCurrent: {
     backgroundColor: colors.purple,
   },
   storyOptionNumText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: '#7056BE',
+    color: "#7056BE",
   },
   storyOptionTitle: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
     color: colors.text,
   },
   storyOptionBadge: {
-    fontFamily: 'Nunito_700Bold',
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
-    color: '#8372A5',
+    color: "#8372A5",
+  },
+  flashcardContainer: {
+    height: 320,
+    width: "100%",
+    position: "relative",
+    marginVertical: 4,
+  },
+  flashcardPressable: {
+    width: "100%",
+    height: "100%",
+  },
+  flashcardSide: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: "#DECFFC",
+    padding: 16,
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#8C77B0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+    backfaceVisibility: "hidden",
+  },
+  flashcardHeaderRow: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  flashcardSideBadge: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#8B74BC",
+    backgroundColor: "#F4EFFC",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+    letterSpacing: 0.4,
+  },
+  flashcardSpeakerBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#F2ECFC",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E2D6FA",
+  },
+  flashcardFrontBody: {
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 6,
+  },
+  flashcardBackBody: {
+    width: "100%",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingHorizontal: 8,
+  },
+  flashcardBackWord: {
+    fontFamily: fonts.vocab,
+    fontSize: 34,
+    fontWeight: "bold",
+    color: colors.darkPurple,
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+  flashcardBackDefinition: {
+    fontFamily: fonts.reading,
+    fontSize: 16,
+    lineHeight: 22,
+    color: colors.text,
+    textAlign: "center",
+  },
+  flashcardExampleBox: {
+    backgroundColor: "#FAF7FF",
+    borderWidth: 1.5,
+    borderColor: "#ECE4FA",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    marginTop: 4,
+    width: "100%",
+  },
+  flashcardExampleText: {
+    fontFamily: fonts.reading,
+    fontSize: 14.5,
+    fontStyle: "italic",
+    lineHeight: 21,
+    color: "#574E6B",
+    textAlign: "center",
   },
 });
