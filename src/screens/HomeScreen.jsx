@@ -11,13 +11,13 @@ import { Art, Icon } from "../Art";
 import { useLearning } from "../state/LearningProvider";
 import {
   Body,
-  Button,
   Card,
   Encouragement,
   Screen,
   Title,
   colors,
 } from "../components/ui";
+import { CONTENT } from "../content";
 
 export function HomeTile({ title, icon, backgroundColor, onPress }) {
   return (
@@ -49,7 +49,9 @@ export function HomeScreen({ navigation }) {
     <Screen testID="screen-home">
       <View testID="home-brand-row" style={styles.brandRow}>
         <View style={{ gap: 1 }}>
-          <Text testID="home-brand-title" style={styles.smallBrand}>LEXIARAL</Text>
+          <Text testID="home-brand-title" style={styles.smallBrand}>
+            LEXIARAL
+          </Text>
         </View>
 
         <Pressable
@@ -66,17 +68,26 @@ export function HomeScreen({ navigation }) {
         </Pressable>
       </View>
 
-      <View testID="home-hero-card" style={[styles.hero, stacked && styles.heroStacked]}>
+      <View
+        testID="home-hero-card"
+        style={[styles.hero, stacked && styles.heroStacked]}
+      >
         <View style={{ width: stacked ? "55%" : "44%" }}>
           <Art name="owl-reading" height={stacked ? 140 : 155} />
         </View>
 
         <View style={{ flex: 1, gap: 5 }}>
-          <Title testID="home-hero-title" style={[styles.heroTitle, stacked && styles.center]}>
+          <Title
+            testID="home-hero-title"
+            style={[styles.heroTitle, stacked && styles.center]}
+          >
             {state.pupilName ? `Hi, ${state.pupilName}!` : "Hi, I’m Lexi!"}
           </Title>
 
-          <Body testID="home-hero-subtitle" style={[styles.heroText, stacked && styles.center]}>
+          <Body
+            testID="home-hero-subtitle"
+            style={[styles.heroText, stacked && styles.center]}
+          >
             {state.pupilName
               ? "I’m Lexi. Ready to learn new words today?"
               : "Ready to learn new words today?"}
@@ -102,10 +113,9 @@ export function HomeScreen({ navigation }) {
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>LEARN</Text>
-            <Text style={styles.mainActionSub}>Word Flashcards</Text>
           </View>
           <View style={styles.actionPillLearn}>
-            <Text style={styles.actionPillTextLearn}>Study 20 Words</Text>
+            <Text style={styles.actionPillTextLearn}>Study {CONTENT.words?.length || 48} Words</Text>
           </View>
         </Pressable>
 
@@ -126,70 +136,75 @@ export function HomeScreen({ navigation }) {
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>PLAY</Text>
-            <Text style={styles.mainActionSub}>3 Game Levels</Text>
           </View>
           <View style={styles.actionPillPlay}>
-            <Text style={styles.actionPillTextPlay}>Easy · Avg · Diff</Text>
+            <Text style={styles.actionPillTextPlay}>3 Levels Game</Text>
           </View>
         </Pressable>
       </View>
 
-      {state.session && state.session.phase !== "done" && (
-        <Button
-          testID="home-resume-button"
-          title="Resume active level"
-          icon="arrow"
-          secondary
-          onPress={() => navigation.navigate("Activity")}
-        />
-      )}
-
-      <Pressable
-        testID="home-progress-tile"
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel="My Progress Dashboard"
-        onPress={() => navigation.navigate("Progress")}
-        style={({ pressed }) => [
-          styles.progressTile,
-          pressed && { opacity: 0.85 },
-        ]}
-      >
-        <Icon name="chart" size={26} color="#458971" />
-        <View style={{ flex: 1, gap: 1 }}>
-          <Text style={styles.progressTileTitle}>My Learning Progress</Text>
-          <Text style={styles.progressTileSub}>
-            View scores, stars, and level history
-          </Text>
-        </View>
-        <Icon name="arrow" size={16} color="#7F948B" />
-      </Pressable>
-
       <Card testID="home-stats-card" style={styles.statsCard}>
-        <View testID="home-stats-stars" style={styles.stat}>
-          <Icon name="star" color="#F5C75F" size={29} />
-          <Text style={styles.statNumber}>{state.lifetimeStars}</Text>
-          <Text style={styles.statLabel}>Stars</Text>
-        </View>
+        <Pressable
+          testID="home-stats-stars"
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`You have ${state.lifetimeStars} stars. Tap to view learning progress.`}
+          onPress={() => navigation.navigate("Progress")}
+          style={({ pressed }) => [
+            styles.statItem,
+            pressed && styles.statItemPressed,
+          ]}
+        >
+          <View style={styles.statIconBadgeStar}>
+            <Icon name="star" color="#D98A09" size={32} />
+          </View>
+          <View style={styles.statContent}>
+            <Text style={styles.statNumber}>{state.lifetimeStars}</Text>
+            <Text style={styles.statLabel}>Stars</Text>
+            <Text style={styles.statActionHint}>Tap to view</Text>
+          </View>
+        </Pressable>
 
         <View style={styles.statDivider} />
 
-        <View testID="home-stats-badges" style={styles.stat}>
-          <Icon name="badge" color="#F1A3BE" size={29} />
-          <Text style={styles.statNumber}>{state.badges.length}</Text>
-          <Text style={styles.statLabel}>Badges</Text>
-        </View>
+        <Pressable
+          testID="home-stats-badges"
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`You have ${state.badges.length} badges. Tap to view badge collection.`}
+          onPress={() => navigation.navigate("Badges")}
+          style={({ pressed }) => [
+            styles.statItem,
+            pressed && styles.statItemPressed,
+          ]}
+        >
+          <View style={styles.statIconBadgeTrophy}>
+            <Icon name="badge" color="#C73E58" size={32} />
+          </View>
+          <View style={styles.statContent}>
+            <Text style={styles.statNumber}>{state.badges.length}</Text>
+            <Text style={styles.statLabel}>Badges</Text>
+            <Text style={styles.statActionHint}>Tap to view</Text>
+          </View>
+        </Pressable>
       </Card>
 
       <Encouragement testID="home-encouragement" />
 
       <Pressable
-        testID="home-about-link"
+        testID="home-about-btn"
+        accessible
         accessibilityRole="button"
+        accessibilityLabel="About LEXIARAL information"
         onPress={() => navigation.navigate("About")}
-        style={{ alignSelf: "center", padding: 12 }}
+        style={({ pressed }) => [
+          styles.aboutBtn,
+          pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+        ]}
       >
-        <Text style={styles.aboutLink}>About LEXIARAL</Text>
+        <Icon name="info" size={16} color="#7E68A6" />
+        <Text style={styles.aboutBtnText}>About LEXIARAL</Text>
+        <Icon name="arrow" size={13} color="#9C89BF" />
       </Pressable>
     </Screen>
   );
@@ -330,31 +345,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#1B734E",
   },
-  progressTile: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#F3FBF7",
-    borderRadius: 20,
-    borderWidth: 1.5,
-    borderColor: "#CCEFE0",
-    gap: 14,
-    shadowColor: "#80BCA3",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  progressTileTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 16,
-    color: colors.text,
-  },
-  progressTileSub: {
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 13,
-    color: "#5C7C6F",
-  },
   homeTile: {
     flex: 1,
     minHeight: 145,
@@ -385,36 +375,100 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     paddingHorizontal: 12,
-    paddingVertical: 18,
-    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    borderColor: "#DECFFC",
+    shadowColor: "#8C77B0",
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
-  stat: {
+  statItem: {
     flex: 1,
     flexDirection: "row",
-    flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
-    gap: 5,
+    gap: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+  },
+  statItemPressed: {
+    backgroundColor: "rgba(108, 71, 199, 0.08)",
+    transform: [{ scale: 0.97 }],
+  },
+  statIconBadgeStar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#FFF7DB",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#FFE299",
+  },
+  statIconBadgeTrophy: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#FFF0F3",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#FFC2D1",
+  },
+  statContent: {
+    alignItems: "flex-start",
   },
   statNumber: {
     fontFamily: "Nunito_900Black",
-    fontSize: 21,
+    fontSize: 24,
+    lineHeight: 28,
     color: colors.text,
   },
   statLabel: {
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: colors.text,
   },
-  statDivider: {
-    height: 30,
-    width: 1,
-    backgroundColor: "#EAE3F1",
-  },
-  aboutLink: {
+  statActionHint: {
     fontFamily: "Nunito_700Bold",
+    fontSize: 11,
     color: "#8E7BAE",
-    fontSize: 14,
+    marginTop: 1,
+  },
+  statDivider: {
+    height: 48,
+    width: 1.5,
+    backgroundColor: "#EAE3F1",
+    marginHorizontal: 4,
+  },
+  aboutBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    gap: 8,
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 9,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: "#DECFFC",
+    shadowColor: "#8C77B0",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  aboutBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#6B5299",
   },
 });
 

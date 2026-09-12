@@ -94,9 +94,34 @@ const shapes = {
       C17 16 14 8 9 11" fill="#ED849C"/>
     <path d="M9 11 Q8 7 12 7" stroke="#72BFA4" stroke-width="2"/>
   `,
+  info: `
+    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.2" fill="none"/>
+    <circle cx="12" cy="8" r="1.3" fill="currentColor"/>
+    <path d="M12 11 V16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  `,
+  shuffle: `
+    <path d="M16 3 H21 V8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 20 L21 3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M21 16 V21 H16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M15 15 L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M4 4 L9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  `,
+  arrowLeft: `
+    <path d="M15 19 L8 12 L15 5" stroke="currentColor"
+      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  shield: `
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  `,
+  refresh: `
+    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 3v5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M21 21v-5h-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
 };
 
-export function Icon({ name, color = '#8F78D8', size = 24 }) {
+export function Icon({ name, color = '#8F78D8', size = 24, style }) {
   const shape = shapes[name] || shapes.star;
 
   const xml = `<svg xmlns="http://www.w3.org/2000/svg"
@@ -109,6 +134,7 @@ export function Icon({ name, color = '#8F78D8', size = 24 }) {
       xml={xml}
       width={size}
       height={size}
+      style={style}
     />
   );
 }

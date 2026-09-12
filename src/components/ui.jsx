@@ -40,79 +40,15 @@ export const colors = {
   cardBg: '#FFFFFF',
 };
 
-const NAV_ROUTES = ['Home', 'Levels', 'Progress', 'Badges', 'Review', 'About'];
-
-const tabs = [
-  { route: 'Home', label: 'Home', icon: 'home' },
-  { route: 'Review', label: 'Learn', icon: 'cards' },
-  { route: 'Levels', label: 'Play', icon: 'book' },
-  { route: 'Progress', label: 'Progress', icon: 'chart' },
-  { route: 'Badges', label: 'Badges', icon: 'badge' },
-];
-
-function BottomNavigation() {
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  const active =
-    route.name === 'About'
-      ? 'Home'
-      : route.name;
-
-  const openTab = (destination) => {
-    if (destination === route.name) return;
-
-    // Keep a predictable stack instead of accumulating tab screens.
-    navigation.reset({
-      index: destination === 'Home' ? 0 : 1,
-      routes:
-        destination === 'Home'
-          ? [{ name: 'Home' }]
-          : [{ name: 'Home' }, { name: destination }],
-    });
-  };
-
-  return (
-    <View style={styles.navigation}>
-      {tabs.map((tab) => {
-        const selected = active === tab.route;
-
-        return (
-          <Pressable
-            key={tab.route}
-            testID={`nav-tab-${tab.route.toLowerCase()}`}
-            accessibilityRole="tab"
-            accessibilityLabel={tab.label}
-            accessibilityState={{ selected }}
-            onPress={() => openTab(tab.route)}
-            style={styles.tab}
-          >
-            <Icon
-              name={tab.icon}
-              color={selected ? colors.primary : '#ABA9B8'}
-              size={24}
-            />
-
-            <Text
-              style={[
-                styles.tabLabel,
-                selected && { color: colors.primary },
-              ]}
-            >
-              {tab.label}
-            </Text>
-
-            {selected && <View style={styles.tabDot} />}
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
+export const fonts = {
+  vocab: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_900Black", sans-serif',
+  reading: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_700Bold", sans-serif',
+  ui: 'Nunito_800ExtraBold',
+};
 
 /**
  * Layout used by all screens.
- * Assessment screens intentionally omit the bottom tabs.
+ * Clean, distraction-free screen container without redundant bottom tabs.
  * Supports sticky bottomSlot to eliminate scroll dependency for feedback and next actions.
  */
 export function Screen({
@@ -123,10 +59,11 @@ export function Screen({
   testID,
 }) {
   const { busy, error } = useLearning();
+  const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
 
-  const hasTabs = NAV_ROUTES.includes(route.name);
+  const isSubScreen = !['Home', 'Welcome', 'Activity', 'Results'].includes(route.name);
   const hasNativeHeader = ['Activity', 'Results'].includes(route.name);
 
   return (
@@ -156,6 +93,30 @@ export function Screen({
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        {isSubScreen && (
+          <Pressable
+            testID="screen-back-btn"
+            accessibilityRole="button"
+            accessibilityLabel="Back to Home"
+            onPress={() =>
+              navigation.canGoBack()
+                ? navigation.goBack()
+                : navigation.navigate('Home')
+            }
+            style={({ pressed }) => [
+              styles.screenBackPill,
+              pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+            ]}
+          >
+            <Icon
+              name="arrowLeft"
+              size={15}
+              color={colors.primary}
+            />
+            <Text style={styles.screenBackPillText}>Back to Home</Text>
+          </Pressable>
+        )}
+
         {CONTENT.status === 'demo' && (
           <View testID="demo-status-pill" style={styles.demoPill}>
             <Text style={styles.demoText}>DEMO · Not yet ARAL-verified</Text>
@@ -189,19 +150,8 @@ export function Screen({
         >
           {bottomSlot}
         </View>
-      ) : hasTabs ? (
-        <View
-          testID="bottom-navigation-container"
-          style={{
-            paddingHorizontal: 16,
-            paddingBottom: Math.max(insets.bottom, 10),
-            paddingTop: 6,
-          }}
-        >
-          <BottomNavigation />
-        </View>
       ) : (
-        <View style={{ height: insets.bottom }} />
+        <View style={{ height: Math.max(insets.bottom, 12) }} />
       )}
     </View>
   );
@@ -444,38 +394,28 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 6,
   },
-  navigation: {
-    width: '100%',
-    maxWidth: 540,
-    alignSelf: 'center',
+  screenBackPill: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: 'rgba(255,255,255,.91)',
-    paddingVertical: 10,
-    borderRadius: 25,
-    shadowColor: '#807098',
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  tab: {
-    flex: 1,
-    minHeight: 52,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
+    gap: 6,
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: '#DECFFC',
+    shadowColor: '#8C77B0',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+    marginBottom: 4,
   },
-  tabLabel: {
-    fontFamily: 'Nunito_700Bold',
-    color: '#8D8A9B',
-    fontSize: 11,
-  },
-  tabDot: {
-    height: 4,
-    width: 4,
-    backgroundColor: colors.blue,
-    borderRadius: 2,
+  screenBackPillText: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 13,
+    color: colors.primary,
   },
   encouragement: {
     fontFamily: 'Nunito_800ExtraBold',

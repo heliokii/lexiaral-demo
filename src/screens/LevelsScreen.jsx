@@ -1,23 +1,11 @@
-import React from 'react';
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Art, Icon } from '../Art';
-import { LEVELS, UNLOCK_PERCENT } from '../content';
-import { useLearning } from '../state/LearningProvider';
-import { isLevelUnlocked, latestAttempt } from '../state/engine';
-import {
-  Body,
-  Encouragement,
-  Screen,
-  Title,
-  colors,
-} from '../components/ui';
+import { Art, Icon } from "../Art";
+import { LEVELS, UNLOCK_PERCENT } from "../content";
+import { useLearning } from "../state/LearningProvider";
+import { isLevelUnlocked, latestAttempt } from "../state/engine";
+import { Body, Encouragement, Screen, Title, colors } from "../components/ui";
 
 export default function LevelsScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
@@ -25,49 +13,52 @@ export default function LevelsScreen({ navigation }) {
   async function start(level) {
     const levelObj = LEVELS.find((l) => l.id === level);
     const next = await dispatch({
-      type: 'START',
+      type: "START",
       level,
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       at: new Date().toISOString(),
     });
 
     if (next) {
-      navigation.navigate('Activity', {
-        title: `${levelObj?.name || ''} Level`,
+      navigation.navigate("Activity", {
+        title: `${levelObj?.name || ""} Level`,
       });
     }
   }
 
   function handleLevelPress(level) {
     const active =
-      state.session?.level === level.id &&
-      state.session?.phase !== 'done';
+      state.session?.level === level.id && state.session?.phase !== "done";
 
     // 1. If this level is already in progress, seamlessly resume immediately!
     if (active) {
       const levelObj = LEVELS.find((l) => l.id === level.id);
-      navigation.navigate('Activity', {
-        title: `${levelObj?.name || ''} Level`,
+      navigation.navigate("Activity", {
+        title: `${levelObj?.name || ""} Level`,
       });
       return;
     }
 
     // 2. If another level is in progress, confirm before replacing
-    if (state.session && state.session.phase !== 'done') {
-      if (typeof window !== 'undefined' && window.confirm) {
-        if (window.confirm('Start a new activity? Your unfinished activity will be replaced.')) {
+    if (state.session && state.session.phase !== "done") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (
+          window.confirm(
+            "Start a new activity? Your unfinished activity will be replaced.",
+          )
+        ) {
           start(level.id);
         }
         return;
       }
 
       Alert.alert(
-        'Start a new activity?',
-        'Your unfinished activity will be replaced. Saved stars and completed results will stay.',
+        "Start a new activity?",
+        "Your unfinished activity will be replaced. Saved stars and completed results will stay.",
         [
-          { text: 'Keep my activity', style: 'cancel' },
-          { text: 'Start new', onPress: () => start(level.id) },
-        ]
+          { text: "Keep my activity", style: "cancel" },
+          { text: "Start new", onPress: () => start(level.id) },
+        ],
       );
       return;
     }
@@ -78,7 +69,9 @@ export default function LevelsScreen({ navigation }) {
   return (
     <Screen testID="screen-levels">
       <View testID="levels-header" style={styles.header}>
-        <Title testID="levels-title" style={styles.title}>Choose Your Level</Title>
+        <Title testID="levels-title" style={styles.title}>
+          Choose Your Level
+        </Title>
         <Body testID="levels-subtitle" style={styles.subtitle}>
           Keep learning and build your vocabulary!
         </Body>
@@ -90,16 +83,15 @@ export default function LevelsScreen({ navigation }) {
           const result = latestAttempt(state, level.id);
 
           const active =
-            state.session?.level === level.id &&
-            state.session.phase !== 'done';
+            state.session?.level === level.id && state.session.phase !== "done";
 
           const statusLabel = !unlocked
-            ? 'Locked'
+            ? "Locked"
             : active
-              ? 'In Progress · Tap to Resume'
+              ? "In Progress"
               : result
-                ? 'Completed'
-                : 'Unlocked';
+                ? "Completed"
+                : "Unlocked";
 
           const statusStyle = !unlocked
             ? styles.lockedStatus
@@ -110,11 +102,11 @@ export default function LevelsScreen({ navigation }) {
                 : styles.unlockedStatus;
 
           const textColor = !unlocked
-            ? '#8A8596'
+            ? "#8A8596"
             : active
-              ? '#D24B3B'
+              ? "#D24B3B"
               : result
-                ? '#1E8D5B'
+                ? "#1E8D5B"
                 : colors.primary;
 
           return (
@@ -133,7 +125,10 @@ export default function LevelsScreen({ navigation }) {
                 pressed && !busy && { transform: [{ scale: 0.985 }] },
               ]}
             >
-              <View testID={`level-status-${level.id}`} style={[styles.status, statusStyle]}>
+              <View
+                testID={`level-status-${level.id}`}
+                style={[styles.status, statusStyle]}
+              >
                 <Text style={[styles.statusText, { color: textColor }]}>
                   {statusLabel}
                 </Text>
@@ -143,17 +138,22 @@ export default function LevelsScreen({ navigation }) {
                 <Art
                   name={
                     !unlocked
-                      ? 'owl-thinking'
+                      ? "owl-thinking"
                       : level.id === 1
-                        ? 'owl-cheering'
-                        : 'owl-reading'
+                        ? "owl-cheering"
+                        : "owl-reading"
                   }
                   height={94}
                 />
               </View>
 
               <View style={styles.levelText}>
-                <Text style={[styles.levelTitle, active && { color: colors.primary }]}>
+                <Text
+                  style={[
+                    styles.levelTitle,
+                    active && { color: colors.primary },
+                  ]}
+                >
                   Level {level.id}: {level.name}
                 </Text>
 
@@ -169,24 +169,28 @@ export default function LevelsScreen({ navigation }) {
                     <Icon
                       name="star"
                       size={18}
-                      color={result || unlocked ? '#F5A623' : '#D9D3E6'}
+                      color={result || unlocked ? "#F5A623" : "#D9D3E6"}
                     />
                     <Icon
                       name="star"
                       size={18}
                       color={
-                        result && result.total > 0 && result.score / result.total >= 0.5
-                          ? '#F5A623'
-                          : '#D9D3E6'
+                        result &&
+                        result.total > 0 &&
+                        result.score / result.total >= 0.5
+                          ? "#F5A623"
+                          : "#D9D3E6"
                       }
                     />
                     <Icon
                       name="star"
                       size={18}
                       color={
-                        result && result.total > 0 && result.score / result.total >= 0.8
-                          ? '#F5A623'
-                          : '#D9D3E6'
+                        result &&
+                        result.total > 0 &&
+                        result.score / result.total >= 0.8
+                          ? "#F5A623"
+                          : "#D9D3E6"
                       }
                     />
                     {result && (
@@ -194,20 +198,18 @@ export default function LevelsScreen({ navigation }) {
                         {result.score}/{result.total} stars
                       </Text>
                     )}
-                    {!result && unlocked && (
-                      <Text style={styles.small}>Ready when you are!</Text>
-                    )}
+                    
                     {!unlocked && (
                       <Text style={styles.small}>
                         {(state.masteryThreshold != null
                           ? state.masteryThreshold
                           : UNLOCK_PERCENT) === 0
-                          ? `Complete ${level.id === 2 ? 'Easy' : 'Average'} to unlock`
+                          ? `Complete ${level.id === 2 ? "Easy" : "Average"} to unlock`
                           : `Earn ${
                               state.masteryThreshold != null
                                 ? state.masteryThreshold
                                 : UNLOCK_PERCENT
-                            }% in ${level.id === 2 ? 'Easy' : 'Average'}`}
+                            }% in ${level.id === 2 ? "Easy" : "Average"}`}
                       </Text>
                     )}
                   </View>
@@ -216,9 +218,11 @@ export default function LevelsScreen({ navigation }) {
 
               <View style={[styles.chevron, active && styles.chevronActive]}>
                 <Icon
-                  name={unlocked ? 'arrow' : 'lock'}
+                  name={unlocked ? "arrow" : "lock"}
                   size={16}
-                  color={active ? '#FFFFFF' : unlocked ? colors.primary : '#9A95A7'}
+                  color={
+                    active ? "#FFFFFF" : unlocked ? colors.primary : "#9A95A7"
+                  }
                 />
               </View>
             </Pressable>
@@ -250,82 +254,82 @@ const styles = StyleSheet.create({
   },
   levelCard: {
     minHeight: 124,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 22,
     paddingHorizontal: 14,
     paddingVertical: 14,
     paddingTop: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     borderWidth: 1.5,
-    borderColor: '#ECE6F7',
-    shadowColor: '#7C67A6',
+    borderColor: "#ECE6F7",
+    shadowColor: "#7C67A6",
     shadowOpacity: 0.08,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
     elevation: 2,
-    position: 'relative',
+    position: "relative",
   },
   activeCard: {
     borderColor: colors.primary,
     borderWidth: 2,
-    backgroundColor: '#FAF7FF',
+    backgroundColor: "#FAF7FF",
     shadowOpacity: 0.14,
   },
   lockedCard: {
-    backgroundColor: 'rgba(240,237,246,.75)',
-    borderColor: '#E7E2F0',
+    backgroundColor: "rgba(240,237,246,.75)",
+    borderColor: "#E7E2F0",
   },
   owl: {
-    width: '28%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "28%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   levelText: {
     flex: 1,
     gap: 4,
   },
   levelTitle: {
-    fontFamily: 'Nunito_900Black',
+    fontFamily: "Nunito_900Black",
     fontSize: 18,
     color: colors.darkPurple,
   },
   description: {
-    fontFamily: 'Nunito_700Bold',
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
     color: colors.text,
   },
   resumeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     marginTop: 3,
   },
   resumeText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: colors.primary,
   },
   small: {
-    fontFamily: 'Nunito_600SemiBold',
+    fontFamily: "Nunito_600SemiBold",
     fontSize: 12,
     lineHeight: 16,
     color: colors.muted,
   },
   score: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     marginTop: 2,
   },
   scoreText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: '#8D7040',
+    color: "#8D7040",
   },
   status: {
-    position: 'absolute',
+    position: "absolute",
     right: 12,
     top: 8,
     borderRadius: 8,
@@ -333,19 +337,19 @@ const styles = StyleSheet.create({
     paddingVertical: 2.5,
   },
   unlockedStatus: {
-    backgroundColor: '#EBF4FE',
+    backgroundColor: "#EBF4FE",
   },
   inProgressStatus: {
-    backgroundColor: '#FEEDEA',
+    backgroundColor: "#FEEDEA",
   },
   completedStatus: {
-    backgroundColor: '#E8F8F0',
+    backgroundColor: "#E8F8F0",
   },
   lockedStatus: {
-    backgroundColor: '#E9E4F0',
+    backgroundColor: "#E9E4F0",
   },
   statusText: {
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 10.5,
     letterSpacing: 0.2,
   },
@@ -353,9 +357,9 @@ const styles = StyleSheet.create({
     height: 32,
     width: 32,
     borderRadius: 16,
-    backgroundColor: '#F0EBF9',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F0EBF9",
+    alignItems: "center",
+    justifyContent: "center",
   },
   chevronActive: {
     backgroundColor: colors.primary,
