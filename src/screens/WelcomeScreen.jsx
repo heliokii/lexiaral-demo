@@ -2,18 +2,26 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Art } from "../Art";
+import { AnimatedLexi } from "../components/AnimatedLexi";
 import { useLearning } from "../state/LearningProvider";
 import { Body, Button, Card, Screen, Title, colors } from "../components/ui";
+import { sanitizePupilInput } from "../utils/sanitizer";
 
 export function WelcomeScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
-  const [pupilInput, setPupilInput] = useState(state?.pupilName || "");
+  const [pupilInput, setPupilInput] = useState(
+    sanitizePupilInput(state?.pupilName || "", 20)
+  );
+
+  const handleInputChange = (text) => {
+    const cleaned = sanitizePupilInput(text, 20);
+    setPupilInput(cleaned);
+  };
 
   const handleStart = async () => {
-    const trimmed = pupilInput.trim();
-    if (trimmed) {
-      await dispatch({ type: "SET_PUPIL_NAME", name: trimmed });
-    }
+    const cleaned = sanitizePupilInput(pupilInput, 20).trim();
+    const finalName = cleaned || "Learner";
+    await dispatch({ type: "SET_PUPIL_NAME", name: finalName });
     navigation.replace("Home");
   };
 
@@ -21,7 +29,7 @@ export function WelcomeScreen({ navigation }) {
     <Screen testID="screen-welcome">
       <View testID="welcome-content-container" style={styles.welcome}>
         <Text testID="welcome-brand-text" style={styles.brand}>LEXIARAL</Text>
-        <Art name="owl-reading" height={220} />
+        <AnimatedLexi name="owl-reading" height={200} />
         <Title testID="welcome-title" style={styles.center}>Learn Words. Play. Grow.</Title>
         <Body testID="welcome-subtitle" style={styles.center}>
           English Vocabulary Game for Grade 3 Learners
@@ -32,11 +40,11 @@ export function WelcomeScreen({ navigation }) {
           <TextInput
             testID="welcome-pupil-input"
             value={pupilInput}
-            onChangeText={setPupilInput}
+            onChangeText={handleInputChange}
             placeholder="e.g. Pupil 01, Alex, or Learner"
             placeholderTextColor="#9EA5B9"
             style={styles.pupilTextInput}
-            maxLength={28}
+            maxLength={20}
             autoCapitalize="words"
           />
           <Body testID="welcome-pupil-hint" style={styles.pupilInputHint}>
