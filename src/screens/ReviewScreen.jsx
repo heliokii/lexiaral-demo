@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { CONTENT } from "../content";
 import { Icon } from "../Art";
 import { Body, Screen, Title, colors } from "../components/ui";
 import { ReviewFlashcard } from "../components/learning";
+import { playCardSwipeSfx, setBgmFocusMode, stopAudio } from "../audio";
 
 export function ReviewScreen() {
   const [words, setWords] = useState(() => [...(CONTENT.words || [])]);
@@ -12,6 +13,9 @@ export function ReviewScreen() {
   const [viewMode, setViewMode] = useState("card"); // 'card' (single card mode) or 'list'
 
   const shuffleAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const slideOpacity = useRef(new Animated.Value(1)).current;
+  const isTransitioning = useRef(false);
 
   const safeIndex = Math.min(
     currentIndex,
@@ -19,7 +23,17 @@ export function ReviewScreen() {
   );
   const currentWord = words[safeIndex];
 
+  // Enable soft BGM focus mode while studying flashcards
+  useEffect(() => {
+    setBgmFocusMode(true);
+    return () => {
+      setBgmFocusMode(false);
+      stopAudio();
+    };
+  }, []);
+
   const handleShuffle = () => {
+    stopAudio();
     Animated.sequence([
       Animated.timing(shuffleAnim, {
         toValue: 1,
@@ -41,6 +55,87 @@ export function ReviewScreen() {
     }
     setWords(shuffled);
     setCurrentIndex(0);
+  };
+
+  const handleNext = () => {
+    if (safeIndex >= words.length - 1 || isTransitioning.current) return;
+    stopAudio();
+    playCardSwipeSfx();
+    isTransitioning.current = true;
+
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: -140,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideOpacity, {
+        toValue: 0,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setCurrentIndex((prev) => Math.min(words.length - 1, prev + 1));
+      slideAnim.setValue(140);
+      Animated.parallel([
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          friction: 8,
+          tension: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideOpacity, {
+          toValue: 1,
+          duration: 120,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        isTransitioning.current = false;
+      });
+    });
+  };
+
+  const handlePrev = () => {
+    if (safeIndex <= 0 || isTransitioning.current) return;
+    stopAudio();
+    playCardSwipeSfx();
+    isTransitioning.current = true;
+
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: 140,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideOpacity, {
+        toValue: 0,
+        duration: 90,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setCurrentIndex((prev) => Math.max(0, prev - 1));
+      slideAnim.setValue(-140);
+      Animated.parallel([
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          friction: 8,
+          tension: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideOpacity, {
+          toValue: 1,
+          duration: 120,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        isTransitioning.current = false;
+      });
+    });
+  };
+
+  const handleToggleView = () => {
+    stopAudio();
+    setViewMode((prev) => (prev === "card" ? "list" : "card"));
   };
 
   return (
@@ -76,7 +171,7 @@ export function ReviewScreen() {
           accessible
           accessibilityRole="button"
           accessibilityLabel={`Switch to ${viewMode === "card" ? "list" : "card"} mode`}
-          onPress={() => setViewMode(viewMode === "card" ? "list" : "card")}
+          onPress={handleToggleView}
           style={({ pressed }) => [
             styles.actionBtn,
             pressed && { opacity: 0.8, transform: [{ scale: 0.96 }] },
@@ -99,7 +194,9 @@ export function ReviewScreen() {
             style={[
               { width: "100%" },
               {
+                opacity: slideOpacity,
                 transform: [
+                  { translateX: slideAnim },
                   {
                     translateX: shuffleAnim.interpolate({
                       inputRange: [0, 0.5, 1],
@@ -132,7 +229,7 @@ export function ReviewScreen() {
               accessibilityRole="button"
               accessibilityLabel="Previous word"
               disabled={safeIndex === 0}
-              onPress={() => setCurrentIndex(Math.max(0, safeIndex - 1))}
+              onPress={handlePrev}
               style={[
                 styles.pagerBtn,
                 safeIndex === 0 && styles.pagerBtnDisabled,
@@ -165,11 +262,7 @@ export function ReviewScreen() {
               accessibilityRole="button"
               accessibilityLabel="Next word"
               disabled={safeIndex >= words.length - 1}
-              onPress={() =>
-                setCurrentIndex(
-                  Math.min(words.length - 1, safeIndex + 1),
-                )
-              }
+              onPress={handleNext}
               style={[
                 styles.pagerBtn,
                 safeIndex >= words.length - 1 && styles.pagerBtnDisabled,

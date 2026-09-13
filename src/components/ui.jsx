@@ -16,6 +16,7 @@ import { SvgXml } from 'react-native-svg';
 import assets from '../assets.generated';
 import { CONTENT } from '../content';
 import { Icon } from '../Art';
+import { playTapSfx, stopAudio } from '../audio';
 import { useLearning } from '../state/LearningProvider';
 
 export const colors = {
@@ -97,23 +98,22 @@ export function Screen({
           <Pressable
             testID="screen-back-btn"
             accessibilityRole="button"
-            accessibilityLabel="Back to Home"
-            onPress={() =>
-              navigation.canGoBack()
-                ? navigation.goBack()
-                : navigation.navigate('Home')
-            }
+            accessibilityLabel="Go back"
+            onPress={() => {
+              playTapSfx();
+              stopAudio();
+              navigation.navigate('Home');
+            }}
             style={({ pressed }) => [
-              styles.screenBackPill,
-              pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+              styles.screenBackBtn,
+              pressed && { opacity: 0.65, transform: [{ scale: 0.94 }] },
             ]}
           >
             <Icon
               name="arrowLeft"
-              size={15}
-              color={colors.primary}
+              size={22}
+              color="#8065CE"
             />
-            <Text style={styles.screenBackPillText}>Back to Home</Text>
           </Pressable>
         )}
 
@@ -209,6 +209,11 @@ export function Button({
 
   const textColor = secondary ? colors.primary : '#FFFFFF';
 
+  const handlePress = (e) => {
+    playTapSfx();
+    if (onPress) onPress(e);
+  };
+
   return (
     <Pressable
       testID={testID}
@@ -216,7 +221,7 @@ export function Button({
       accessibilityLabel={accessibilityLabel || title}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPress={onPress}
+      onPress={handlePress}
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: background },
@@ -250,10 +255,68 @@ export function Button({
         <Icon
           name="arrow"
           color={secondary ? colors.primary : '#FFFFFF'}
-          size={18}
+          size={20}
         />
       )}
     </Pressable>
+  );
+}
+
+export function HeaderAudioToggle() {
+  const { state, dispatch, busy } = useLearning();
+  if (!state) return null;
+  const isMuted = !state.audioEnabled;
+
+  return (
+    <Pressable
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={isMuted ? 'Unmute sound' : 'Mute sound'}
+      disabled={busy}
+      onPress={() => {
+        playTapSfx();
+        stopAudio();
+        dispatch({ type: 'SET_AUDIO', enabled: isMuted });
+      }}
+      style={({ pressed }) => [
+        styles.headerAudioBtn,
+        isMuted && styles.headerAudioBtnMuted,
+        pressed && { opacity: 0.7 },
+      ]}
+    >
+      <Icon
+        name={isMuted ? 'mute' : 'sound'}
+        size={20}
+        color={isMuted ? '#8A7F9D' : '#7056BE'}
+      />
+    </Pressable>
+  );
+}
+
+export function ActivityHeader({ title, onBack }) {
+  return (
+    <View style={styles.activityHeader}>
+      <Pressable
+        testID="activity-back-btn"
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        onPress={() => {
+          playTapSfx();
+          if (onBack) onBack();
+        }}
+        style={({ pressed }) => [
+          styles.activityBackBtn,
+          pressed && { opacity: 0.7, transform: [{ scale: 0.96 }] },
+        ]}
+      >
+        <Icon name="arrowLeft" size={18} color="#8065CE" />
+      </Pressable>
+
+      <Text style={styles.activityHeaderTitle}>{title}</Text>
+
+      <HeaderAudioToggle />
+    </View>
   );
 }
 
@@ -394,28 +457,15 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 6,
   },
-  screenBackPill: {
-    flexDirection: 'row',
+  screenBackBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: '#DECFFC',
-    shadowColor: '#8C77B0',
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    backgroundColor: 'transparent',
     marginBottom: 4,
-  },
-  screenBackPillText: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 13,
-    color: colors.primary,
   },
   encouragement: {
     fontFamily: 'Nunito_800ExtraBold',
@@ -431,5 +481,43 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 16,
     paddingTop: 8,
+  },
+  activityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#EAE9FC',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    width: '100%',
+  },
+  activityBackBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  activityHeaderTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 18,
+    color: '#3E3B50',
+    textAlign: 'center',
+    flex: 1,
+  },
+  headerAudioBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 18,
+    backgroundColor: '#FAF8FE',
+    borderWidth: 1,
+    borderColor: '#DED6F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAudioBtnMuted: {
+    backgroundColor: '#F3EFF8',
+    borderColor: '#DDD6E8',
   },
 });

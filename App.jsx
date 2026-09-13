@@ -6,7 +6,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -20,7 +23,7 @@ import {
 } from '@expo-google-fonts/nunito';
 
 import { Art, Icon } from './src/Art';
-import { stopAudio } from './src/audio';
+import { playTapSfx, setBgmFocusMode, stopAudio } from './src/audio';
 import { LearningProvider, useLearning } from './src/state/LearningProvider';
 
 import {
@@ -37,6 +40,7 @@ import {
 } from './src/screens';
 
 const Stack = createNativeStackNavigator();
+const navigationRef = createNavigationContainerRef();
 
 function FontLoadingScreen({ error }) {
   return (
@@ -69,6 +73,7 @@ function HeaderAudioToggle() {
       accessibilityLabel={isMuted ? 'Unmute sound' : 'Mute sound'}
       disabled={busy}
       onPress={() => {
+        playTapSfx();
         stopAudio();
         dispatch({ type: 'SET_AUDIO', enabled: isMuted });
       }}
@@ -106,7 +111,20 @@ export default function App() {
           <LearningProvider>
             <StatusBar style="dark" />
 
-            <NavigationContainer onStateChange={stopAudio}>
+            <NavigationContainer
+              ref={navigationRef}
+              onStateChange={() => {
+                stopAudio();
+                if (navigationRef.isReady()) {
+                  const routeName = navigationRef.getCurrentRoute()?.name;
+                  const isFocusScreen =
+                    routeName === 'Review' ||
+                    routeName === 'Activity' ||
+                    routeName === 'Levels';
+                  setBgmFocusMode(isFocusScreen);
+                }
+              }}
+            >
               <Stack.Navigator
                 initialRouteName="Welcome"
                 screenOptions={{
@@ -122,26 +140,15 @@ export default function App() {
                 <Stack.Screen
                   name="Activity"
                   component={ActivityScreen}
-                  options={({ route }) => ({
-                    headerShown: true,
-                    title: route.params?.title || 'Let’s Learn',
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: '#EAE9FC' },
-                    headerTintColor: '#8065CE',
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: {
-                      fontFamily: 'Nunito_800ExtraBold',
-                      fontSize: 18,
-                      color: '#3E3B50',
-                    },
-                    headerRight: () => <HeaderAudioToggle />,
-                  })}
+                  options={{
+                    headerShown: false,
+                  }}
                 />
 
                 <Stack.Screen
                   name="Results"
                   component={ResultsScreen}
-                  options={{
+                  options={({ navigation, route }) => ({
                     headerShown: true,
                     title: 'My Result',
                     headerShadowVisible: false,
@@ -152,8 +159,31 @@ export default function App() {
                       fontFamily: 'Nunito_800ExtraBold',
                       fontSize: 18,
                     },
+                    headerLeft: () => (
+                      <Pressable
+                        testID="results-header-back-btn"
+                        accessible
+                        accessibilityRole="button"
+                        accessibilityLabel="Go back"
+                        onPress={() => {
+                          playTapSfx();
+                          stopAudio();
+                          if (route.params?.from === 'Progress') {
+                            navigation.navigate('Progress');
+                          } else {
+                            navigation.navigate('Levels');
+                          }
+                        }}
+                        style={({ pressed }) => [
+                          styles.headerBackBtn,
+                          pressed && { opacity: 0.65, transform: [{ scale: 0.94 }] },
+                        ]}
+                      >
+                        <Icon name="arrowLeft" size={22} color="#8065CE" />
+                      </Pressable>
+                    ),
                     headerRight: () => <HeaderAudioToggle />,
-                  }}
+                  })}
                 />
 
                 <Stack.Screen name="Final" component={FinalScreen} />
@@ -227,5 +257,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#777089',
     textAlign: 'center',
+  },
+  headerBackBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
+    backgroundColor: 'transparent',
   },
 });

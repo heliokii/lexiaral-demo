@@ -119,6 +119,39 @@ const shapes = {
     <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M21 21v-5h-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
   `,
+  close: `
+    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  x: `
+    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  play: `
+    <path d="M7.5 5 C6.7 4.5 5.5 5 5.5 6 L5.5 18 C5.5 19 6.7 19.5 7.5 19 L18.5 13 C19.3 12.5 19.3 11.5 18.5 11 Z" fill="currentColor"/>
+  `,
+  replay: `
+    <path d="M4 11 A8 8 0 1 1 6.2 16.8" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+    <polyline points="4 5.5 4 11.5 10 11.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  `,
+  grid: `
+    <rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="currentColor"/>
+    <rect x="13.5" y="3.5" width="7" height="7" rx="2" fill="currentColor"/>
+    <rect x="3.5" y="13.5" width="7" height="7" rx="2" fill="currentColor"/>
+    <rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="currentColor"/>
+  `,
+  checklist: `
+    <rect x="4" y="3" width="16" height="18" rx="3.5" stroke="currentColor" stroke-width="2.4" fill="none"/>
+    <path d="M8 8.5 L10 10.5 L14.5 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="8" y1="17.5" x2="13" y2="17.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+  `,
+  award: `
+    <path d="M7 4 H17 V10 C17 12.8 14.8 15 12 15 C9.2 15 7 12.8 7 10 V4 Z" fill="currentColor"/>
+    <path d="M7 6 H4 C4 9 5.5 11 7 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M17 6 H20 C20 9 18.5 11 17 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M12 15 V19 M8 21 H16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  `,
 };
 
 export function Icon({ name, color = '#8F78D8', size = 24, style }) {

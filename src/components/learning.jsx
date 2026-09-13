@@ -15,7 +15,15 @@ import { SvgXml } from "react-native-svg";
 import assets from "../assets.generated";
 import { CONTENT, WORDS, STORIES } from "../content";
 import { illustrations } from "../illustrations";
-import { pronounce, speak, stopAudio } from "../audio";
+import {
+  playCardFlipSfx,
+  playErrorSfx,
+  playMatchSfx,
+  playSuccessSfx,
+  pronounce,
+  speak,
+  stopAudio,
+} from "../audio";
 import { Art, Icon } from "../Art";
 import { Body, Button, Card, Title, colors, fonts } from "./ui";
 
@@ -209,6 +217,8 @@ export function FlashcardQuestionWidget(props) {
     }
   }, [question.id]);
 
+  const isListenQuestion = question.type === "listenAndChoose";
+
   return (
     <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
@@ -216,12 +226,12 @@ export function FlashcardQuestionWidget(props) {
           <Title style={styles.questionTitle}>
             {question.type === "pictureToWord"
               ? "What is this?"
-              : question.type === "listenAndChoose"
+              : isListenQuestion
                 ? "Listen to the word"
                 : `Find the "${word?.word || "word"}"`}
           </Title>
 
-          {word && (
+          {word && !isListenQuestion && (
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Hear the word"
@@ -233,21 +243,24 @@ export function FlashcardQuestionWidget(props) {
           )}
         </View>
 
-        {question.type === "listenAndChoose" ? (
-          <View style={{ paddingVertical: 14, alignItems: "center", gap: 10 }}>
-            <Icon name="sound" size={46} color={colors.primary} />
-            <Body
-              style={{ textAlign: "center", fontSize: 15, color: colors.muted }}
-            >
-              Tap the sound button above or below, then choose the word you
-              heard.
-            </Body>
-            <Button
-              title="Play Word Sound"
-              icon="sound"
+        {isListenQuestion ? (
+          <View style={styles.listenHeroContainer}>
+            <Pressable
+              testID="listen-hero-play-btn"
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Listen to the word again"
               onPress={() => pronounce(word)}
-              style={{ minHeight: 44, paddingHorizontal: 20 }}
-            />
+              style={({ pressed }) => [
+                styles.listenHeroBtn,
+                pressed && { transform: [{ scale: 0.94 }], opacity: 0.85 },
+              ]}
+            >
+              <View style={styles.listenHeroBtnInner}>
+                <Icon name="sound" size={36} color="#FFFFFF" />
+              </View>
+            </Pressable>
+            <Text style={styles.listenHeroText}>Tap to listen again</Text>
           </View>
         ) : question.type === "pictureToWord" ? (
           <WordPicture word={word} height={140} />
@@ -299,7 +312,6 @@ export function MatchingPairsQuestionWidget({
   const handleSelectPic = (picWordId) => {
     if (disabled || isCompleted || matchedIds.includes(picWordId)) return;
     if (!selectedWordId) {
-      speak("Tap a word on the left first!", "en-US", true);
       return;
     }
 
@@ -308,19 +320,18 @@ export function MatchingPairsQuestionWidget({
       setMatchedIds(next);
       setSelectedWordId(null);
       setMismatchPair(null);
-      const wordObj = WORDS[selectedWordId];
-      speak(`Good job! ${wordObj?.word || ""}`, "en-US", true);
+      playSuccessSfx();
 
       if (next.length === pairs.length && !selected) {
         onAnswer(question.answerId);
       }
     } else {
       setMismatchPair({ wordId: selectedWordId, picWordId });
-      speak("Try again", "en-US", true);
+      playErrorSfx();
       setTimeout(() => {
         setMismatchPair(null);
         setSelectedWordId(null);
-      }, 700);
+      }, 600);
     }
   };
 
@@ -497,11 +508,17 @@ export function ReviewFlashcard({ word }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
+    stopAudio();
     flipAnim.setValue(0);
     setIsFlipped(false);
+    return () => {
+      stopAudio();
+    };
   }, [word?.id]);
 
   const handleFlip = () => {
+    stopAudio();
+    playCardFlipSfx();
     if (isFlipped) {
       Animated.spring(flipAnim, {
         toValue: 0,
@@ -540,103 +557,115 @@ export function ReviewFlashcard({ word }) {
   });
 
   return (
-    <View testID={`flashcard-card-${word.id}`} style={styles.flashcardContainer}>
-      <Pressable
-        testID={`flashcard-flip-btn-${word.id}`}
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={
-          isFlipped
-            ? `Word card for ${word.word}: ${word.definition}. Tap to see picture.`
-            : `Picture of ${word.word}. Tap to flip and see word definition.`
-        }
-        onPress={handleFlip}
-        style={styles.flashcardPressable}
+    <View
+      testID={`flashcard-card-${word.id}`}
+      style={styles.flashcardContainer}
+    >
+      {/* FRONT SIDE (Picture) */}
+      <Animated.View
+        pointerEvents={isFlipped ? "none" : "auto"}
+        style={[
+          styles.flashcardSide,
+          {
+            transform: [{ perspective: 1000 }, { rotateY: frontRotate }],
+            opacity: frontOpacity,
+          },
+        ]}
       >
-        {/* FRONT SIDE (Picture) */}
-        <Animated.View
-          pointerEvents={isFlipped ? "none" : "auto"}
-          style={[
-            styles.flashcardSide,
-            {
-              transform: [{ perspective: 1000 }, { rotateY: frontRotate }],
-              opacity: frontOpacity,
-            },
-          ]}
-        >
-          <View style={styles.flashcardHeaderRow}>
+        <View style={styles.flashcardHeaderRow}>
+          <Pressable
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel="Flip card to see word definition"
+            onPress={handleFlip}
+          >
             <Text style={styles.flashcardSideBadge}>PICTURE</Text>
-            <Pressable
-              testID={`flashcard-sound-front-${word.id}`}
-              accessible
-              accessibilityRole="button"
-              accessibilityLabel={`Hear pronunciation of ${word.word}`}
-              onPress={(e) => {
-                e?.stopPropagation?.();
-                pronounce(word);
-              }}
-              style={({ pressed }) => [
-                styles.flashcardSpeakerBtn,
-                pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
-              ]}
-            >
-              <Icon name="sound" size={18} color={colors.primary} />
-            </Pressable>
-          </View>
+          </Pressable>
+          <Pressable
+            testID={`flashcard-sound-front-${word.id}`}
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={`Hear pronunciation of ${word.word}`}
+            onPress={() => pronounce(word)}
+            style={({ pressed }) => [
+              styles.flashcardSpeakerBtn,
+              pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+            ]}
+          >
+            <Icon name="sound" size={18} color={colors.primary} />
+          </Pressable>
+        </View>
 
-          <View style={styles.flashcardFrontBody}>
-            <WordPicture word={word} height={180} />
-          </View>
-        </Animated.View>
-
-        {/* BACK SIDE (Word + Description) */}
-        <Animated.View
-          pointerEvents={isFlipped ? "auto" : "none"}
-          style={[
-            styles.flashcardSide,
-            {
-              transform: [{ perspective: 1000 }, { rotateY: backRotate }],
-              opacity: backOpacity,
-            },
-          ]}
+        <Pressable
+          testID={`flashcard-flip-btn-${word.id}`}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`Picture of ${word.word}. Tap to flip and see word definition.`}
+          onPress={handleFlip}
+          style={styles.flashcardFrontBody}
         >
-          <View style={styles.flashcardHeaderRow}>
-            <Text style={styles.flashcardSideBadge}>WORD & MEANING</Text>
-            <Pressable
-              testID={`flashcard-sound-back-${word.id}`}
-              accessible
-              accessibilityRole="button"
-              accessibilityLabel={`Hear meaning of ${word.word}`}
-              onPress={(e) => {
-                e?.stopPropagation?.();
-                speak(
-                  `${word.word}. ${word.definition}. ${word.example_sentence}`,
-                  "en-US",
-                  true,
-                );
-              }}
-              style={({ pressed }) => [
-                styles.flashcardSpeakerBtn,
-                pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
-              ]}
-            >
-              <Icon name="sound" size={18} color={colors.primary} />
-            </Pressable>
-          </View>
+          <WordPicture word={word} height={180} />
+        </Pressable>
+      </Animated.View>
 
-          <View style={styles.flashcardBackBody}>
-            <Title style={styles.flashcardBackWord}>{word.word}</Title>
-            <Text style={styles.flashcardBackDefinition}>
-              {word.definition}
+      {/* BACK SIDE (Word + Description) */}
+      <Animated.View
+        pointerEvents={isFlipped ? "auto" : "none"}
+        style={[
+          styles.flashcardSide,
+          {
+            transform: [{ perspective: 1000 }, { rotateY: backRotate }],
+            opacity: backOpacity,
+          },
+        ]}
+      >
+        <View style={styles.flashcardHeaderRow}>
+          <Pressable
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel="Flip card to see picture"
+            onPress={handleFlip}
+          >
+            <Text style={styles.flashcardSideBadge}>WORD & MEANING</Text>
+          </Pressable>
+          <Pressable
+            testID={`flashcard-sound-back-${word.id}`}
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={`Hear meaning of ${word.word}`}
+            onPress={() =>
+              speak(
+                `${word.word}. ${word.definition}. ${word.example_sentence}`,
+                "en-US",
+                true,
+              )
+            }
+            style={({ pressed }) => [
+              styles.flashcardSpeakerBtn,
+              pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+            ]}
+          >
+            <Icon name="sound" size={18} color={colors.primary} />
+          </Pressable>
+        </View>
+
+        <Pressable
+          testID={`flashcard-flip-btn-back-${word.id}`}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`Word card for ${word.word}: ${word.definition}. Tap to see picture.`}
+          onPress={handleFlip}
+          style={styles.flashcardBackBody}
+        >
+          <Title style={styles.flashcardBackWord}>{word.word}</Title>
+          <Text style={styles.flashcardBackDefinition}>{word.definition}</Text>
+          <View style={styles.flashcardExampleBox}>
+            <Text style={styles.flashcardExampleText}>
+              "{word.example_sentence}"
             </Text>
-            <View style={styles.flashcardExampleBox}>
-              <Text style={styles.flashcardExampleText}>
-                "{word.example_sentence}"
-              </Text>
-            </View>
           </View>
-        </Animated.View>
-      </Pressable>
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }
@@ -703,10 +732,6 @@ export function InteractiveStoryReaderWidget({
           </Pressable>
         )}
       </View>
-
-      <Body style={styles.hint}>
-        Tap the purple words to see their meanings.
-      </Body>
 
       <Text style={styles.story}>
         {parts.map((part, index) => {
@@ -1292,5 +1317,40 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: "#574E6B",
     textAlign: "center",
+  },
+  listenHeroContainer: {
+    paddingVertical: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  listenHeroBtn: {
+    width: 86,
+    height: 86,
+    borderRadius: 43,
+    backgroundColor: "#F2ECFC",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#DACBF8",
+    shadowColor: "#7048B8",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.16,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  listenHeroBtnInner: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listenHeroText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    color: colors.darkPurple,
+    letterSpacing: 0.3,
   },
 });
