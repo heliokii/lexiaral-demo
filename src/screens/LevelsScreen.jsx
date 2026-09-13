@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { setBgmFocusMode, stopAudio } from "../audio";
 
 import { Art, Icon } from "../Art";
 import { LEVELS, UNLOCK_PERCENT } from "../content";
@@ -9,6 +10,15 @@ import { Body, Encouragement, Screen, Title, colors } from "../components/ui";
 
 export default function LevelsScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
+
+  // Enable soft BGM focus mode during play level selection
+  useEffect(() => {
+    setBgmFocusMode(true);
+    return () => {
+      setBgmFocusMode(false);
+      stopAudio();
+    };
+  }, []);
 
   async function start(level) {
     const levelObj = LEVELS.find((l) => l.id === level);
@@ -134,14 +144,22 @@ export default function LevelsScreen({ navigation }) {
                 </Text>
               </View>
 
-              <View style={[styles.owl, !unlocked && { opacity: 0.38 }]}>
+              <View style={[styles.owl, !unlocked && { opacity: 0.45 }]}>
                 <Art
                   name={
                     !unlocked
-                      ? "owl-thinking"
-                      : level.id === 1
-                        ? "owl-cheering"
-                        : "owl-reading"
+                      ? "owl_sleeping"
+                      : level.stars === 3
+                        ? "owl_excited"
+                        : level.stars === 2
+                          ? "owl_cheering"
+                          : level.stars === 1
+                            ? "owl_happy"
+                            : level.id === 1
+                              ? "owl_reading"
+                              : level.id === 2
+                                ? "owl_thinking"
+                                : "owl_excited"
                   }
                   height={94}
                 />

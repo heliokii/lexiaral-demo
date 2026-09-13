@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 300 300" fill="none">
+
+    <!-- Shadow -->
+    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+
+    <!-- Feet -->
+    <path d="M118 259 L107 274 M118 263 L122 275
+      M176 259 L166 275 M176 263 L185 274"
+      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Left wing behind body (sleeping) -->
+    <path d="M83 151 Q47 163 58 207 Q64 224 79 217 L105 184 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+    <!-- Right wing tucked in -->
+    <path d="M215 148 Q250 155 255 185 Q248 205 228 200 L213 172 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+
+    <!-- Body (tilted slightly) -->
+    <path d="M76 105 L68 49 L111 69
+      Q147 43 190 66 L220 40 L223 103
+      Q240 126 233 170
+      Q237 253 151 263
+      Q67 259 67 177 Q60 135 76 105 Z"
+      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+
+    <!-- Face cream patch -->
+    <path d="M88 99 Q111 71 146 96
+      Q182 70 209 99
+      Q228 130 208 161
+      Q183 183 148 174
+      Q109 187 86 159
+      Q67 131 88 99 Z"
+      fill="#FFF1D0"/>
+
+    <!-- Belly -->
+    <ellipse cx="149" cy="211" rx="57" ry="43" fill="#FFF1D0"/>
+
+    <!-- Ear tufts relaxed -->
+    <path d="M93 66 L101 53 M128 60 L137 46 M172 58 L181 47"
+      stroke="#936747" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Sleeping eyes (closed Z lines) -->
+    <path d="M100 120 Q114 112 128 120" stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
+    <path d="M170 120 Q184 112 198 120" stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Rosy cheeks -->
+    <ellipse cx="93" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
+    <ellipse cx="208" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
+
+    <!-- Beak small relaxed -->
+    <path d="M139 132 Q149 124 159 132 L149 147 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
+
+    <!-- Soft sleepy smile -->
+    <path d="M133 152 Q149 161 165 152"
+      stroke="#9B5B38" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Purple scarf/chest -->
+    <path d="M78 163 Q148 188 222 162 L210 189
+      Q155 211 89 186 Z"
+      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
+    <path d="M93 185 L76 205 L103 201 L111 187"
+      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
+
+    <!-- Scarf dot detail -->
+    <path d="M184 181 C177 172 168 181 184 190 C200 179 191 172 184 181 Z"
+      fill="#F5D8E4"/>
+
+    <!-- ZZZ floating sleep bubbles -->
+    <text x="218" y="75" fill="#A397BC"
+      font-family="sans-serif" font-weight="bold" font-size="22">z</text>
+    <text x="234" y="54" fill="#A397BC"
+      font-family="sans-serif" font-weight="bold" font-size="30">z</text>
+    <text x="255" y="33" fill="#A397BC"
+      font-family="sans-serif" font-weight="bold" font-size="38">Z</text>
+
+    <!-- Faint sparkles -->
+    <path d="M44 71 L35 57 M54 65 L51 48 M32 81 L20 77"
+      stroke="#F5CC65" stroke-width="4" opacity=".4" stroke-linecap="round"/>
+
+  </svg>

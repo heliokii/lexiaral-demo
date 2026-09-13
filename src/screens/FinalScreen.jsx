@@ -76,7 +76,7 @@ export function FinalScreen({ navigation }) {
 
         <View testID="final-celebration-hero" style={[styles.celebration, compact && styles.heroStacked]}>
           <View style={{ width: compact ? "65%" : "48%" }}>
-            <Art name="owl-cheering" height={210} />
+            <Art name={allCompleted ? "owl_excited" : "owl_cheering"} height={210} />
           </View>
 
           <View style={{ flex: 1, gap: 7 }}>
@@ -130,7 +130,7 @@ export function FinalScreen({ navigation }) {
       </Card>
 
       <Card testID="final-master-badge-card" style={{ alignItems: "center" }}>
-        <Art name={master ? "medal" : "owl-reading"} height={170} />
+        <Art name={master ? "medal" : "owl_thinking"} height={170} />
 
         <Title style={styles.center}>
           {master ? "Vocabulary Master" : "A Little More Every Day"}

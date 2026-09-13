@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { LEVELS, QUESTIONS } from "../content";
-import { Icon } from "../Art";
+import { Art, Icon } from "../Art";
 import { useLearning } from "../state/LearningProvider";
 import { BADGES, bestAttempt, latestAttempt } from "../state/engine";
 import {
@@ -140,17 +140,19 @@ export function ProgressScreen({ navigation }) {
         <Text style={styles.sectionTitle}>Recent Activity History</Text>
 
         {!recentAttempts.length ? (
-          <Body
-            style={{
-              color: colors.muted,
-              fontSize: 14,
-              textAlign: "center",
-              paddingVertical: 10,
-            }}
-          >
-            No activities completed yet. Play a level to start tracking your
-            history!
-          </Body>
+          <View style={{ alignItems: "center", paddingVertical: 14, gap: 8 }}>
+            <Art name="owl_sleeping" height={95} />
+            <Body
+              style={{
+                color: colors.muted,
+                fontSize: 14,
+                textAlign: "center",
+              }}
+            >
+              No activities completed yet. Play a level to start tracking your
+              history!
+            </Body>
+          </View>
         ) : (
           <View style={{ gap: 8 }}>
             {recentAttempts.map((attempt) => {
@@ -163,7 +165,10 @@ export function ProgressScreen({ navigation }) {
                   accessibilityRole="button"
                   accessibilityLabel={`Level ${attempt.level} ${levelObj?.name || ""} score: ${attempt.score} of ${attempt.total} stars. Tap to view details.`}
                   onPress={() =>
-                    navigation.navigate("Results", { id: attempt.id })
+                    navigation.navigate("Results", {
+                      id: attempt.id,
+                      from: "Progress",
+                    })
                   }
                   style={({ pressed }) => [
                     styles.attemptRow,

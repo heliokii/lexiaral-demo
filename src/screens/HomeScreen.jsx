@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 
 import { Art, Icon } from "../Art";
+import { AnimatedLexi } from "../components/AnimatedLexi";
 import { useLearning } from "../state/LearningProvider";
 import {
   Body,
@@ -45,6 +46,15 @@ export function HomeScreen({ navigation }) {
   const { width, fontScale } = useWindowDimensions();
   const stacked = width < 350 || fontScale > 1.3;
 
+  const defaultSubtitle = state.pupilName
+    ? "I’m Lexi. Ready to learn new words today?"
+    : "Ready to learn new words today?";
+  const [lexiSpeechText, setLexiSpeechText] = useState(defaultSubtitle);
+
+  useEffect(() => {
+    setLexiSpeechText(defaultSubtitle);
+  }, [state.pupilName]);
+
   return (
     <Screen testID="screen-home">
       <View testID="home-brand-row" style={styles.brandRow}>
@@ -73,7 +83,18 @@ export function HomeScreen({ navigation }) {
         style={[styles.hero, stacked && styles.heroStacked]}
       >
         <View style={{ width: stacked ? "55%" : "44%" }}>
-          <Art name="owl-reading" height={stacked ? 140 : 155} />
+          <AnimatedLexi
+            name={
+              state.lifetimeStars >= 9
+                ? "owl_excited"
+                : state.lifetimeStars >= 3
+                  ? "owl_happy"
+                  : "owl-reading"
+            }
+            height={stacked ? 140 : 155}
+            pupilName={state.pupilName}
+            onSpeak={(spokenText) => setLexiSpeechText(spokenText)}
+          />
         </View>
 
         <View style={{ flex: 1, gap: 5 }}>
@@ -86,11 +107,16 @@ export function HomeScreen({ navigation }) {
 
           <Body
             testID="home-hero-subtitle"
-            style={[styles.heroText, stacked && styles.center]}
+            style={[
+              styles.heroText,
+              stacked && styles.center,
+              lexiSpeechText !== defaultSubtitle && {
+                color: colors.darkPurple,
+                fontFamily: "Nunito_700Bold",
+              },
+            ]}
           >
-            {state.pupilName
-              ? "I’m Lexi. Ready to learn new words today?"
-              : "Ready to learn new words today?"}
+            {lexiSpeechText}
           </Body>
         </View>
       </View>

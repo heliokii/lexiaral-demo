@@ -61,7 +61,7 @@ export function AboutScreen({ navigation }) {
       {/* Hero Header */}
       <View style={styles.heroSection}>
         <View style={styles.mascotGlow}>
-          <Art name="owl-reading" height={130} />
+          <Art name="owl_happy" height={130} />
         </View>
         <Title testID="about-screen-title" style={styles.heroTitle}>
           LEXIARAL
@@ -137,7 +137,7 @@ export function AboutScreen({ navigation }) {
         <View style={styles.hintBox}>
           <Icon name="info" size={15} color={colors.muted} />
           <Text style={styles.hintText}>
-            Audio uses your device's English speech engine. Works fully offline.
+            Friendly female instructional voice (light, cheerful tone) · Works fully offline.
           </Text>
         </View>
       </Card>
