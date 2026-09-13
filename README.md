@@ -15,6 +15,17 @@
 
 LEXIARAL is an interactive vocabulary learning application designed for Grade 3 learners following the Department of Education (DepEd) ARAL Program standards. It pairs flashcard-based vocabulary study (**LEARN** mode) with digital game reinforcement (**PLAY** mode across Easy, Average, and Difficult tiers) to support children's lexical acquisition and reading comprehension.
 
+## Video Demonstration
+
+<p align="center">
+  <video src="./assets/generated/VideoIntro.mp4" controls="controls" width="100%" style="max-width: 680px; border-radius: 14px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);">
+    <a href="./assets/generated/VideoIntro.mp4">Watch the LEXIARAL Video Introduction</a>
+  </video>
+</p>
+
+> [!NOTE]
+> A comprehensive video walkthrough demonstrating the LEXIARAL Grade 3 ARAL learning pathways, interactive story reader, auditory feedback, and animated mascot companion.
+
 ## Key Features
 
 - **Dual Learning Pathways (LEARN & PLAY)**: Study all 20 Grade 3 ARAL vocabulary flashcards upfront, then reinforce mastery through progressive digital game levels.
