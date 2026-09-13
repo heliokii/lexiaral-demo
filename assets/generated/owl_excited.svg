@@ -9,7 +9,7 @@
       M172 265 L164 278 M178 268 L186 277"
       stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
 
-    <!-- Both wings spread wide in excitment -->
+    <!-- Both wings spread wide in excitement -->
     <path d="M76 130 Q30 110 18 75 Q34 70 48 95
       Q30 62 48 57 Q64 58 76 88 Q60 55 80 60
       Q100 80 96 128 Z"
@@ -56,13 +56,11 @@
     <ellipse cx="90" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
     <ellipse cx="208" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
 
-    <!-- Beak -->
-    <path d="M139 122 Q149 114 159 122 L149 137 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
-
-    <!-- Wide open excited grin -->
-    <path d="M120 143 Q149 168 178 143"
-      fill="#9B5B38" stroke="#9B5B38" stroke-width="3"/>
+    <!-- Excited chirping owl beak (open upper & lower mandible) -->
+    <path d="M137 122 Q149 114 161 122 L149 136 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M141 135 Q149 144 157 135 Z"
+      fill="#D98A32" stroke="#B97D37" stroke-width="2"/>
 
     <!-- Purple scarf/chest -->
     <path d="M78 153 Q148 178 222 152 L210 179

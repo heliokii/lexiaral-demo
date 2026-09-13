@@ -78,16 +78,17 @@ export default function LevelsScreen({ navigation }) {
 
   return (
     <Screen testID="screen-levels">
-      <View testID="levels-header" style={styles.header}>
-        <Title testID="levels-title" style={styles.title}>
-          Choose Your Level
-        </Title>
-        <Body testID="levels-subtitle" style={styles.subtitle}>
-          Keep learning and build your vocabulary!
-        </Body>
-      </View>
+      <View style={styles.contentWrapper}>
+        <View testID="levels-header" style={styles.header}>
+          <Title testID="levels-title" style={styles.title}>
+            Choose Your Level
+          </Title>
+          <Body testID="levels-subtitle" style={styles.subtitle}>
+            Keep learning and build your vocabulary!
+          </Body>
+        </View>
 
-      <View testID="levels-list" style={styles.levelList}>
+        <View testID="levels-list" style={styles.levelList}>
         {LEVELS.map((level) => {
           const unlocked = isLevelUnlocked(state, level.id);
           const result = latestAttempt(state, level.id);
@@ -161,7 +162,7 @@ export default function LevelsScreen({ navigation }) {
                                 ? "owl_thinking"
                                 : "owl_excited"
                   }
-                  height={94}
+                  height={124}
                 />
               </View>
 
@@ -246,46 +247,53 @@ export default function LevelsScreen({ navigation }) {
             </Pressable>
           );
         })}
-      </View>
+        </View>
 
-      <Encouragement />
+        <Encouragement />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  contentWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    paddingVertical: 10,
+    gap: 16,
+  },
   header: {
     gap: 4,
   },
   title: {
-    fontSize: 26,
-    lineHeight: 32,
+    fontSize: 28,
+    lineHeight: 34,
     color: colors.darkPurple,
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 21,
+    fontSize: 16,
+    lineHeight: 22,
     color: colors.muted,
   },
   levelList: {
-    gap: 12,
+    gap: 18,
   },
   levelCard: {
-    minHeight: 124,
+    minHeight: 172,
     backgroundColor: "#FFFFFF",
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    paddingTop: 24,
+    borderRadius: 26,
+    paddingHorizontal: 18,
+    paddingVertical: 22,
+    paddingTop: 32,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 16,
     borderWidth: 1.5,
     borderColor: "#ECE6F7",
     shadowColor: "#7C67A6",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.09,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
     elevation: 2,
     position: "relative",
   },
@@ -300,59 +308,61 @@ const styles = StyleSheet.create({
     borderColor: "#E7E2F0",
   },
   owl: {
-    width: "28%",
+    width: "30%",
     alignItems: "center",
     justifyContent: "center",
   },
   levelText: {
     flex: 1,
-    gap: 4,
+    gap: 5,
   },
   levelTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 18,
+    fontSize: 22,
+    lineHeight: 28,
     color: colors.darkPurple,
   },
   description: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 14,
+    fontSize: 16,
+    lineHeight: 22,
     color: colors.text,
   },
   resumeRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    marginTop: 3,
+    marginTop: 4,
   },
   resumeText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 14,
+    fontSize: 14.5,
     color: colors.primary,
   },
   small: {
     fontFamily: "Nunito_600SemiBold",
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 12.5,
+    lineHeight: 17,
     color: colors.muted,
   },
   score: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginTop: 2,
+    gap: 5,
+    marginTop: 4,
   },
   scoreText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 13,
+    fontSize: 13.5,
     color: "#8D7040",
   },
   status: {
     position: "absolute",
-    right: 12,
-    top: 8,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
+    right: 14,
+    top: 10,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 3.5,
   },
   unlockedStatus: {
     backgroundColor: "#EBF4FE",
@@ -368,13 +378,13 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 10.5,
+    fontSize: 11.5,
     letterSpacing: 0.2,
   },
   chevron: {
-    height: 32,
-    width: 32,
-    borderRadius: 16,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
     backgroundColor: "#F0EBF9",
     alignItems: "center",
     justifyContent: "center",

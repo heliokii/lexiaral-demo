@@ -184,7 +184,7 @@ const easyMatching = {
   type: 'matching',
   category: 'vocabulary',
   prompt: 'Match each target word with its correct picture!',
-  pairs: pack.words.slice(0, 4).map((word) => ({
+  pairs: pack.words.slice(0, 6).map((word) => ({
     id: word.id,
     wordId: word.id,
     word: word.word,
@@ -281,6 +281,11 @@ export function answerLabel(question) {
 }
 
 export function getFeedbackDetails(question, correct) {
+  const isMatching =
+    question?.type === 'matching' ||
+    question?.answerId === 'all_matched' ||
+    (question?.choices && question.choices.some(c => c.id === 'all_matched'));
+
   const correctLabel = answerLabel(question);
   let rawExplanation = (question.explanation || '').trim();
 
@@ -304,14 +309,23 @@ export function getFeedbackDetails(question, correct) {
   }
 
   const title = correct ? 'Great Job!' : 'Nice Try!';
-  const fullSpeech = correct
-    ? `${title} The correct answer indeed is ${correctLabel}. ${rawExplanation}`.trim()
-    : `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim();
+
+  let fullSpeech = '';
+  if (isMatching) {
+    fullSpeech = correct
+      ? `${title} All pairs matched! ${rawExplanation}`.trim()
+      : `${title} Let's keep matching words with their pictures.`.trim();
+  } else {
+    fullSpeech = correct
+      ? `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim()
+      : `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim();
+  }
 
   return {
     correct,
     title,
-    correctLabel,
+    isMatching,
+    correctLabel: isMatching ? 'All pairs matched!' : correctLabel,
     explanation: rawExplanation,
     fullSpeech,
   };

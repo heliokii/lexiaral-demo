@@ -47,8 +47,8 @@ export function HomeScreen({ navigation }) {
   const stacked = width < 350 || fontScale > 1.3;
 
   const defaultSubtitle = state.pupilName
-    ? "I’m Lexi. Ready to learn new words today?"
-    : "Ready to learn new words today?";
+    ? "I’m Lexi. Ready to learn?"
+    : "Ready to learn?";  
   const [lexiSpeechText, setLexiSpeechText] = useState(defaultSubtitle);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function HomeScreen({ navigation }) {
         testID="home-hero-card"
         style={[styles.hero, stacked && styles.heroStacked]}
       >
-        <View style={{ width: stacked ? "55%" : "44%" }}>
+        <View style={{ width: stacked ? "55%" : "46%" }}>
           <AnimatedLexi
             name={
               state.lifetimeStars >= 9
@@ -91,7 +91,7 @@ export function HomeScreen({ navigation }) {
                   ? "owl_happy"
                   : "owl-reading"
             }
-            height={stacked ? 140 : 155}
+            height={stacked ? 155 : 175}
             pupilName={state.pupilName}
             onSpeak={(spokenText) => setLexiSpeechText(spokenText)}
           />
@@ -135,7 +135,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.mainActionIconWrap}>
-            <Icon name="cards" size={34} color="#7548C7" />
+            <Icon name="cards" size={38} color="#7548C7" />
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>LEARN</Text>
@@ -158,7 +158,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.mainActionIconWrapPlay}>
-            <Icon name="book" size={34} color="#24865E" />
+            <Icon name="book" size={38} color="#24865E" />
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>PLAY</Text>
@@ -182,7 +182,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.statIconBadgeStar}>
-            <Icon name="star" color="#D98A09" size={32} />
+            <Icon name="star" color="#D98A09" size={36} />
           </View>
           <View style={styles.statContent}>
             <Text style={styles.statNumber}>{state.lifetimeStars}</Text>
@@ -205,7 +205,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.statIconBadgeTrophy}>
-            <Icon name="badge" color="#C73E58" size={32} />
+            <Icon name="badge" color="#C73E58" size={36} />
           </View>
           <View style={styles.statContent}>
             <Text style={styles.statNumber}>{state.badges.length}</Text>
@@ -275,7 +275,8 @@ const styles = StyleSheet.create({
   hero: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 8,
+    marginVertical: 4,
   },
   heroStacked: {
     flexDirection: "column",
@@ -283,22 +284,23 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   heroTitle: {
-    fontSize: 30,
-    lineHeight: 35,
+    fontSize: 34,
+    lineHeight: 40,
   },
   heroText: {
-    fontSize: 18,
-    lineHeight: 25,
+    fontSize: 19.5,
+    lineHeight: 27,
   },
   mainActionRow: {
     flexDirection: "row",
-    gap: 14,
+    gap: 16,
+    marginVertical: 4,
   },
   mainActionCard: {
     flex: 1,
-    minHeight: 154,
-    borderRadius: 22,
-    padding: 14,
+    minHeight: 172,
+    borderRadius: 24,
+    padding: 16,
     alignItems: "center",
     justifyContent: "space-between",
     borderWidth: 2,
@@ -317,18 +319,18 @@ const styles = StyleSheet.create({
     borderColor: "#BAEAD4",
   },
   mainActionIconWrap: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: "#EAE1FC",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 4,
   },
   mainActionIconWrapPlay: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: "#D7F5E7",
     alignItems: "center",
     justifyContent: "center",
@@ -336,8 +338,8 @@ const styles = StyleSheet.create({
   },
   mainActionTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 22,
-    letterSpacing: 0.5,
+    fontSize: 24,
+    letterSpacing: 0.6,
     color: colors.text,
   },
   mainActionSub: {
@@ -347,28 +349,28 @@ const styles = StyleSheet.create({
   },
   actionPillLearn: {
     backgroundColor: "#EDE5FD",
-    borderRadius: 12,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: "#D9C8FA",
   },
   actionPillTextLearn: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 12,
+    fontSize: 12.5,
     color: "#6536BC",
   },
   actionPillPlay: {
     backgroundColor: "#DEFAEC",
-    borderRadius: 12,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    borderRadius: 14,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: "#B0ECCB",
   },
   actionPillTextPlay: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 12,
+    fontSize: 12.5,
     color: "#1B734E",
   },
   homeTile: {
@@ -400,9 +402,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: 12,
-    paddingVertical: 14,
-    borderRadius: 22,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    borderRadius: 24,
     borderWidth: 1.5,
     borderColor: "#DECFFC",
     shadowColor: "#8C77B0",
@@ -410,6 +412,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
     elevation: 2,
+    marginVertical: 4,
   },
   statItem: {
     flex: 1,
@@ -426,9 +429,9 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
   statIconBadgeStar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: "#FFF7DB",
     alignItems: "center",
     justifyContent: "center",
@@ -436,9 +439,9 @@ const styles = StyleSheet.create({
     borderColor: "#FFE299",
   },
   statIconBadgeTrophy: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: "#FFF0F3",
     alignItems: "center",
     justifyContent: "center",
@@ -450,23 +453,23 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontFamily: "Nunito_900Black",
-    fontSize: 24,
-    lineHeight: 28,
+    fontSize: 26,
+    lineHeight: 30,
     color: colors.text,
   },
   statLabel: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 14,
+    fontSize: 15,
     color: colors.text,
   },
   statActionHint: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 11,
+    fontSize: 11.5,
     color: "#8E7BAE",
     marginTop: 1,
   },
   statDivider: {
-    height: 48,
+    height: 52,
     width: 1.5,
     backgroundColor: "#EAE3F1",
     marginHorizontal: 4,
@@ -478,9 +481,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     gap: 8,
     backgroundColor: "#FFFFFF",
-    paddingVertical: 9,
-    paddingHorizontal: 18,
-    borderRadius: 20,
+    paddingVertical: 11,
+    paddingHorizontal: 22,
+    borderRadius: 22,
     borderWidth: 1.5,
     borderColor: "#DECFFC",
     shadowColor: "#8C77B0",
@@ -488,12 +491,12 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: 22,
+    marginBottom: 16,
   },
   aboutBtnText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 13,
+    fontSize: 14,
     color: "#6B5299",
   },
 });

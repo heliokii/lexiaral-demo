@@ -110,7 +110,7 @@ export function AnimatedLexi({
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     // 2. Reading curiosity sway / head tilt loop
@@ -134,7 +134,7 @@ export function AnimatedLexi({
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     // 3. Rhythmic breathing scale loop
@@ -152,7 +152,7 @@ export function AnimatedLexi({
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     // 4. Idle friendly waving wing loop
@@ -176,7 +176,7 @@ export function AnimatedLexi({
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     // 5. Twinkling excitement sparkles loop
@@ -194,7 +194,7 @@ export function AnimatedLexi({
           easing: Easing.inOut(Easing.quad),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     floatLoop.start();
@@ -307,16 +307,16 @@ export function AnimatedLexi({
     const learnerName = pupilName ? pupilName.trim() : "";
     const greetings = learnerName
       ? [
-          `Hi ${learnerName}! Ready to read together? Tap Play or Learn!`,
-          `You can do it, ${learnerName}! Let's earn stars today!`,
-          `I love reading with you, ${learnerName}! What shall we learn?`,
-          `Ready for adventure, ${learnerName}? Let's practice!`,
+          `Hi ${learnerName}! Ready to learn?`,
+          `Let's earn stars together, ${learnerName}!`,
+          `Ready to read with me, ${learnerName}?`,
+          `Let's learn happily, ${learnerName}!`,
         ]
       : [
-          "Hi! I'm Lexi. Ready to learn new words today?",
-          "Ready to read together? Tap Play or Learn!",
-          "You can do it! Let's earn stars today!",
-          "Reading is so much fun! Let's get started!",
+          "Hi! I'm Lexi. Ready to learn?",
+          "Ready to read? Tap Play or Learn!",
+          "You can do it! Let's earn stars!",
+          "Reading is fun! Let's get started!",
         ];
 
     const chosenGreeting =

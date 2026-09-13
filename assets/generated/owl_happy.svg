@@ -9,9 +9,11 @@
       M176 259 L166 275 M176 263 L185 274"
       stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
 
-    <!-- Wings relaxed at sides -->
+    <!-- Left wing resting softly -->
     <path d="M83 151 Q47 163 58 207 Q64 224 79 217 L105 184 Z"
       fill="#C89760" stroke="#936747" stroke-width="4"/>
+
+    <!-- Right wing cheerfully waving -->
     <path d="M215 148 Q244 140 255 116 Q269 119 257 143
       Q276 131 277 143 Q267 168 244 180
       Q269 175 264 188 Q244 211 215 199 Z"
@@ -42,23 +44,21 @@
       M172 58 L181 47"
       stroke="#936747" stroke-width="4" stroke-linecap="round"/>
 
-    <!-- Happy closed eyes (wink-like crescents) -->
-    <path d="M100 115 Q114 106 128 115"
+    <!-- Happy arched closed eyes (^ ^) -->
+    <path d="M101 124 Q115 99 129 124"
       stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
-    <path d="M170 115 Q184 106 198 115"
+    <path d="M169 124 Q183 99 197 124"
       stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
 
-    <!-- Rosy cheeks -->
-    <ellipse cx="93" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
-    <ellipse cx="208" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
+    <!-- Rosy blushing cheeks -->
+    <ellipse cx="93" cy="138" rx="13" ry="8" fill="#EFABA2" opacity=".85"/>
+    <ellipse cx="207" cy="138" rx="13" ry="8" fill="#EFABA2" opacity=".85"/>
 
-    <!-- Beak -->
-    <path d="M139 132 Q149 124 159 132 L149 147 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
-
-    <!-- Big smile -->
-    <path d="M122 153 Q149 178 178 153"
-      fill="#9B5B38" stroke="#9B5B38" stroke-width="3"/>
+    <!-- Owl Beak (Proper avian anatomy: no human nose or mouth) -->
+    <path d="M138 128 Q149 120 160 128 Q157 143 149 148 Q141 143 138 128 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M143 131 Q149 126 155 131"
+      stroke="#FFF2D6" stroke-width="2" stroke-linecap="round"/>
 
     <!-- Purple scarf/chest -->
     <path d="M78 163 Q148 188 222 162 L210 189
@@ -71,12 +71,12 @@
     <path d="M149 193 C144 186 135 189 135 196 C135 204 149 213 149 213 C149 213 163 204 163 196 C163 189 154 186 149 193 Z"
       fill="#F5D8E4"/>
 
-    <!-- Gold sparkles above head -->
+    <!-- Gold sparkles and star burst -->
     <path d="M44 71 L35 57 M54 65 L51 48 M32 81 L20 77"
       stroke="#F5CC65" stroke-width="6" stroke-linecap="round"/>
-
-    <!-- Stars around head for happy mood -->
-    <path d="M230 55 L235 44 L240 55 L252 55 L243 63 L247 75 L235 67 L223 75 L227 63 L218 55 Z"
-      fill="#FFD86B" opacity=".9"/>
+    <path d="M236 48 L240 38 L244 48 L254 48 L246 55 L249 65 L240 59 L231 65 L234 55 L226 48 Z"
+      fill="#FFD86B" stroke="#E5B842" stroke-width="1.5"/>
+    <circle cx="258" cy="74" r="3.5" fill="#FFD86B"/>
+    <circle cx="222" cy="36" r="2.5" fill="#FFD86B"/>
 
   </svg>

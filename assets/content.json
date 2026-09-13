@@ -535,7 +535,7 @@
   ],
   "story": {
     "id": "story-1-cat",
-    "title": "1. The Cat",
+    "title": "The Cat",
     "text": "Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat near the door. Mia gives her cat some food and water. Mia is happy to have a playful cat.",
     "target_word_ids": [
       "cat",
@@ -614,7 +614,7 @@
   "stories": [
     {
       "id": "story-1-cat",
-      "title": "1. The Cat",
+      "title": "The Cat",
       "text": "Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat near the door. Mia gives her cat some food and water. Mia is happy to have a playful cat.",
       "target_word_ids": [
         "cat",
@@ -692,7 +692,7 @@
     },
     {
       "id": "story-2-mat",
-      "title": "2. The Mat",
+      "title": "The Mat",
       "text": "Tom has a clean mat in front of his house. His little cat likes to sit on the mat every afternoon. Tom cleans the mat when it gets dirty. He wants his house to look neat and clean. His cat enjoys resting on the mat.",
       "target_word_ids": [
         "mat",
@@ -770,7 +770,7 @@
     },
     {
       "id": "story-3-hat",
-      "title": "3. The Hat",
+      "title": "The Hat",
       "text": "Ben has a new red hat. He wears his hat when he goes outside to play. One afternoon, the wind blows his hat away. Ben quickly runs after it and picks it up. He smiles because he gets his hat back.",
       "target_word_ids": [
         "hat",
@@ -848,7 +848,7 @@
     },
     {
       "id": "story-4-rat",
-      "title": "4. The Rat",
+      "title": "The Rat",
       "text": "A small rat lives near an old box. One morning, the rat sees some food near the box. It runs quickly toward the food. After eating, the rat goes back to its little home. The rat feels safe inside its home.",
       "target_word_ids": [
         "rat",
@@ -926,7 +926,7 @@
     },
     {
       "id": "story-5-bat",
-      "title": "5. The Bat",
+      "title": "The Bat",
       "text": "A bat lives in a tall tree near a garden. During the day, it stays quiet inside the tree. At night, the bat flies around the garden. It looks for food before returning to the tree. The children enjoy watching the bat from a safe distance.",
       "target_word_ids": [
         "bat",
@@ -1004,7 +1004,7 @@
     },
     {
       "id": "story-6-pet",
-      "title": "6. My Pet",
+      "title": "My Pet",
       "text": "Ana has a little pet at home. Her pet is small, friendly, and playful. Every morning, Ana gives her pet food and clean water. She also plays with it after school. Ana loves taking care of her pet.",
       "target_word_ids": [
         "pet",
@@ -1082,7 +1082,7 @@
     },
     {
       "id": "story-7-happy",
-      "title": "7. A Happy Day",
+      "title": "A Happy Day",
       "text": "Leo receives a new book from his mother. He opens the book and reads the first page. He shares the book with his sister. They read together and talk about the pictures. Leo feels happy because he loves reading.",
       "target_word_ids": [
         "happy",
@@ -1160,7 +1160,7 @@
     },
     {
       "id": "story-8-sun",
-      "title": "8. The Sun",
+      "title": "The Sun",
       "text": "The sun comes up early in the morning. The children prepare to play outside with their friends. They run, laugh, and enjoy the warm sunlight. After playing, they rest under a tree. It is a bright and wonderful day.",
       "target_word_ids": [
         "sun",
@@ -1238,7 +1238,7 @@
     },
     {
       "id": "story-9-sit",
-      "title": "9. Sit and Read",
+      "title": "Sit and Read",
       "text": "Nina goes to the reading corner in her classroom. Her teacher asks her to sit on a chair. Nina sits quietly and opens her book. She reads the words one by one. After reading, she tells her teacher what she learned.",
       "target_word_ids": [
         "sit",
@@ -1316,7 +1316,7 @@
     },
     {
       "id": "story-10-set",
-      "title": "10. The Book",
+      "title": "The Book",
       "text": "Sam has a new storybook. Before reading, he sets the book carefully on the table. He gets a pencil and sits beside his mother. After lunch, Sam reads the book with her. He enjoys learning new words from the story.",
       "target_word_ids": [
         "set",
@@ -1394,7 +1394,7 @@
     },
     {
       "id": "story-11-lit",
-      "title": "11. The Lamp",
+      "title": "The Lamp",
       "text": "It becomes dark outside in the evening. Ana turns on the lamp beside her bed. The lamp is now lit, so the room becomes bright. Ana gets her book and starts reading. She reads quietly before going to sleep.",
       "target_word_ids": [
         "lit",
@@ -1472,7 +1472,7 @@
     },
     {
       "id": "story-12-little",
-      "title": "12. The Little Bird",
+      "title": "The Little Bird",
       "text": "A little bird sits on a branch near the house. Every morning, the bird sings a sweet song. A child watches the bird from the window. The bird flies from one branch to another. The child feels happy while watching it.",
       "target_word_ids": [
         "little",
@@ -1550,7 +1550,7 @@
     },
     {
       "id": "story-13-top",
-      "title": "13. On Top",
+      "title": "On Top",
       "text": "Mark has a small toy car. He puts the toy on top of a box. The toy stays there while Mark cleans his room. After cleaning, he carefully gets the toy. Then he puts it back in his toy box.",
       "target_word_ids": [
         "top",
@@ -1628,7 +1628,7 @@
     },
     {
       "id": "story-14-map",
-      "title": "14. The Map",
+      "title": "The Map",
       "text": "Ben wants to visit the park with his father. His father brings a map to help them find the way. Ben looks at the map carefully. They follow the directions on the map. Soon, they reach the park and enjoy their afternoon together.",
       "target_word_ids": [
         "map",
@@ -1706,7 +1706,7 @@
     },
     {
       "id": "story-15-man",
-      "title": "15. The Kind Man",
+      "title": "The Kind Man",
       "text": "A kind man walks to a store one morning. On the way, he sees a child carrying several books. The child looks tired and needs help. The man helps carry some of the books. The child smiles and thanks the kind man.",
       "target_word_ids": [
         "man",
@@ -1784,7 +1784,7 @@
     },
     {
       "id": "story-16-dog",
-      "title": "16. The Dog",
+      "title": "The Dog",
       "text": "Dan has a friendly dog named Max. Every afternoon, Max runs around the yard. Dan plays with his dog after school. They run and play with a small ball. Before going inside, Dan gives Max some water.",
       "target_word_ids": [
         "dog",
@@ -1862,7 +1862,7 @@
     },
     {
       "id": "story-17-den",
-      "title": "17. The Dog's Den",
+      "title": "The Dog's Den",
       "text": "The dog has a small den under a tree. It goes inside the den when it wants to rest. The den keeps the dog comfortable and safe. After sleeping, the dog comes outside to play. When it gets tired again, it returns to its den.",
       "target_word_ids": [
         "den",
@@ -1940,7 +1940,7 @@
     },
     {
       "id": "story-18-dig",
-      "title": "18. Digging",
+      "title": "Digging",
       "text": "The dog sees something interesting under the soil. It starts to dig with its paws. It digs near a big tree for a few minutes. Soon, the dog finds its old toy. The dog takes the toy and plays with it again.",
       "target_word_ids": [
         "dig",
@@ -2018,7 +2018,7 @@
     },
     {
       "id": "story-19-egg",
-      "title": "19. The Egg",
+      "title": "The Egg",
       "text": "A hen sits quietly in her nest. Beside her is a small egg. The farmer carefully checks the nest every morning. He makes sure the hen is safe and comfortable. The farmer is thankful for the egg.",
       "target_word_ids": [
         "egg",
@@ -2096,7 +2096,7 @@
     },
     {
       "id": "story-20-hill",
-      "title": "20. The Hill",
+      "title": "The Hill",
       "text": "Sara and her brother walk up a small hill. They walk slowly because the path is a little steep. Along the way, they see green trees and colorful flowers. When they reach the top, they look at the beautiful view. They feel proud because they reached the top of the hill.",
       "target_word_ids": [
         "hill",
@@ -2174,7 +2174,7 @@
     },
     {
       "id": "story-21-pink",
-      "title": "21. Pink",
+      "title": "Pink",
       "text": "One morning, Mia went to her grandmother's house. She saw a small pink fan beside the window. Mia picked up the fan and looked at it with a smile. Her grandmother told her that the fan was a special gift. Mia turned on the fan and felt the cool air. She thanked her grandmother and placed the fan back beside the window.",
       "target_word_ids": [
         "pink",
@@ -2250,7 +2250,7 @@
     },
     {
       "id": "story-22-fast",
-      "title": "22. Fast",
+      "title": "Fast",
       "text": "One afternoon, Ben played with his toy car outside their house. He placed the car on a smooth path. When Ben pushed it, the car moved very fast. The car passed a small tree and stopped near the gate. Ben ran after it and picked it up. He laughed because he enjoyed watching his toy car move.",
       "target_word_ids": [
         "fast"
@@ -2325,7 +2325,7 @@
     },
     {
       "id": "story-23-frog",
-      "title": "23. Frog",
+      "title": "Frog",
       "text": "After the rain, Leo went outside to look at the plants. Near a small puddle, he noticed a green frog. The frog jumped from one leaf to another. Leo quietly followed it because he wanted to see where it would go. The frog finally jumped into the grass and disappeared. Leo smiled and went inside to tell his mother about it.",
       "target_word_ids": [
         "frog",
@@ -2403,7 +2403,7 @@
     },
     {
       "id": "story-24-stop",
-      "title": "24. Stop",
+      "title": "Stop",
       "text": "One morning, Carlo was walking to school with his sister. As they crossed the street, their mother reminded them to stop at the corner. Carlo stopped and looked carefully before crossing. His sister also waited beside him. When the way was clear, they crossed the street safely. Carlo learned that stopping and looking carefully can help keep people safe.",
       "target_word_ids": [
         "stop"
@@ -2478,7 +2478,7 @@
     },
     {
       "id": "story-25-back",
-      "title": "25. Back",
+      "title": "Back",
       "text": "After school, Nina stayed outside to play with her friends. Soon, her mother called her to come back home. Nina said goodbye to her friends. She picked up her bag and walked home. Her mother welcomed her at the door. Nina helped her mother prepare their things for dinner.",
       "target_word_ids": [
         "back",
@@ -2554,7 +2554,7 @@
     },
     {
       "id": "story-26-nine",
-      "title": "26. Nine",
+      "title": "Nine",
       "text": "One afternoon, Nina found some pencils in her classroom. She counted them and found nine pencils. She placed the pencils neatly on the teacher's desk. Then she told her teacher about them. Her teacher thanked her for being honest. Nina felt proud because she did the right thing.",
       "target_word_ids": [
         "nine"
@@ -2629,7 +2629,7 @@
     },
     {
       "id": "story-27-nuts",
-      "title": "27. Nuts",
+      "title": "Nuts",
       "text": "One morning, Sam walked around the garden. Under a tree, he saw some nuts on the ground. He picked them up carefully and placed them in a small bag. Then he showed the nuts to his sister. His sister helped him count them. They kept the nuts in a safe place.",
       "target_word_ids": [
         "nuts"
@@ -2704,7 +2704,7 @@
     },
     {
       "id": "story-28-floor",
-      "title": "28. Floor",
+      "title": "Floor",
       "text": "Mia was reading a book in her room. Suddenly, the book slipped from her hands and fell on the floor. She looked at the book and saw that it was still clean. Mia picked it up carefully. She placed it on her table. Then she continued reading her story.",
       "target_word_ids": [
         "floor"
@@ -2779,7 +2779,7 @@
     },
     {
       "id": "story-29-spins",
-      "title": "29. Spins",
+      "title": "Spins",
       "text": "Ben was sitting near a small electric fan. He turned the fan on, and it spins around slowly. After a few moments, the fan moved faster. Ben felt the cool air on his face. He moved his chair closer to the table. Then he continued reading his book.",
       "target_word_ids": [
         "spins",
@@ -2855,7 +2855,7 @@
     },
     {
       "id": "story-30-test",
-      "title": "30. Test",
+      "title": "Test",
       "text": "Lara went to school early one morning. Her teacher told the class that they would have a reading test. Lara read each word carefully before answering. She checked her answers before passing her paper. Her teacher thanked her for doing her best. Lara felt proud of herself after the test.",
       "target_word_ids": [
         "test",
@@ -2931,7 +2931,7 @@
     },
     {
       "id": "story-31-last",
-      "title": "31. Last",
+      "title": "Last",
       "text": "Mark borrowed a storybook from the classroom shelf. He sat quietly and began reading it. He read every page until he reached the last page. The story was about a boy and his pet. Mark enjoyed the ending very much. He returned the book to the shelf after reading.",
       "target_word_ids": [
         "last"
@@ -3006,7 +3006,7 @@
     },
     {
       "id": "story-32-stem",
-      "title": "32. Stem",
+      "title": "Stem",
       "text": "Lia planted a small flower in a pot. After several days, the flower grew a strong stem. Lia placed the pot near the window. She gave the plant water every morning. New leaves slowly appeared on the plant. Lia was happy to see her flower growing.",
       "target_word_ids": [
         "stem",
@@ -3082,7 +3082,7 @@
     },
     {
       "id": "story-33-mist",
-      "title": "33. Mist",
+      "title": "Mist",
       "text": "Ben woke up early one morning. When he looked outside, he saw mist covering the field. The trees looked blurry from his window. Ben waited for the sun to rise. As the morning became warmer, the mist slowly disappeared. Ben could finally see the field clearly.",
       "target_word_ids": [
         "mist"
@@ -3157,7 +3157,7 @@
     },
     {
       "id": "story-34-mill",
-      "title": "34. Mill",
+      "title": "Mill",
       "text": "Rico went walking with his father one afternoon. While walking, they saw an old mill beside the road. Rico became curious about the old building. His father told him to stay close and observe from a safe place. They looked at the mill for a few minutes. Then they continued their walk together.",
       "target_word_ids": [
         "mill",
@@ -3233,7 +3233,7 @@
     },
     {
       "id": "story-35-tell",
-      "title": "35. Tell",
+      "title": "Tell",
       "text": "Lina had an interesting story to tell her classmates. She stood in front of the class and began speaking. Her classmates listened carefully to every part of the story. When Lina reached the funny part, everyone laughed. Lina smiled because her classmates enjoyed her story. She thanked them for listening to her.",
       "target_word_ids": [
         "tell"
@@ -3308,7 +3308,7 @@
     },
     {
       "id": "story-36-sell",
-      "title": "36. Sell",
+      "title": "Sell",
       "text": "A family in the village had a small fruit shop. Every morning, they sell fresh fruits to their neighbors. The children helped arrange the fruits on the table. Their parents welcomed the customers. Many people came because the fruits were fresh. The family was happy because they worked together.",
       "target_word_ids": [
         "sell"
@@ -3383,7 +3383,7 @@
     },
     {
       "id": "story-37-light",
-      "title": "37. Light",
+      "title": "Light",
       "text": "One evening, Ana was reading in her room. Suddenly, the room became dark because the light went off. Ana stopped reading and waited for her mother. Her mother came and checked the light. Soon, the light came back on. Ana smiled and continued reading her book.",
       "target_word_ids": [
         "light"
@@ -3458,7 +3458,7 @@
     },
     {
       "id": "story-38-bell",
-      "title": "38. Bell",
+      "title": "Bell",
       "text": "The school bell rang early in the morning. The pupils quickly went to their classrooms. They placed their bags beside their chairs. Their teacher greeted them with a smile. The pupils took out their books and pencils. Soon, the teacher began the first lesson.",
       "target_word_ids": [
         "bell"
@@ -3533,7 +3533,7 @@
     },
     {
       "id": "story-39-bath",
-      "title": "39. Bath",
+      "title": "Bath",
       "text": "Leo spent the afternoon playing outside with his friends. When he came home, his hands and feet were dirty. His mother told him to take a bath before dinner. Leo washed his body carefully and changed his clothes. After his bath, he combed his hair. He was ready to eat dinner with his family.",
       "target_word_ids": [
         "bath"
@@ -3608,7 +3608,7 @@
     },
     {
       "id": "story-40-bark",
-      "title": "40. Bark",
+      "title": "Bark",
       "text": "One afternoon, Carlo was playing near his house. Suddenly, he heard his dog bark near the gate. Carlo went to see what was happening. He noticed a cat walking outside the gate. The dog looked at the cat but stayed near its owner. Carlo gently called his dog and brought it inside.",
       "target_word_ids": [
         "bark"
@@ -3683,7 +3683,7 @@
     },
     {
       "id": "story-41-road",
-      "title": "41. Road",
+      "title": "Road",
       "text": "Ricky traveled with his family in their red car. They drove carefully along the road. Ricky looked through the window and saw trees and houses. After a while, they passed a small bridge. His father continued driving slowly and safely. Soon, they arrived at the place they wanted to visit.",
       "target_word_ids": [
         "road"
@@ -3758,7 +3758,7 @@
     },
     {
       "id": "story-42-rain",
-      "title": "42. Rain",
+      "title": "Rain",
       "text": "One afternoon, dark clouds covered the sky. A few minutes later, the rain began to fall. The children quickly went inside the house. They sat near the window and watched the rain. While waiting, they read a storybook together. After some time, the rain stopped and the sky became clear.",
       "target_word_ids": [
         "rain"
@@ -3833,7 +3833,7 @@
     },
     {
       "id": "story-43-rock",
-      "title": "43. Rock",
+      "title": "Rock",
       "text": "Ben was walking along a path with his father. He noticed a large rock beside the road. Ben stopped because he had never seen such a big rock before. His father told him not to climb on it. Ben listened and walked around the rock instead. Then they continued their walk safely.",
       "target_word_ids": [
         "rock",
@@ -3909,7 +3909,7 @@
     },
     {
       "id": "story-44-round",
-      "title": "44. Round",
+      "title": "Round",
       "text": "Ana received a new ball from her aunt. The ball was round and easy to roll. Ana went outside and played with her brother. She rolled the ball toward him. Her brother rolled it back to her. They continued playing until it was time to go inside.",
       "target_word_ids": [
         "round"
@@ -3984,7 +3984,7 @@
     },
     {
       "id": "story-45-plant",
-      "title": "45. Plant",
+      "title": "Plant",
       "text": "Lia found a small plant growing near their window. She noticed that its leaves looked fresh and healthy. She asked her mother if she could take care of it. Her mother taught her to give it enough water and sunlight. Lia followed her mother's advice every day. After several days, she was happy to see new leaves.",
       "target_word_ids": [
         "plant",
@@ -4061,7 +4061,7 @@
     },
     {
       "id": "story-46-green",
-      "title": "46. Green",
+      "title": "Green",
       "text": "Tom was walking around the school garden with his teacher. He noticed a green leaf on a small plant. He bent down and looked at the leaf carefully. The teacher explained that leaves help plants grow. Tom became interested and looked at the other plants. He thanked his teacher for teaching him something new.",
       "target_word_ids": [
         "green",
@@ -4137,7 +4137,7 @@
     },
     {
       "id": "story-47-black",
-      "title": "47. Black",
+      "title": "Black",
       "text": "Ben was getting ready for school one morning. He put his books inside his black bag. He also placed his pencils and notebook inside it. Before leaving, he checked if he had everything he needed. His mother reminded him to take care of his school things. Ben carried his bag and happily went to school.",
       "target_word_ids": [
         "black",
@@ -4213,7 +4213,7 @@
     },
     {
       "id": "story-48-house",
-      "title": "48. House",
+      "title": "House",
       "text": "One afternoon, Ana walked with her mother around their neighborhood. As they walked, Ana noticed a small house with a red door. There were beautiful flowers beside the window. Ana stopped for a moment because she liked the flowers. Her mother told her that the house belonged to a kind family. They continued walking home while talking about the beautiful garden.",
       "target_word_ids": [
         "house",

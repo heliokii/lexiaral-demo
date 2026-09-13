@@ -54,13 +54,9 @@
     <ellipse cx="93" cy="140" rx="10" ry="6" fill="#EFABA2" opacity=".5"/>
     <ellipse cx="208" cy="140" rx="10" ry="6" fill="#EFABA2" opacity=".5"/>
 
-    <!-- Beak -->
-    <path d="M139 132 Q149 124 159 132 L149 147 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
-
-    <!-- Sad downturned mouth -->
-    <path d="M130 157 Q149 148 168 157"
-      stroke="#9B5B38" stroke-width="3" stroke-linecap="round"/>
+    <!-- Beak (No human mouth below it) -->
+    <path d="M138 133 Q149 126 160 133 L149 149 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
 
     <!-- Purple scarf/chest -->
     <path d="M78 163 Q148 188 222 162 L210 189

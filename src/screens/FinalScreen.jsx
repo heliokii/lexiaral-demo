@@ -8,7 +8,7 @@ import {
 
 import { LEVELS, performance } from "../content";
 import { Art, Icon } from "../Art";
-import { speak } from "../audio";
+import { speak, stopAudio } from "../audio";
 import { useLearning } from "../state/LearningProvider";
 import { latestAttempt } from "../state/engine";
 import {
@@ -69,6 +69,17 @@ export function FinalScreen({ navigation }) {
   const master = state.badges.includes("vocabulary-master");
   const compact = width < 350 || fontScale > 1.3;
 
+  const feedbackSpeech = total > 0
+    ? `${performance(score, total)}! You earned ${score} stars in your completed activities.`
+    : "Great work completing your activity! Keep exploring and practicing words!";
+
+  React.useEffect(() => {
+    speak(feedbackSpeech, "en-US", true);
+    return () => {
+      stopAudio();
+    };
+  }, []);
+
   return (
     <Screen testID="screen-final">
       <View testID="final-confetti-container" style={{ position: "relative" }}>
@@ -76,15 +87,30 @@ export function FinalScreen({ navigation }) {
 
         <View testID="final-celebration-hero" style={[styles.celebration, compact && styles.heroStacked]}>
           <View style={{ width: compact ? "65%" : "48%" }}>
-            <Art name={allCompleted ? "owl_excited" : "owl_cheering"} height={210} />
+            <Art name={allCompleted ? "owl_excited" : "owl_cheering"} height={compact ? 170 : 200} />
           </View>
 
-          <View style={{ flex: 1, gap: 7 }}>
-            <Title testID="final-hero-title" style={[styles.heroTitle, compact && styles.center]}>
-              {allCompleted ? "Amazing\nWork!" : "Keep\nGrowing!"}
-            </Title>
+          <View style={{ flex: 1, gap: 6 }}>
+            <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
+              <Title testID="final-hero-title" style={[styles.heroTitle, compact && styles.center]}>
+                {allCompleted ? "Amazing\nWork!" : "Keep\nGrowing!"}
+              </Title>
+              <Pressable
+                testID="final-hear-feedback-btn"
+                accessible
+                accessibilityRole="button"
+                accessibilityLabel="Hear feedback summary"
+                onPress={() => speak(feedbackSpeech, "en-US", true)}
+                style={({ pressed }) => [
+                  styles.heroSpeakerBtn,
+                  pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+                ]}
+              >
+                <Icon name="sound" size={18} color={colors.primary} />
+              </Pressable>
+            </View>
 
-            <Body testID="final-hero-subtitle" style={{ fontSize: 16, lineHeight: 23 }}>
+            <Body testID="final-hero-subtitle" style={{ fontSize: 16, lineHeight: 22 }}>
               {allCompleted
                 ? "You completed all three levels!"
                 : "Your word adventure is underway."}
@@ -93,7 +119,17 @@ export function FinalScreen({ navigation }) {
         </View>
       </View>
 
-      <Card testID="final-results-card">
+      <Card testID="final-results-card" style={{ gap: 12, padding: 18 }}>
+        <View style={styles.resultsCardHeader}>
+          <Title style={{ fontSize: 18, color: colors.darkPurple }}>Level Scores</Title>
+          {total > 0 && (
+            <View style={styles.subtotalPill}>
+              <Icon name="star" size={14} color="#D88F0C" />
+              <Text style={styles.subtotalPillText}>{score}/{total} stars</Text>
+            </View>
+          )}
+        </View>
+
         {LEVELS.map((level, index) => {
           const result = attempts[index];
           const color = ["#4ECD9F", "#967CE3", "#F1A0AF"][index];
@@ -102,7 +138,7 @@ export function FinalScreen({ navigation }) {
             <View key={level.id} testID={`final-result-row-${level.id}`} style={styles.resultRow}>
               <Icon
                 name="star"
-                size={25}
+                size={22}
                 color={["#F5CA61", "#F2AEC1", "#85CDE7"][index]}
               />
 
@@ -124,77 +160,71 @@ export function FinalScreen({ navigation }) {
           );
         })}
 
-        <Text style={styles.caption}>
-          Latest completed attempt in each level.
-        </Text>
+        <View style={styles.resultsSummaryFooter}>
+          <Text style={styles.caption}>
+            Latest completed attempt in each level.
+          </Text>
+          {total > 0 && (
+            <Text testID="final-overall-summary" style={styles.performanceTag}>
+              {performance(score, total)}
+            </Text>
+          )}
+        </View>
       </Card>
 
-      <Card testID="final-master-badge-card" style={{ alignItems: "center" }}>
-        <Art name={master ? "medal" : "owl_thinking"} height={170} />
-
-        <Title style={styles.center}>
-          {master ? "Vocabulary Master" : "A Little More Every Day"}
-        </Title>
-
-        <Body style={{ fontSize: 16 }}>
-          {master
-            ? "Badge earned!"
-            : "Finish all three levels to earn this badge."}
-        </Body>
-      </Card>
-
-      {total > 0 && (
-        <View testID="final-overall-summary" style={{ alignItems: "center", gap: 6 }}>
-          <Title style={{ fontSize: 22 }}>{performance(score, total)}</Title>
-          <Body style={{ fontSize: 17 }}>
-            {allCompleted ? "Overall score" : "Completed-level subtotal"}:{" "}
-            {score}/{total} stars
-          </Body>
+      {/* Vocabulary Master Badge Status: Avoid redundant second owl when badge is not yet unlocked */}
+      {master ? (
+        <Card testID="final-master-badge-card" style={styles.masterBadgeCard}>
+          <Art name="medal" height={100} />
+          <View style={{ gap: 2, alignItems: "center" }}>
+            <Title style={styles.center}>Vocabulary Master</Title>
+            <Body style={{ fontSize: 15, color: "#238055" }}>Badge earned!</Body>
+          </View>
+        </Card>
+      ) : (
+        <View style={styles.badgeQuestRow}>
+          <View style={styles.badgeQuestIcon}>
+            <Icon name="medal" size={24} color={colors.primary} />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={styles.badgeQuestTitle}>Vocabulary Master Badge</Text>
+            <Text style={styles.badgeQuestSub}>Finish all three levels to earn this special badge!</Text>
+          </View>
         </View>
       )}
 
-      <View style={compact ? { gap: 12 } : styles.actionRow}>
+      {/* Streamlined, non-redundant primary actions */}
+      <View style={{ gap: 12, marginTop: 6 }}>
         <Button
-          testID="final-review-words-btn"
-          title="Review Words"
-          icon="book"
-          style={compact ? undefined : { flex: 1 }}
-          onPress={() => navigation.navigate("Review")}
+          testID="final-play-again-btn"
+          title="PLAY AGAIN"
+          tone="purple"
+          arrow
+          onPress={() => navigation.navigate("Levels")}
+          style={{ minHeight: 56 }}
         />
-        <Button
-          testID="final-home-btn"
-          title="Home"
-          icon="home"
-          tone="mint"
-          style={compact ? undefined : { flex: 1 }}
-          onPress={() =>
-            navigation.reset({ index: 0, routes: [{ name: "Home" }] })
-          }
-        />
+
+        <View style={compact ? { gap: 10 } : styles.actionRow}>
+          <Button
+            testID="final-review-words-btn"
+            title="Review Words"
+            icon="book"
+            secondary
+            style={compact ? undefined : { flex: 1 }}
+            onPress={() => navigation.navigate("Review")}
+          />
+          <Button
+            testID="final-home-btn"
+            title="Home"
+            icon="home"
+            tone="mint"
+            style={compact ? undefined : { flex: 1 }}
+            onPress={() =>
+              navigation.reset({ index: 0, routes: [{ name: "Home" }] })
+            }
+          />
+        </View>
       </View>
-
-      <Button
-        testID="final-play-again-btn"
-        title="Play again"
-        secondary
-        onPress={() => navigation.navigate("Levels")}
-      />
-
-      <Button
-        testID="final-hear-feedback-btn"
-        title="Hear my feedback"
-        icon="sound"
-        secondary
-        onPress={() =>
-          speak(
-            total
-              ? `${performance(score, total)} You earned ${score} stars in your latest completed activities.`
-              : "Let’s start your word adventure!",
-            "en-US",
-            true,
-          )
-        }
-      />
     </Screen>
   );
 }
@@ -218,6 +248,38 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 35,
   },
+  heroSpeakerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F4EEFD",
+    borderWidth: 1,
+    borderColor: "#E1D4FA",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resultsCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  subtotalPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#FFF5DA",
+    borderWidth: 1,
+    borderColor: "#F7DE9B",
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  subtotalPillText: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 13,
+    color: "#8D7040",
+  },
   resultRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -237,10 +299,62 @@ const styles = StyleSheet.create({
     textAlign: "right",
     color: colors.text,
   },
+  resultsSummaryFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderColor: "#F0EBF9",
+    paddingTop: 8,
+    marginTop: 2,
+  },
   caption: {
     fontFamily: "Nunito_600SemiBold",
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.muted,
+    flex: 1,
+  },
+  performanceTag: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 13.5,
+    color: colors.primary,
+  },
+  masterBadgeCard: {
+    alignItems: "center",
+    padding: 18,
+    gap: 10,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 22,
+    borderWidth: 1.5,
+    borderColor: "#DECFFC",
+  },
+  badgeQuestRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#FAF7FF",
+    borderWidth: 1.5,
+    borderColor: "#E6DBFC",
+    borderRadius: 18,
+    padding: 14,
+  },
+  badgeQuestIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#EDE5FD",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeQuestTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    color: colors.darkPurple,
+  },
+  badgeQuestSub: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
     color: colors.muted,
   },
   actionRow: {

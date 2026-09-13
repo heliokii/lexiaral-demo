@@ -15,6 +15,7 @@ import { SvgXml } from "react-native-svg";
 import assets from "../assets.generated";
 import { CONTENT, WORDS, STORIES } from "../content";
 import { illustrations } from "../illustrations";
+import { getStoryScenarioSvg } from "../storyIllustrations";
 import {
   playCardFlipSfx,
   playErrorSfx,
@@ -122,6 +123,44 @@ export function WordPicture({ word, height = 170 }) {
   );
 }
 
+const CHOICE_LETTERS = ["A", "B", "C", "D"];
+
+export function ChoiceBadge({ letter, state }) {
+  let bg = "#F3EEFA";
+  let border = "#D7C6F5";
+  let text = "#653EB5";
+
+  if (state === "selected") {
+    bg = "#EDE4FC";
+    border = colors.primary;
+    text = colors.primary;
+  } else if (state === "correct") {
+    bg = "#20A464";
+    border = "#17824E";
+    text = "#FFFFFF";
+  } else if (state === "wrong") {
+    bg = "#E85A71";
+    border = "#C23F54";
+    text = "#FFFFFF";
+  }
+
+  return (
+    <View
+      style={[
+        styles.choiceBadge,
+        {
+          backgroundColor: bg,
+          borderColor: border,
+        },
+      ]}
+    >
+      <Text style={[styles.choiceBadgeText, { color: text }]}>
+        {letter}
+      </Text>
+    </View>
+  );
+}
+
 export function AnswerChoices({
   question,
   selected,
@@ -146,6 +185,16 @@ export function AnswerChoices({
         const chosen = selected?.choiceId === choice.id;
         const wrong = revealed && chosen && !correct;
 
+        const badgeState = correct
+          ? "correct"
+          : wrong
+            ? "wrong"
+            : chosen
+              ? "selected"
+              : "default";
+
+        const letter = CHOICE_LETTERS[index] || String.fromCharCode(65 + index);
+
         return (
           <Pressable
             key={choice.id}
@@ -153,8 +202,8 @@ export function AnswerChoices({
             accessibilityRole="button"
             accessibilityLabel={
               pictures
-                ? `Picture ${index + 1}: ${WORDS[choice.wordId].word}`
-                : choice.label
+                ? `Option ${letter}: Picture ${index + 1}, ${WORDS[choice.wordId].word}`
+                : `Option ${letter}: ${choice.label}`
             }
             accessibilityState={{
               disabled: disabled || revealed,
@@ -172,20 +221,41 @@ export function AnswerChoices({
             ]}
           >
             {pictures ? (
-              <>
-                <Text style={styles.pictureLabel}>Picture {index + 1}</Text>
-                <WordPicture word={WORDS[choice.wordId]} height={92} />
-              </>
+              <View style={styles.pictureChoiceContainer}>
+                <View style={styles.pictureBadgeWrap}>
+                  <ChoiceBadge letter={letter} state={badgeState} />
+                </View>
+                <WordPicture word={WORDS[choice.wordId]} height={112} />
+              </View>
+            ) : grid ? (
+              <View style={styles.choiceRowGrid}>
+                <ChoiceBadge letter={letter} state={badgeState} />
+                <Text
+                  style={[
+                    styles.answerText,
+                    styles.answerTextGrid,
+                    correct && { color: "#176640" },
+                    wrong && { color: "#8A2B1D" },
+                  ]}
+                >
+                  {choice.label}
+                </Text>
+                <View style={{ width: 32 }} />
+              </View>
             ) : (
-              <Text
-                style={[
-                  styles.answerText,
-                  correct && { color: "#176640" },
-                  wrong && { color: "#8A2B1D" },
-                ]}
-              >
-                {choice.label}
-              </Text>
+              <View style={styles.choiceRowLinear}>
+                <ChoiceBadge letter={letter} state={badgeState} />
+                <Text
+                  style={[
+                    styles.answerText,
+                    styles.answerTextLinear,
+                    correct && { color: "#176640" },
+                    wrong && { color: "#8A2B1D" },
+                  ]}
+                >
+                  {choice.label}
+                </Text>
+              </View>
             )}
 
             {correct && (
@@ -257,17 +327,31 @@ export function FlashcardQuestionWidget(props) {
               ]}
             >
               <View style={styles.listenHeroBtnInner}>
-                <Icon name="sound" size={36} color="#FFFFFF" />
+                <Icon name="sound" size={44} color="#FFFFFF" />
               </View>
             </Pressable>
             <Text style={styles.listenHeroText}>Tap to listen again</Text>
           </View>
         ) : question.type === "pictureToWord" ? (
-          <WordPicture word={word} height={140} />
+          <WordPicture word={word} height={205} />
         ) : (
-          <View style={{ paddingVertical: 18, alignItems: "center", gap: 8 }}>
-            <Icon name="book" size={36} color={colors.primary} />
-            <Title style={{ fontSize: 32, color: colors.darkPurple }}>
+          <View
+            style={{
+              paddingVertical: 28,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 12,
+              flex: 1,
+            }}
+          >
+            <Icon name="book" size={46} color={colors.primary} />
+            <Title
+              style={{
+                fontSize: 38,
+                lineHeight: 44,
+                color: colors.darkPurple,
+              }}
+            >
               {word?.word}
             </Title>
           </View>
@@ -360,27 +444,6 @@ export function MatchingPairsQuestionWidget({
           {question.prompt ||
             "Tap a word on the left, then tap its matching picture on the right."}
         </Body>
-
-        <View
-          style={{
-            alignSelf: "center",
-            backgroundColor: "#E8F8F0",
-            paddingHorizontal: 12,
-            paddingVertical: 4,
-            borderRadius: 12,
-          }}
-        >
-          <Text
-            style={{
-              fontFamily: "Nunito_800ExtraBold",
-              color: "#20A464",
-              fontSize: 13.5,
-            }}
-          >
-            Matched: {isCompleted ? pairs.length : matchedIds.length} of{" "}
-            {pairs.length} pairs
-          </Text>
-        </View>
       </Card>
 
       <View style={styles.matchingBoard}>
@@ -444,7 +507,7 @@ export function MatchingPairsQuestionWidget({
                   isWrong && styles.matchCardWrong,
                 ]}
               >
-                <WordPicture word={WORDS[item.wordId]} height={60} />
+                <WordPicture word={WORDS[item.wordId]} height={52} />
                 {isMatched && (
                   <View style={styles.checkBadge}>
                     <Icon name="check" size={13} color="#FFFFFF" />
@@ -464,10 +527,17 @@ export function SentenceCompletionQuestionWidget(props) {
   const word = WORDS[question.wordId];
 
   return (
-    <View style={{ gap: 10 }}>
+    <View style={{ gap: 12 }}>
       <Card style={styles.questionCard}>
         <View style={styles.questionHeaderRow}>
-          <Text style={styles.questionBadge}>Level 2: Use the Word</Text>
+          <View style={{ flex: 1, gap: 4 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Text style={styles.questionBadge}>Level 2: Use the Word</Text>
+            </View>
+            <Title style={styles.questionTitle}>
+              {question.prompt || "Which word completes the sentence?"}
+            </Title>
+          </View>
 
           {question.type !== "bestUse" && (
             <Pressable
@@ -484,18 +554,12 @@ export function SentenceCompletionQuestionWidget(props) {
         </View>
 
         {question.type === "pictureSentence" && word && (
-          <WordPicture word={word} height={125} />
+          <WordPicture word={word} height={155} />
         )}
 
         <View style={styles.sentenceBox}>
           <Text style={styles.sentenceText}>{question.sentence}</Text>
         </View>
-
-        <Body
-          style={{ textAlign: "center", fontSize: 15, color: colors.muted }}
-        >
-          {question.prompt}
-        </Body>
       </Card>
 
       <AnswerChoices {...props} />
@@ -604,7 +668,7 @@ export function ReviewFlashcard({ word }) {
           onPress={handleFlip}
           style={styles.flashcardFrontBody}
         >
-          <WordPicture word={word} height={180} />
+          <WordPicture word={word} height={230} />
         </Pressable>
       </Animated.View>
 
@@ -704,6 +768,8 @@ export function InteractiveStoryReaderWidget({
 
   const parts = expression ? story.text.split(expression) : [story.text];
 
+  const scenarioSvg = getStoryScenarioSvg(story);
+
   const handleToggleReading = () => {
     if (isReading) {
       stopAudio();
@@ -717,21 +783,60 @@ export function InteractiveStoryReaderWidget({
   return (
     <Card>
       <View style={styles.storyHeader}>
-        <Icon name="book" size={28} />
-        <Title style={{ flex: 1 }}>{story.title}</Title>
-        {onSelectStory && (
+        <Icon name="book" size={26} color={colors.primary} />
+        <Title style={{ flex: 1, fontSize: 22, color: colors.darkPurple }}>
+          {story.title?.replace(/^\d+\.\s*/, "") || story.title}
+        </Title>
+        <View style={styles.storyHeaderActions}>
+          {onSelectStory && (
+            <Pressable
+              testID="story-switch-btn"
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Choose another reading story"
+              onPress={() => setPickerOpen(true)}
+              style={({ pressed }) => [
+                styles.storyHeaderActionBtn,
+                pressed && { transform: [{ scale: 0.94 }], opacity: 0.8 },
+              ]}
+            >
+              <Icon name="refresh" size={20} color="#6C47C7" />
+            </Pressable>
+          )}
+
           <Pressable
+            testID="story-listen-toggle-btn"
             accessible
             accessibilityRole="button"
-            accessibilityLabel="Choose another story from 20 ARAL stories"
-            onPress={() => setPickerOpen(true)}
-            style={styles.storyPickerBtn}
+            accessibilityLabel={
+              isReading ? "Stop reading story" : "Listen to story audio"
+            }
+            onPress={handleToggleReading}
+            style={({ pressed }) => [
+              styles.storyHeaderActionBtn,
+              isReading && styles.storyHeaderActionBtnActive,
+              pressed && { transform: [{ scale: 0.94 }], opacity: 0.8 },
+            ]}
           >
-            <Text style={styles.storyPickerBtnText}>Choose Story</Text>
-            <Icon name="arrow" size={14} color="#7548C7" />
+            <Icon
+              name={isReading ? "lock" : "sound"}
+              size={20}
+              color={isReading ? "#FFFFFF" : colors.primary}
+            />
           </Pressable>
-        )}
+        </View>
       </View>
+
+      {scenarioSvg ? (
+        <View
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel={`Illustration scene for ${story.title?.replace(/^\d+\.\s*/, "") || "the story"}`}
+          style={styles.storyScenarioWrapper}
+        >
+          <SvgXml xml={scenarioSvg} width="100%" height={195} />
+        </View>
+      ) : null}
 
       <Text style={styles.story}>
         {parts.map((part, index) => {
@@ -756,13 +861,6 @@ export function InteractiveStoryReaderWidget({
         })}
       </Text>
 
-      <Button
-        title={isReading ? "Stop reading" : "Listen to the story"}
-        icon={isReading ? "lock" : "sound"}
-        secondary
-        onPress={handleToggleReading}
-      />
-
       <Modal
         transparent
         visible={pickerOpen}
@@ -779,13 +877,18 @@ export function InteractiveStoryReaderWidget({
                 Choose a Story
               </Title>
               <Body style={{ fontSize: 13, color: colors.muted }}>
-                Grade 3 ARAL Official Curriculum (20 Stories)
+                Grade 3 ARAL Reading Stories
               </Body>
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 16, gap: 10 }}>
-              {(STORIES || []).map((item, idx) => {
+              {(STORIES || []).map((item) => {
                 const isCurrent = item.id === story.id;
+                const cleanTitle = item.title.replace(/^\d+\.\s*/, "");
+                const primaryWordId =
+                  item.target_word_ids?.[0] || item.id.replace(/^story-\d+-/, "");
+                const iconXml =
+                  illustrations[primaryWordId] || illustrations[item.id];
                 const targetLabels = (item.target_word_ids || [])
                   .map((id) => WORDS[id]?.word || id)
                   .join(", ");
@@ -795,7 +898,7 @@ export function InteractiveStoryReaderWidget({
                     key={item.id}
                     accessible
                     accessibilityRole="button"
-                    accessibilityLabel={`Story ${idx + 1}: ${item.title}. Target words: ${targetLabels}`}
+                    accessibilityLabel={`${cleanTitle}. Target words: ${targetLabels}`}
                     onPress={() => {
                       stopAudio();
                       setIsReading(false);
@@ -809,18 +912,19 @@ export function InteractiveStoryReaderWidget({
                   >
                     <View
                       style={[
-                        styles.storyOptionNum,
-                        isCurrent && styles.storyOptionNumCurrent,
+                        styles.storyOptionIconWrap,
+                        isCurrent && styles.storyOptionIconWrapCurrent,
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.storyOptionNumText,
-                          isCurrent && { color: "#FFF" },
-                        ]}
-                      >
-                        {idx + 1}
-                      </Text>
+                      {iconXml ? (
+                        <SvgXml xml={iconXml} width={34} height={34} />
+                      ) : (
+                        <Icon
+                          name="book"
+                          size={20}
+                          color={isCurrent ? colors.primary : "#8C77B0"}
+                        />
+                      )}
                     </View>
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text
@@ -829,7 +933,7 @@ export function InteractiveStoryReaderWidget({
                           isCurrent && { color: colors.darkPurple },
                         ]}
                       >
-                        {item.title}
+                        {cleanTitle}
                       </Text>
                       {targetLabels ? (
                         <Text style={styles.storyOptionBadge}>
@@ -871,21 +975,48 @@ export function InteractiveStoryReaderWidget({
         onRequestClose={() => setSelectedWord(null)}
       >
         <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard} accessibilityViewIsModal>
+          <View style={[styles.modalCard, { position: "relative" }]} accessibilityViewIsModal>
+            {selectedWord && (
+              <Pressable
+                testID="word-popup-sound-btn"
+                accessible
+                accessibilityRole="button"
+                accessibilityLabel={`Hear pronunciation of ${selectedWord.word}`}
+                onPress={() => pronounce(selectedWord)}
+                style={({ pressed }) => [
+                  {
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    zIndex: 20,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: "#F4EEFD",
+                    borderWidth: 1,
+                    borderColor: "#E1D4FA",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: "#8C77B0",
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    shadowOffset: { width: 0, height: 2 },
+                    elevation: 2,
+                  },
+                  pressed && { opacity: 0.75, transform: [{ scale: 0.94 }] },
+                ]}
+              >
+                <Icon name="sound" size={19} color={colors.primary} />
+              </Pressable>
+            )}
+
             <ScrollView contentContainerStyle={{ padding: 24, gap: 16 }}>
               {selectedWord && (
                 <>
-                  <WordPicture word={selectedWord} height={135} />
+                  <WordPicture word={selectedWord} height={145} />
                   <Title>{selectedWord.word}</Title>
                   <Body>{selectedWord.definition}</Body>
                   <Body>{selectedWord.example_sentence}</Body>
-
-                  <Button
-                    title="Hear the word"
-                    icon="sound"
-                    secondary
-                    onPress={() => pronounce(selectedWord)}
-                  />
 
                   <Button
                     title="Back to the story"
@@ -903,17 +1034,19 @@ export function InteractiveStoryReaderWidget({
 
 const styles = StyleSheet.create({
   questionCard: {
-    paddingTop: 16,
-    paddingBottom: 14,
-    paddingHorizontal: 16,
-    gap: 10,
-    borderRadius: 22,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    minHeight: 290,
+    justifyContent: "space-between",
+    gap: 12,
+    borderRadius: 24,
   },
   questionHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
+    gap: 10,
   },
   questionBadge: {
     fontFamily: "Nunito_800ExtraBold",
@@ -925,64 +1058,111 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   speakerBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: "#F0EBF9",
     alignItems: "center",
     justifyContent: "center",
   },
   questionTitle: {
     color: colors.darkPurple,
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 23,
+    lineHeight: 29,
     fontFamily: "Nunito_900Black",
   },
   sentenceBox: {
     backgroundColor: "#F8F6FD",
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1.5,
     borderColor: "#ECE4F7",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: 24,
+    paddingHorizontal: 18,
     marginVertical: 4,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+    minHeight: 120,
   },
   sentenceText: {
     fontFamily: fonts.reading,
-    fontSize: 20,
-    lineHeight: 28,
+    fontSize: 22,
+    lineHeight: 32,
     color: colors.darkPurple,
     textAlign: "center",
   },
   answers: {
-    gap: 10,
+    gap: 12,
   },
   answerGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    rowGap: 10,
+    rowGap: 12,
   },
   answer: {
-    minHeight: 62,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    minHeight: 82,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: "#E7DFEE",
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: "#E2D7F4",
     backgroundColor: "#FFFFFF",
     gap: 4,
-    shadowColor: "#8E7DA7",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 5,
+    shadowColor: "#7456A8",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 2,
     position: "relative",
   },
   gridTile: {
     width: "48.5%",
+  },
+  choiceBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#8C77B0",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  choiceBadgeText: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 15,
+    lineHeight: 18,
+  },
+  choiceRowGrid: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 2,
+  },
+  choiceRowLinear: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    width: "100%",
+    paddingHorizontal: 6,
+  },
+  pictureChoiceContainer: {
+    width: "100%",
+    alignItems: "center",
+    position: "relative",
+  },
+  pictureBadgeWrap: {
+    position: "absolute",
+    top: -4,
+    left: -2,
+    zIndex: 5,
   },
   answerSelected: {
     borderColor: colors.primary,
@@ -990,9 +1170,21 @@ const styles = StyleSheet.create({
   },
   answerText: {
     fontFamily: fonts.reading,
-    fontSize: 17,
+    fontSize: 18,
     color: colors.text,
+  },
+  answerTextGrid: {
+    fontSize: 22,
+    lineHeight: 28,
+    fontFamily: "Nunito_800ExtraBold",
     textAlign: "center",
+    flex: 1,
+  },
+  answerTextLinear: {
+    fontSize: 18,
+    lineHeight: 25,
+    textAlign: "left",
+    flex: 1,
   },
   pictureLabel: {
     fontFamily: "Nunito_700Bold",
@@ -1046,6 +1238,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
+  storyScenarioWrapper: {
+    width: "100%",
+    borderRadius: 18,
+    overflow: "hidden",
+    borderWidth: 1.5,
+    borderColor: "#EBE0FA",
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#6F48AC",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.09,
+    shadowRadius: 8,
+    elevation: 2,
+    marginVertical: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   hint: {
     fontSize: 16,
     color: colors.muted,
@@ -1085,7 +1293,7 @@ const styles = StyleSheet.create({
   },
   matchingColumn: {
     flex: 1,
-    gap: 10,
+    gap: 8,
   },
   columnHeader: {
     fontFamily: "Nunito_800ExtraBold",
@@ -1096,13 +1304,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   matchCard: {
-    minHeight: 74,
-    paddingVertical: 12,
+    minHeight: 64,
+    paddingVertical: 8,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: "#DCE7F5",
     shadowColor: "#9986B2",
@@ -1113,7 +1321,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   matchPicCard: {
-    paddingVertical: 6,
+    paddingVertical: 4,
   },
   matchCardSelected: {
     borderColor: colors.purple,
@@ -1188,21 +1396,20 @@ const styles = StyleSheet.create({
     borderColor: colors.purple,
     backgroundColor: "#F7F3FF",
   },
-  storyOptionNum: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#EDE8FC",
+  storyOptionIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: "#F4EFFC",
+    borderWidth: 1.5,
+    borderColor: "#E5DAFA",
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
-  storyOptionNumCurrent: {
-    backgroundColor: colors.purple,
-  },
-  storyOptionNumText: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 13,
-    color: "#7056BE",
+  storyOptionIconWrapCurrent: {
+    backgroundColor: "#EBE2FC",
+    borderColor: colors.purple,
   },
   storyOptionTitle: {
     fontFamily: "Nunito_800ExtraBold",
@@ -1215,7 +1422,7 @@ const styles = StyleSheet.create({
     color: "#8372A5",
   },
   flashcardContainer: {
-    height: 320,
+    height: 395,
     width: "100%",
     position: "relative",
     marginVertical: 4,
@@ -1319,38 +1526,64 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   listenHeroContainer: {
-    paddingVertical: 18,
+    paddingVertical: 24,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 16,
+    flex: 1,
+    minHeight: 180,
   },
   listenHeroBtn: {
-    width: 86,
-    height: 86,
-    borderRadius: 43,
+    width: 108,
+    height: 108,
+    borderRadius: 54,
     backgroundColor: "#F2ECFC",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: "#DACBF8",
     shadowColor: "#7048B8",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.16,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 4,
   },
   listenHeroBtnInner: {
-    width: 66,
-    height: 66,
-    borderRadius: 33,
+    width: 82,
+    height: 82,
+    borderRadius: 41,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   listenHeroText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
+    fontSize: 17,
     color: colors.darkPurple,
     letterSpacing: 0.3,
+  },
+  storyHeaderActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  storyHeaderActionBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F3EDFD",
+    borderWidth: 1.5,
+    borderColor: "#DACBF8",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#7A59AF",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  storyHeaderActionBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 });

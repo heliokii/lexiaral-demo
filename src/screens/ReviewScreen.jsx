@@ -5,7 +5,12 @@ import { CONTENT } from "../content";
 import { Icon } from "../Art";
 import { Body, Screen, Title, colors } from "../components/ui";
 import { ReviewFlashcard } from "../components/learning";
-import { playCardSwipeSfx, setBgmFocusMode, stopAudio } from "../audio";
+import {
+  playCardShuffleSfx,
+  playCardSwipeSfx,
+  setBgmFocusMode,
+  stopAudio,
+} from "../audio";
 
 export function ReviewScreen() {
   const [words, setWords] = useState(() => [...(CONTENT.words || [])]);
@@ -34,6 +39,7 @@ export function ReviewScreen() {
 
   const handleShuffle = () => {
     stopAudio();
+    playCardShuffleSfx();
     Animated.sequence([
       Animated.timing(shuffleAnim, {
         toValue: 1,
@@ -334,24 +340,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
+    gap: 10,
+    marginTop: 24,
+    marginBottom: 16,
     paddingVertical: 6,
   },
   pagerBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 16,
     backgroundColor: "#FFFFFF",
     borderWidth: 1.5,
     borderColor: "#E2D8F2",
     shadowColor: "#8C77B0",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    elevation: 2,
   },
   pagerBtnDisabled: {
     opacity: 0.45,
@@ -362,21 +370,21 @@ const styles = StyleSheet.create({
   },
   pagerBtnText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 13,
+    fontSize: 14.5,
     color: colors.primary,
   },
   pagerBtnTextDisabled: {
     color: "#8C8599",
   },
   pagerPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 14,
     backgroundColor: "#F0EBF9",
   },
   pagerPillText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 13,
+    fontSize: 14,
     color: colors.primary,
   },
 });

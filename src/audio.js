@@ -32,6 +32,7 @@ const SFX_PATHS = {
   bgm: '/assets/assets/alex-morgan-kids-playground-giggles-parade-578468.mp3',
   cardFlip: '/assets/assets/card-flip.mp3',
   cardSwipe: '/assets/assets/card-swipe.mp3',
+  cardShuffle: '/assets/assets/card-shuffle.mp3',
 };
 
 // Reusable audio helper with instant fallback
@@ -274,6 +275,11 @@ export function playCardFlipSfx() {
 // User-provided MP3 card swipe/pagination SFX (card-swipe.mp3)
 export function playCardSwipeSfx() {
   playAudioClip('cardSwipe', 0.9, playCardSwipeSynthFallback);
+}
+
+// User-provided MP3 card shuffle SFX (card-shuffle.mp3)
+export function playCardShuffleSfx() {
+  playAudioClip('cardShuffle', 0.9, playCardSwipeSynthFallback);
 }
 
 // Short, light chime for pair matches in vocabulary activities

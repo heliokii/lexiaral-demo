@@ -171,19 +171,66 @@ export function ActivityScreen({ navigation }) {
               borderColor: "#DCD0F8",
               borderWidth: 1.5,
               backgroundColor: "rgba(255, 255, 255, 0.96)",
-              gap: 16,
+              alignItems: "center",
+              gap: 14,
               shadowColor: "#5E4399",
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.08,
               shadowRadius: 14,
               elevation: 3,
+              position: "relative",
             }}
           >
+            {/* Top-right absolute audio button */}
+            <Pressable
+              testID="instructions-hear-btn"
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Hear instructions"
+              onPress={() =>
+                speak(
+                  `${INSTRUCTIONS[session.level]} Correct answers earn stars; mistakes help you learn!`,
+                  "en-US",
+                  true
+                )
+              }
+              style={({ pressed }) => [
+                {
+                  position: "absolute",
+                  top: 18,
+                  right: 18,
+                  zIndex: 10,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: "#F4EEFD",
+                  borderWidth: 1,
+                  borderColor: "#E1D4FA",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: "#8C77B0",
+                  shadowOpacity: 0.08,
+                  shadowRadius: 4,
+                  shadowOffset: { width: 0, height: 2 },
+                  elevation: 2,
+                },
+                pressed && { opacity: 0.75, transform: [{ scale: 0.94 }] },
+              ]}
+            >
+              <Icon name="sound" size={19} color={colors.primary} />
+            </Pressable>
+
+            <View style={{ alignItems: "center", paddingVertical: 4 }}>
+              <Art name="owl_thinking" height={108} width={108} />
+            </View>
+
             <Title
               testID="instructions-title"
               style={{
-                fontSize: 22,
+                fontSize: 24,
+                lineHeight: 30,
                 color: colors.darkPurple,
+                textAlign: "center",
               }}
             >
               How to Play
@@ -193,9 +240,11 @@ export function ActivityScreen({ navigation }) {
               testID="instructions-text"
               style={{
                 fontFamily: "Nunito_700Bold",
-                fontSize: 17,
+                fontSize: 17.5,
                 lineHeight: 26,
                 color: "#2C1B4D",
+                textAlign: "center",
+                paddingHorizontal: 8,
               }}
             >
               {INSTRUCTIONS[session.level]}
@@ -204,32 +253,34 @@ export function ActivityScreen({ navigation }) {
             <View
               style={{
                 height: 1,
+                width: "90%",
                 backgroundColor: "#EFE8FC",
+                marginVertical: 2,
               }}
             />
 
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-              <View
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 15,
-                  backgroundColor: "#FFF4D2",
-                  borderWidth: 1,
-                  borderColor: "#F7D885",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon name="star" size={15} color="#E59812" />
-              </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                backgroundColor: "#FFF8E7",
+                borderWidth: 1,
+                borderColor: "#F7DE9B",
+                borderRadius: 16,
+                paddingHorizontal: 14,
+                paddingVertical: 7,
+                alignSelf: "center",
+              }}
+            >
+              <Icon name="star" size={16} color="#E59812" />
               <Text
                 style={{
-                  flex: 1,
-                  fontFamily: "Nunito_600SemiBold",
-                  fontSize: 14,
-                  lineHeight: 20,
-                  color: "#675981",
+                  fontFamily: "Nunito_700Bold",
+                  fontSize: 13.5,
+                  lineHeight: 19,
+                  color: "#7A5918",
+                  textAlign: "center",
                 }}
               >
                 Correct answers earn stars; mistakes help you learn!
@@ -237,35 +288,18 @@ export function ActivityScreen({ navigation }) {
             </View>
           </Card>
 
-          <View style={{ gap: 12 }}>
-            <Button
-              testID="instructions-hear-btn"
-              title="Hear instructions"
-              icon="sound"
-              secondary
-              onPress={() =>
-                speak(
-                  `${INSTRUCTIONS[session.level]} Correct answers earn stars; mistakes help you learn!`,
-                  "en-US",
-                  true
-                )
-              }
-              style={{ minHeight: 52 }}
-            />
-
-            <Button
-              testID="instructions-begin-btn"
-              title={session.level === 3 ? "READ THE STORY" : "BEGIN"}
-              tone="purple"
-              arrow
-              disabled={busy}
-              onPress={async () => {
-                stopAudio();
-                await dispatch({ type: "BEGIN" });
-              }}
-              style={{ minHeight: 56 }}
-            />
-          </View>
+          <Button
+            testID="instructions-begin-btn"
+            title={session.level === 3 ? "READ THE STORY" : "BEGIN"}
+            tone="purple"
+            arrow
+            disabled={busy}
+            onPress={async () => {
+              stopAudio();
+              await dispatch({ type: "BEGIN" });
+            }}
+            style={{ minHeight: 56, marginTop: 8 }}
+          />
         </View>
       </Screen>
     );
@@ -284,24 +318,34 @@ export function ActivityScreen({ navigation }) {
           onBack={() => navigation.navigate("Home")}
         />
 
-        <InteractiveStoryReaderWidget
-          story={activeStory}
-          onSelectStory={(storyId) =>
-            dispatch({ type: "SELECT_STORY", storyId })
-          }
-        />
-
-        <Button
-          title="NEXT: ANSWER QUESTIONS"
-          tone="purple"
-          arrow
-          disabled={busy}
-          onPress={async () => {
-            stopAudio();
-            await dispatch({ type: "READ_DONE" });
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "space-between",
+            paddingTop: 6,
+            paddingBottom: 16,
+            gap: 16,
           }}
-          style={{ minHeight: 54 }}
-        />
+        >
+          <InteractiveStoryReaderWidget
+            story={activeStory}
+            onSelectStory={(storyId) =>
+              dispatch({ type: "SELECT_STORY", storyId })
+            }
+          />
+
+          <Button
+            title="NEXT: ANSWER QUESTIONS"
+            tone="purple"
+            arrow
+            disabled={busy}
+            onPress={async () => {
+              stopAudio();
+              await dispatch({ type: "READ_DONE" });
+            }}
+            style={{ minHeight: 56 }}
+          />
+        </View>
       </Screen>
     );
   }
@@ -423,53 +467,89 @@ export function ActivityScreen({ navigation }) {
           label="Questions answered"
         />
 
-        {session.level === 1 && question.type === "matching" && (
-          <MatchingPairsQuestionWidget {...widgetProps} />
-        )}
+        <View style={styles.questionBodyWrapper}>
+          {session.level === 1 && question.type === "matching" && (
+            <MatchingPairsQuestionWidget {...widgetProps} />
+          )}
 
-        {session.level === 1 && question.type !== "matching" && (
-          <FlashcardQuestionWidget {...widgetProps} />
-        )}
+          {session.level === 1 && question.type !== "matching" && (
+            <FlashcardQuestionWidget {...widgetProps} />
+          )}
 
-        {session.level === 2 && (
-          <SentenceCompletionQuestionWidget {...widgetProps} />
-        )}
+          {session.level === 2 && (
+            <SentenceCompletionQuestionWidget {...widgetProps} />
+          )}
 
-        {session.level === 3 && (
-          <>
-            <Button
-              secondary
-              title={showStory ? "HIDE STORY" : "READ STORY AGAIN"}
-              onPress={() => setShowStory((value) => !value)}
-            />
+          {session.level === 3 && (
+            <>
+              {showStory && (
+                <InteractiveStoryReaderWidget
+                  story={
+                    (STORIES || []).find(
+                      (s) => s.id === (session.storyId || state.selectedStoryId),
+                    ) || CONTENT.story
+                  }
+                  onSelectStory={(storyId) =>
+                    dispatch({ type: "SELECT_STORY", storyId })
+                  }
+                />
+              )}
 
-            {showStory && (
-              <InteractiveStoryReaderWidget
-                story={
-                  (STORIES || []).find(
-                    (s) => s.id === (session.storyId || state.selectedStoryId),
-                  ) || CONTENT.story
-                }
-                onSelectStory={(storyId) =>
-                  dispatch({ type: "SELECT_STORY", storyId })
-                }
-              />
-            )}
+              <Card style={styles.storyQuestionCard}>
+                <View style={styles.storyQuestionHeaderRow}>
+                  <Pressable
+                    testID="level3-toggle-story-btn"
+                    accessible
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      showStory ? "Hide story text" : "Read story again"
+                    }
+                    onPress={() => setShowStory((value) => !value)}
+                    style={({ pressed }) => [
+                      styles.storyBadgeBtn,
+                      showStory && styles.storyBadgeBtnActive,
+                      pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+                    ]}
+                  >
+                    <Icon
+                      name="book"
+                      size={14}
+                      color={showStory ? "#FFFFFF" : colors.primary}
+                    />
+                    <Text
+                      style={[
+                        styles.storyBadgeBtnText,
+                        showStory && styles.storyBadgeBtnTextActive,
+                      ]}
+                    >
+                      {showStory ? "Hide Story" : "Read Story"}
+                    </Text>
+                  </Pressable>
 
-            <Card>
-              <Body>{question.prompt}</Body>
+                  <Pressable
+                    testID="level3-hear-question-btn"
+                    accessible
+                    accessibilityRole="button"
+                    accessibilityLabel="Hear the question"
+                    onPress={() => speak(question.prompt, "en-US", true)}
+                    style={({ pressed }) => [
+                      styles.questionSpeakerBtn,
+                      pressed && { opacity: 0.8, transform: [{ scale: 0.92 }] },
+                    ]}
+                  >
+                    <Icon name="sound" size={18} color={colors.primary} />
+                  </Pressable>
+                </View>
 
-              <Button
-                title="Hear the question"
-                icon="sound"
-                secondary
-                onPress={() => speak(question.prompt, "en-US", true)}
-              />
-            </Card>
+                <Text style={styles.storyQuestionPromptText}>
+                  {question.prompt}
+                </Text>
+              </Card>
 
-            <AnswerChoices {...widgetProps} />
-          </>
-        )}
+              <AnswerChoices {...widgetProps} />
+            </>
+          )}
+        </View>
       </Screen>
 
       {/* Full-screen backdrop and sliding Bottom Modal Sheet */}
@@ -492,88 +572,111 @@ export function ActivityScreen({ navigation }) {
               },
             ]}
           >
-            {/* Top row: Status icon, heading title, star badge, and single replay speaker */}
-            <View style={styles.sheetHeaderRow}>
-              <View style={styles.statusBadgeGroup}>
-                <Art
-                  name={isCorrect ? "owl_happy" : "owl_sad"}
-                  height={38}
-                  width={38}
-                />
-                <View
-                  style={[
-                    styles.statusIconCircle,
-                    isCorrect ? styles.iconCircleCorrect : styles.iconCircleWrong,
-                  ]}
-                >
-                  <Icon
-                    name={isCorrect ? "check" : "close"}
-                    size={16}
-                    color="#FFFFFF"
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.statusTitleText,
-                    isCorrect ? styles.statusTitleCorrect : styles.statusTitleWrong,
-                  ]}
-                >
-                  {feedbackDetails.title}
-                </Text>
-                {isCorrect && (
-                  <View style={styles.starPill}>
-                    <Icon name="star" size={13} color="#D88F0C" />
-                    <Text style={styles.starPillText}>+1</Text>
-                  </View>
-                )}
-              </View>
+            {/* Top-right absolute audio replay speaker */}
+            <Pressable
+              testID="activity-hear-feedback-btn"
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Hear feedback explanation"
+              onPress={() => speak(feedbackDetails.fullSpeech, "en-US", true)}
+              style={({ pressed }) => [
+                styles.sheetSpeakerBtn,
+                pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+              ]}
+            >
+              <Icon
+                name="sound"
+                size={19}
+                color={isCorrect ? "#1A7B48" : "#C7384D"}
+              />
+            </Pressable>
 
-              <Pressable
-                testID="activity-hear-feedback-btn"
-                accessible
-                accessibilityRole="button"
-                accessibilityLabel="Hear feedback explanation"
-                onPress={() => speak(feedbackDetails.fullSpeech, "en-US", true)}
-                style={({ pressed }) => [
-                  styles.sheetSpeakerBtn,
-                  pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
+            {/* Centered Large Mascot Owl Icon */}
+            <View style={styles.sheetMascotWrap}>
+              <Art
+                name={isCorrect ? "owl_happy" : "owl_sad"}
+                height={88}
+                width={88}
+              />
+            </View>
+
+            {/* Centered Status Title and Badge */}
+            <View style={styles.statusBadgeGroup}>
+              <View
+                style={[
+                  styles.statusIconCircle,
+                  isCorrect ? styles.iconCircleCorrect : styles.iconCircleWrong,
                 ]}
               >
                 <Icon
-                  name="sound"
-                  size={19}
-                  color={isCorrect ? "#1A7B48" : "#C7384D"}
+                  name={isCorrect ? "check" : "close"}
+                  size={16}
+                  color="#FFFFFF"
                 />
-              </Pressable>
+              </View>
+              <Text
+                style={[
+                  styles.statusTitleText,
+                  isCorrect ? styles.statusTitleCorrect : styles.statusTitleWrong,
+                ]}
+              >
+                {feedbackDetails.title}
+              </Text>
+              {isCorrect && (
+                <View style={styles.starPill}>
+                  <Icon name="star" size={13} color="#D88F0C" />
+                  <Text style={styles.starPillText}>+1</Text>
+                </View>
+              )}
             </View>
 
-            {/* Middle row: Clean separated lines for visual hierarchy */}
+            {/* Centered Body Details */}
             <View style={styles.sheetBodyContent}>
               {feedbackDetails.correctLabel ? (
                 <View style={styles.correctAnswerRow}>
-                  <Text
-                    style={[
-                      styles.correctAnswerLabel,
-                      isCorrect && styles.correctAnswerLabelCorrect,
-                    ]}
-                  >
-                    Correct answer:
-                  </Text>
-                  <View
-                    style={[
-                      styles.correctAnswerChip,
-                      isCorrect && styles.correctAnswerChipCorrect,
-                    ]}
-                  >
-                    <Text
+                  {feedbackDetails.isMatching ? (
+                    <View
                       style={[
-                        styles.correctAnswerChipText,
-                        isCorrect && styles.correctAnswerChipTextCorrect,
+                        styles.correctAnswerChip,
+                        styles.correctAnswerChipCorrect,
                       ]}
                     >
-                      {feedbackDetails.correctLabel}
-                    </Text>
-                  </View>
+                      <Text
+                        style={[
+                          styles.correctAnswerChipText,
+                          styles.correctAnswerChipTextCorrect,
+                        ]}
+                      >
+                        All pairs matched!
+                      </Text>
+                    </View>
+                  ) : (
+                    <>
+                      <Text
+                        style={[
+                          styles.correctAnswerLabel,
+                          isCorrect && styles.correctAnswerLabelCorrect,
+                        ]}
+                      >
+                        Correct answer:
+                      </Text>
+                      <View
+                        style={[
+                          styles.correctAnswerChip,
+                          isCorrect && styles.correctAnswerChipCorrect,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.correctAnswerChipText,
+                            isCorrect && styles.correctAnswerChipTextCorrect,
+                          ]}
+                        >
+                          {feedbackDetails.correctLabel}
+                        </Text>
+                      </View>
+                    </>
+                  )}
                 </View>
               ) : null}
 
@@ -584,7 +687,7 @@ export function ActivityScreen({ navigation }) {
               ) : null}
             </View>
 
-            {/* Bottom row: Primary Action Button */}
+            {/* Bottom Primary Action Button */}
             <Button
               testID="activity-next-question-btn"
               title={session.index === total - 1 ? "SEE MY RESULT" : "NEXT QUESTION"}
@@ -592,7 +695,7 @@ export function ActivityScreen({ navigation }) {
               arrow
               disabled={busy}
               onPress={nextQuestion}
-              style={{ minHeight: 52, borderRadius: 18 }}
+              style={{ minHeight: 54, borderRadius: 20, width: "100%" }}
             />
           </Animated.View>
         </View>
@@ -639,12 +742,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingTop: 18,
     paddingBottom: 24,
-    gap: 14,
+    gap: 12,
+    alignItems: "center",
     shadowColor: "#2C1B4D",
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.16,
     shadowRadius: 18,
     elevation: 16,
+  },
+  sheetMascotWrap: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 2,
+    marginBottom: 2,
   },
   sheetHeaderRow: {
     flexDirection: "row",
@@ -654,6 +764,7 @@ const styles = StyleSheet.create({
   statusBadgeGroup: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 10,
   },
   statusIconCircle: {
@@ -697,6 +808,10 @@ const styles = StyleSheet.create({
     color: "#996205",
   },
   sheetSpeakerBtn: {
+    position: "absolute",
+    top: 16,
+    right: 18,
+    zIndex: 10,
     width: 38,
     height: 38,
     borderRadius: 19,
@@ -707,11 +822,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sheetBodyContent: {
+    alignItems: "center",
+    width: "100%",
     gap: 8,
   },
   correctAnswerRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     flexWrap: "wrap",
   },
@@ -749,6 +867,73 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: "#352A47",
+    textAlign: "center",
+  },
+  storyQuestionCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 22,
+    minHeight: 180,
+    justifyContent: "space-between",
+    borderWidth: 1.5,
+    borderColor: "#E5DAFA",
+    gap: 14,
+    shadowColor: "#6B42A6",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  storyQuestionHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  storyBadgeBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#F3EDFD",
+    borderWidth: 1,
+    borderColor: "#D8C4F6",
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  storyBadgeBtnActive: {
+    backgroundColor: "#7548C7",
+    borderColor: "#7548C7",
+  },
+  storyBadgeBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#6937BE",
+  },
+  storyBadgeBtnTextActive: {
+    color: "#FFFFFF",
+  },
+  questionSpeakerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F3EDFD",
+    borderWidth: 1,
+    borderColor: "#D8C4F6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  questionBodyWrapper: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingTop: 6,
+    paddingBottom: 16,
+    gap: 16,
+  },
+  storyQuestionPromptText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 22,
+    lineHeight: 30,
+    color: "#281B45",
   },
 });
 

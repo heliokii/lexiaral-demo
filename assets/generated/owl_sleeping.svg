@@ -48,13 +48,9 @@
     <ellipse cx="93" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
     <ellipse cx="208" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
 
-    <!-- Beak small relaxed -->
-    <path d="M139 132 Q149 124 159 132 L149 147 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
-
-    <!-- Soft sleepy smile -->
-    <path d="M133 152 Q149 161 165 152"
-      stroke="#9B5B38" stroke-width="3" stroke-linecap="round"/>
+    <!-- Beak small relaxed (No human mouth below it) -->
+    <path d="M138 131 Q149 124 160 131 L149 146 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
 
     <!-- Purple scarf/chest -->
     <path d="M78 163 Q148 188 222 162 L210 189
