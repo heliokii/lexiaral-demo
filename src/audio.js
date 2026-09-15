@@ -29,7 +29,7 @@ const SFX_PATHS = {
   correct: '/assets/answer-correct.mp3',
   wrong: '/assets/answer-wrong.mp3',
   yehey: '/assets/yehey-kids.mp3',
-  bgm: '/assets/alex-morgan-kids-playground-giggles-parade-578468.mp3',
+  bgm: '/assets/bgm-cheerful.mp3',
   cardFlip: '/assets/card-flip.mp3',
   cardSwipe: '/assets/card-swipe.mp3',
   cardShuffle: '/assets/card-shuffle.mp3',
