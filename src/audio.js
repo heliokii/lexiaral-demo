@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import * as Speech from 'expo-speech';
+import { Asset } from 'expo-asset';
 
 let muted = false;
 let currentTicket = 0;
@@ -35,10 +36,30 @@ const SFX_PATHS = {
   cardShuffle: require('../assets/card-shuffle.mp3'),
 };
 
+const resolvedPaths = {};
+
+async function getResolvedPath(type) {
+  if (resolvedPaths[type]) return resolvedPaths[type];
+
+  const assetModule = SFX_PATHS[type];
+  if (!assetModule) return null;
+
+  try {
+    const asset = Asset.fromModule(assetModule);
+    await asset.downloadAsync();
+    resolvedPaths[type] = asset.uri;
+    return asset.uri;
+  } catch (e) {
+    console.error(`[Audio] Failed to resolve asset for ${type}:`, e);
+    return null;
+  }
+}
+
+
 // Reusable audio helper with instant fallback
 function playAudioClip(type, volume = 1.0, fallbackSynth) {
   if (muted) return;
-  const path = SFX_PATHS[type];
+  const path = resolvedPaths[type] || SFX_PATHS[type];
   if (!path) {
     if (fallbackSynth) fallbackSynth();
     return;
@@ -339,7 +360,8 @@ function getBgmAudio() {
 
   if (!window.__LEXIARAL_BGM_SINGLETON__) {
     try {
-      const audio = new Audio(SFX_PATHS.bgm);
+      const path = resolvedPaths.bgm || SFX_PATHS.bgm;
+      const audio = new Audio(path);
       audio.loop = true;
       audio.preload = 'auto';
       audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
@@ -348,7 +370,7 @@ function getBgmAudio() {
       audio.load();
 
       window.__LEXIARAL_BGM_SINGLETON__ = audio;
-      console.log('[Audio] BGM singleton created and loading:', SFX_PATHS.bgm);
+      console.log('[Audio] BGM singleton created and loading:', path);
     } catch (e) {
       console.error('[Audio] Failed to create BGM Audio object:', e);
       return null;
@@ -777,6 +799,13 @@ export function pronounce(word) {
   }
 
   Alert.alert('Audio unavailable', 'This word has no supported audio source.');
+}
+
+export async function initAudio() {
+  console.log('[Audio] Initializing and pre-resolving assets...');
+  const types = Object.keys(SFX_PATHS);
+  await Promise.all(types.map(type => getResolvedPath(type)));
+  console.log('[Audio] All assets pre-resolved:', resolvedPaths);
 }
 
 // Global "First-Interaction" BGM Trigger

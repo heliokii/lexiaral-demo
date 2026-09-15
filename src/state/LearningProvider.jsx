@@ -10,7 +10,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CONTENT, validateContent } from '../content';
-import { configureAudio } from '../audio';
+import { configureAudio, initAudio } from '../audio';
 import {
   initialState,
   reduceState,
@@ -36,6 +36,7 @@ export function LearningProvider({ children }) {
 
     try {
       validateContent();
+      await initAudio();
 
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       const restored = raw
