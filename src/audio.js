@@ -338,11 +338,21 @@ function getBgmAudio() {
   if (typeof window === 'undefined' || typeof Audio === 'undefined') return null;
 
   if (!window.__LEXIARAL_BGM_SINGLETON__) {
-    const audio = new Audio(SFX_PATHS.bgm);
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
-    window.__LEXIARAL_BGM_SINGLETON__ = audio;
+    try {
+      const audio = new Audio(SFX_PATHS.bgm);
+      audio.loop = true;
+      audio.preload = 'auto';
+      audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
+
+      // Pre-load the file to avoid delay on play()
+      audio.load();
+
+      window.__LEXIARAL_BGM_SINGLETON__ = audio;
+      console.log('[Audio] BGM singleton created and loading:', SFX_PATHS.bgm);
+    } catch (e) {
+      console.error('[Audio] Failed to create BGM Audio object:', e);
+      return null;
+    }
   }
 
   return window.__LEXIARAL_BGM_SINGLETON__;
