@@ -26,13 +26,13 @@ function getAudioContext() {
 }
 
 const SFX_PATHS = {
-  correct: '/assets/answer-correct.mp3',
-  wrong: '/assets/answer-wrong.mp3',
-  yehey: '/assets/yehey-kids.mp3',
-  bgm: '/assets/bgm-cheerful.mp3',
-  cardFlip: '/assets/card-flip.mp3',
-  cardSwipe: '/assets/card-swipe.mp3',
-  cardShuffle: '/assets/card-shuffle.mp3',
+  correct: require('../assets/answer-correct.mp3'),
+  wrong: require('../assets/answer-wrong.mp3'),
+  yehey: require('../assets/yehey-kids.mp3'),
+  bgm: require('../assets/bgm-cheerful.mp3'),
+  cardFlip: require('../assets/card-flip.mp3'),
+  cardSwipe: require('../assets/card-swipe.mp3'),
+  cardShuffle: require('../assets/card-shuffle.mp3'),
 };
 
 // Reusable audio helper with instant fallback
