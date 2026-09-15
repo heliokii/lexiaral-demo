@@ -355,9 +355,12 @@ function attachInteractionUnlock() {
   gestureUnlockActive = true;
 
   const onGesture = () => {
+    console.log('[Audio] Interaction detected, attempting to unlock BGM...');
     const audio = getBgmAudio();
     if (bgmActive && !muted && audio && audio.paused) {
-      audio.play().catch(() => {});
+      audio.play()
+        .then(() => console.log('[Audio] BGM successfully unlocked and playing'))
+        .catch(err => console.error('[Audio] BGM unlock play failed:', err));
     }
     ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((evt) => {
       window.removeEventListener(evt, onGesture, true);
@@ -409,20 +412,28 @@ export function startBgm() {
   if (muted) return;
   if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
+  console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
+
   const audio = getBgmAudio();
   if (audio) {
     audio.volume = activeUtterance
       ? BGM_DUCK_VOLUME
       : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
 
-    // If ALREADY playing, never trigger another play() call!
-    if (!audio.paused) return;
+    if (!audio.paused) {
+      console.log('[Audio] BGM already playing');
+      return;
+    }
 
+    console.log('[Audio] Attempting to play BGM...');
     const playPromise = audio.play();
     if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {
-        attachInteractionUnlock();
-      });
+      playPromise
+        .then(() => console.log('[Audio] BGM started immediately'))
+        .catch((err) => {
+          console.warn('[Audio] Autoplay blocked, attaching interaction unlock. Error:', err.message);
+          attachInteractionUnlock();
+        });
     }
   }
 }
