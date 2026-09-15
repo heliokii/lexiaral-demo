@@ -26,13 +26,13 @@ function getAudioContext() {
 }
 
 const SFX_PATHS = {
-  correct: '/assets/assets/answer-correct.mp3',
-  wrong: '/assets/assets/answer-wrong.mp3',
-  yehey: '/assets/assets/yehey-kids.mp3',
-  bgm: '/assets/assets/alex-morgan-kids-playground-giggles-parade-578468.mp3',
-  cardFlip: '/assets/assets/card-flip.mp3',
-  cardSwipe: '/assets/assets/card-swipe.mp3',
-  cardShuffle: '/assets/assets/card-shuffle.mp3',
+  correct: '/assets/answer-correct.mp3',
+  wrong: '/assets/answer-wrong.mp3',
+  yehey: '/assets/yehey-kids.mp3',
+  bgm: '/assets/alex-morgan-kids-playground-giggles-parade-578468.mp3',
+  cardFlip: '/assets/card-flip.mp3',
+  cardSwipe: '/assets/card-swipe.mp3',
+  cardShuffle: '/assets/card-shuffle.mp3',
 };
 
 // Reusable audio helper with instant fallback
