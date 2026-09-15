@@ -778,3 +778,18 @@ export function pronounce(word) {
 
   Alert.alert('Audio unavailable', 'This word has no supported audio source.');
 }
+
+// Global "First-Interaction" BGM Trigger
+// Some browsers strictly require the FIRST audio play to be inside a direct user event.
+if (typeof window !== 'undefined') {
+  const forceStartBgm = () => {
+    console.log('[Audio] Global interaction trigger: attempting to force start BGM');
+    startBgm();
+    ['click', 'touchstart', 'keydown'].forEach(evt =>
+      window.removeEventListener(evt, forceStartBgm)
+    );
+  };
+  ['click', 'touchstart', 'keydown'].forEach(evt =>
+    window.addEventListener(evt, forceStartBgm, { once: true })
+  );
+}
