@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 300 300" fill="none">
+
+    <!-- Shadow -->
+    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+
+    <!-- Feet (jumping position - lifted) -->
+    <path d="M114 265 L106 278 M120 268 L124 279
+      M172 265 L164 278 M178 268 L186 277"
+      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Both wings spread wide in excitement -->
+    <path d="M76 130 Q30 110 18 75 Q34 70 48 95
+      Q30 62 48 57 Q64 58 76 88 Q60 55 80 60
+      Q100 80 96 128 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+    <path d="M218 128 Q264 108 278 72 Q262 65 248 92
+      Q268 58 250 54 Q234 55 222 86 Q238 52 220 57
+      Q200 78 202 126 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+
+    <!-- Body (shifted slightly up - jumping) -->
+    <path d="M76 95 L68 39 L111 59
+      Q147 33 190 56 L220 30 L223 93
+      Q240 116 233 160
+      Q237 243 151 253
+      Q67 249 67 167 Q60 125 76 95 Z"
+      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+
+    <!-- Face cream patch -->
+    <path d="M88 89 Q111 61 146 86
+      Q182 60 209 89
+      Q228 120 208 151
+      Q183 173 148 164
+      Q109 177 86 149
+      Q67 121 88 89 Z"
+      fill="#FFF1D0"/>
+
+    <!-- Belly -->
+    <ellipse cx="149" cy="201" rx="57" ry="43" fill="#FFF1D0"/>
+
+    <!-- Ear tufts perked up excited -->
+    <path d="M90 58 L96 41 M127 50 L133 34 M170 48 L178 32"
+      stroke="#936747" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Big wide excited eyes -->
+    <ellipse cx="114" cy="107" rx="16" ry="18" fill="#59402E"/>
+    <ellipse cx="183" cy="107" rx="16" ry="18" fill="#59402E"/>
+    <circle cx="110" cy="101" r="5" fill="white"/>
+    <circle cx="179" cy="101" r="5" fill="white"/>
+    <!-- Sparkle in eyes -->
+    <circle cx="121" cy="104" r="2" fill="white"/>
+    <circle cx="190" cy="104" r="2" fill="white"/>
+
+    <!-- Rosy excited cheeks -->
+    <ellipse cx="90" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
+    <ellipse cx="208" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
+
+    <!-- Excited chirping owl beak (open upper & lower mandible) -->
+    <path d="M137 122 Q149 114 161 122 L149 136 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M141 135 Q149 144 157 135 Z"
+      fill="#D98A32" stroke="#B97D37" stroke-width="2"/>
+
+    <!-- Purple scarf/chest -->
+    <path d="M78 153 Q148 178 222 152 L210 179
+      Q155 201 89 176 Z"
+      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
+    <path d="M93 175 L76 195 L103 191 L111 177"
+      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
+
+    <!-- Excited big sparkles all around -->
+    <path d="M44 61 L35 47 M54 55 L51 38 M32 71 L20 67"
+      stroke="#F5CC65" stroke-width="8" stroke-linecap="round"/>
+    <path d="M244 45 L252 30 M258 62 L270 55 M240 68 L253 72"
+      stroke="#F5CC65" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="34" cy="35" r="4" fill="#FFD86B"/>
+    <circle cx="260" cy="40" r="5" fill="#FFD86B"/>
+
+  </svg>

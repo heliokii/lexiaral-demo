@@ -16,108 +16,62 @@ import { SvgXml } from 'react-native-svg';
 import assets from '../assets.generated';
 import { CONTENT } from '../content';
 import { Icon } from '../Art';
+import { playTapSfx, stopAudio } from '../audio';
 import { useLearning } from '../state/LearningProvider';
 
 export const colors = {
-  blue: '#8065CE',
-  purple: '#9C83EB',
-  darkPurple: '#7056BE',
-  background: '#F2EEFD',
-  text: '#343546',
-  muted: '#77748B',
-  green: '#249C77',
-  mint: '#D7F2E9',
-  paleGreen: '#E2F6EB',
-  pink: '#FADBE5',
-  yellow: '#FFF0C8',
-  orange: '#956322',
-  paleOrange: '#FFF0D7',
-  border: '#E7E0F3',
+  primary: '#6C47C7',
+  blue: '#6C47C7',
+  purple: '#7E57C2',
+  darkPurple: '#4A2F8A',
+  background: '#F3EFFC',
+  text: '#2D2738',
+  muted: '#766D88',
+  green: '#20A464',
+  mint: '#E4F8EE',
+  paleGreen: '#EAF8F1',
+  pink: '#F582AE',
+  yellow: '#F5A623',
+  paleYellow: '#FFF7DB',
+  coral: '#E85A71',
+  paleCoral: '#FFF0F3',
+  orange: '#E07A22',
+  paleOrange: '#FFF3E8',
+  border: '#E5DEF2',
+  cardBg: '#FFFFFF',
 };
 
-const NAV_ROUTES = ['Home', 'Levels', 'Progress', 'Badges', 'Review', 'About'];
-
-const tabs = [
-  { route: 'Home', label: 'Home', icon: 'home' },
-  { route: 'Review', label: 'Learn', icon: 'cards' },
-  { route: 'Levels', label: 'Play', icon: 'book' },
-  { route: 'Progress', label: 'Progress', icon: 'chart' },
-  { route: 'Badges', label: 'Badges', icon: 'badge' },
-];
-
-function BottomNavigation() {
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  const active =
-    route.name === 'About'
-      ? 'Home'
-      : route.name;
-
-  const openTab = (destination) => {
-    if (destination === route.name) return;
-
-    // Keep a predictable stack instead of accumulating tab screens.
-    navigation.reset({
-      index: destination === 'Home' ? 0 : 1,
-      routes:
-        destination === 'Home'
-          ? [{ name: 'Home' }]
-          : [{ name: 'Home' }, { name: destination }],
-    });
-  };
-
-  return (
-    <View style={styles.navigation}>
-      {tabs.map((tab) => {
-        const selected = active === tab.route;
-
-        return (
-          <Pressable
-            key={tab.route}
-            accessibilityRole="tab"
-            accessibilityLabel={tab.label}
-            accessibilityState={{ selected }}
-            onPress={() => openTab(tab.route)}
-            style={styles.tab}
-          >
-            <Icon
-              name={tab.icon}
-              color={selected ? colors.blue : '#ABA9B8'}
-              size={24}
-            />
-
-            <Text
-              style={[
-                styles.tabLabel,
-                selected && { color: colors.blue },
-              ]}
-            >
-              {tab.label}
-            </Text>
-
-            {selected && <View style={styles.tabDot} />}
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
+export const fonts = {
+  vocab: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_900Black", sans-serif',
+  reading: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_700Bold", sans-serif',
+  ui: 'Nunito_800ExtraBold',
+};
 
 /**
  * Layout used by all screens.
- * Assessment screens intentionally omit the bottom tabs.
+ * Clean, distraction-free screen container without redundant bottom tabs.
+ * Supports sticky bottomSlot to eliminate scroll dependency for feedback and next actions.
  */
-export function Screen({ children, scrollRef }) {
+export function Screen({
+  children,
+  scrollRef,
+  bottomSlot,
+  scrollEnabled = true,
+  testID,
+}) {
   const { busy, error } = useLearning();
+  const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
 
-  const hasTabs = NAV_ROUTES.includes(route.name);
+  const isSubScreen = !['Home', 'Welcome', 'Activity', 'Results'].includes(route.name);
   const hasNativeHeader = ['Activity', 'Results'].includes(route.name);
 
   return (
-    <View style={styles.screen}>
+    <View
+      testID={testID || `screen-${route.name.toLowerCase()}`}
+      style={styles.screen}
+    >
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <SvgXml
           xml={assets.landscape}
@@ -129,25 +83,49 @@ export function Screen({ children, scrollRef }) {
 
       <ScrollView
         ref={scrollRef}
+        scrollEnabled={scrollEnabled}
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: hasNativeHeader ? 16 : insets.top + 12,
-            paddingBottom: 26,
+            paddingTop: hasNativeHeader ? 14 : insets.top + 10,
+            paddingBottom: bottomSlot ? 14 : 26,
           },
         ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        {isSubScreen && (
+          <Pressable
+            testID="screen-back-btn"
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            onPress={() => {
+              playTapSfx();
+              stopAudio();
+              navigation.navigate('Home');
+            }}
+            style={({ pressed }) => [
+              styles.screenBackBtn,
+              pressed && { opacity: 0.65, transform: [{ scale: 0.94 }] },
+            ]}
+          >
+            <Icon
+              name="arrowLeft"
+              size={22}
+              color="#8065CE"
+            />
+          </Pressable>
+        )}
+
         {CONTENT.status === 'demo' && (
-          <View style={styles.demoPill}>
+          <View testID="demo-status-pill" style={styles.demoPill}>
             <Text style={styles.demoText}>DEMO · Not yet ARAL-verified</Text>
           </View>
         )}
 
         {busy && (
           <Text accessibilityLiveRegion="polite" style={styles.saving}>
-            Saving your progress…
+            Saving your progress...
           </Text>
         )}
 
@@ -160,41 +138,51 @@ export function Screen({ children, scrollRef }) {
         {children}
       </ScrollView>
 
-      {hasTabs ? (
+      {bottomSlot ? (
         <View
-          style={{
-            paddingHorizontal: 16,
-            paddingBottom: Math.max(insets.bottom, 10),
-            paddingTop: 6,
-          }}
+          testID="bottom-slot-container"
+          style={[
+            styles.bottomSlotWrapper,
+            {
+              paddingBottom: Math.max(insets.bottom, 12),
+            },
+          ]}
         >
-          <BottomNavigation />
+          {bottomSlot}
         </View>
       ) : (
-        <View style={{ height: insets.bottom }} />
+        <View style={{ height: Math.max(insets.bottom, 12) }} />
       )}
     </View>
   );
 }
 
-export function Title({ children, style }) {
+export function Title({ children, style, testID }) {
   return (
-    <Text accessibilityRole="header" style={[styles.title, style]}>
+    <Text
+      testID={testID}
+      accessibilityRole="header"
+      style={[styles.title, style]}
+    >
       {children}
     </Text>
   );
 }
 
-export function Body({ children, style, ...props }) {
+export function Body({ children, style, testID, ...props }) {
   return (
-    <Text style={[styles.body, style]} {...props}>
+    <Text testID={testID} style={[styles.body, style]} {...props}>
       {children}
     </Text>
   );
 }
 
-export function Card({ children, style }) {
-  return <View style={[styles.card, style]}>{children}</View>;
+export function Card({ children, style, testID }) {
+  return (
+    <View testID={testID || "ui-card"} style={[styles.card, style]}>
+      {children}
+    </View>
+  );
 }
 
 export function Button({
@@ -207,21 +195,33 @@ export function Button({
   arrow = false,
   tone = 'purple',
   style,
+  testID,
 }) {
-  const background =
-    secondary
-      ? 'rgba(255,255,255,.9)'
-      : tone === 'mint'
-        ? '#4CCFA1'
-        : colors.purple;
+  const background = secondary
+    ? 'rgba(255,255,255,.94)'
+    : tone === 'mint' || tone === 'green'
+      ? colors.green
+      : tone === 'coral'
+        ? colors.coral
+        : tone === 'amber'
+          ? colors.yellow
+          : colors.primary;
+
+  const textColor = secondary ? colors.primary : '#FFFFFF';
+
+  const handlePress = (e) => {
+    playTapSfx();
+    if (onPress) onPress(e);
+  };
 
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel || title}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPress={onPress}
+      onPress={handlePress}
       style={({ pressed }) => [
         styles.button,
         { backgroundColor: background },
@@ -229,7 +229,7 @@ export function Button({
         style,
         disabled && { opacity: 0.45 },
         pressed && !disabled && {
-          opacity: 0.85,
+          opacity: 0.88,
           transform: [{ scale: 0.985 }],
         },
       ]}
@@ -237,15 +237,15 @@ export function Button({
       {icon && (
         <Icon
           name={icon}
-          color={secondary ? colors.blue : 'white'}
-          size={25}
+          color={secondary ? colors.primary : '#FFFFFF'}
+          size={22}
         />
       )}
 
       <Text
         style={[
           styles.buttonText,
-          secondary && { color: colors.blue },
+          { color: textColor },
         ]}
       >
         {title}
@@ -254,7 +254,7 @@ export function Button({
       {arrow && (
         <Icon
           name="arrow"
-          color={secondary ? colors.blue : 'white'}
+          color={secondary ? colors.primary : '#FFFFFF'}
           size={20}
         />
       )}
@@ -262,11 +262,70 @@ export function Button({
   );
 }
 
-export function ProgressBar({ value, label, color = colors.purple }) {
+export function HeaderAudioToggle() {
+  const { state, dispatch, busy } = useLearning();
+  if (!state) return null;
+  const isMuted = !state.audioEnabled;
+
+  return (
+    <Pressable
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={isMuted ? 'Unmute sound' : 'Mute sound'}
+      disabled={busy}
+      onPress={() => {
+        playTapSfx();
+        stopAudio();
+        dispatch({ type: 'SET_AUDIO', enabled: isMuted });
+      }}
+      style={({ pressed }) => [
+        styles.headerAudioBtn,
+        isMuted && styles.headerAudioBtnMuted,
+        pressed && { opacity: 0.7 },
+      ]}
+    >
+      <Icon
+        name={isMuted ? 'mute' : 'sound'}
+        size={20}
+        color={isMuted ? '#8A7F9D' : '#7056BE'}
+      />
+    </Pressable>
+  );
+}
+
+export function ActivityHeader({ title, onBack }) {
+  return (
+    <View style={styles.activityHeader}>
+      <Pressable
+        testID="activity-back-btn"
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        onPress={() => {
+          playTapSfx();
+          if (onBack) onBack();
+        }}
+        style={({ pressed }) => [
+          styles.activityBackBtn,
+          pressed && { opacity: 0.7, transform: [{ scale: 0.96 }] },
+        ]}
+      >
+        <Icon name="arrowLeft" size={18} color="#8065CE" />
+      </Pressable>
+
+      <Text style={styles.activityHeaderTitle}>{title}</Text>
+
+      <HeaderAudioToggle />
+    </View>
+  );
+}
+
+export function ProgressBar({ value, label, color = colors.purple, testID }) {
   const safeValue = Math.max(0, Math.min(1, value));
 
   return (
     <View
+      testID={testID || "progress-bar"}
       accessible
       accessibilityRole="progressbar"
       accessibilityLabel={label}
@@ -290,9 +349,9 @@ export function ProgressBar({ value, label, color = colors.purple }) {
   );
 }
 
-export function Encouragement() {
+export function Encouragement({ testID }) {
   return (
-    <Text style={styles.encouragement}>
+    <Text testID={testID || "encouragement-text"} style={styles.encouragement}>
       You can do it!
     </Text>
   );
@@ -398,38 +457,15 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 6,
   },
-  navigation: {
-    width: '100%',
-    maxWidth: 540,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: 'rgba(255,255,255,.91)',
-    paddingVertical: 10,
-    borderRadius: 25,
-    shadowColor: '#807098',
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 3 },
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  tab: {
-    flex: 1,
-    minHeight: 52,
+  screenBackBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-  },
-  tabLabel: {
-    fontFamily: 'Nunito_700Bold',
-    color: '#8D8A9B',
-    fontSize: 11,
-  },
-  tabDot: {
-    height: 4,
-    width: 4,
-    backgroundColor: colors.blue,
-    borderRadius: 2,
+    alignSelf: 'flex-start',
+    backgroundColor: 'transparent',
+    marginBottom: 4,
   },
   encouragement: {
     fontFamily: 'Nunito_800ExtraBold',
@@ -438,5 +474,50 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     transform: [{ rotate: '-5deg' }],
     paddingVertical: 12,
+  },
+  bottomSlotWrapper: {
+    width: '100%',
+    maxWidth: 540,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  activityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#EAE9FC',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    width: '100%',
+  },
+  activityBackBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  activityHeaderTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 18,
+    color: '#3E3B50',
+    textAlign: 'center',
+    flex: 1,
+  },
+  headerAudioBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 18,
+    backgroundColor: '#FAF8FE',
+    borderWidth: 1,
+    borderColor: '#DED6F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAudioBtnMuted: {
+    backgroundColor: '#F3EFF8',
+    borderColor: '#DDD6E8',
   },
 });

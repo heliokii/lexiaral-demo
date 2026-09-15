@@ -1,306 +1,395 @@
-import React from 'react';
-import {
-  Alert,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useEffect } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { setBgmFocusMode, stopAudio } from "../audio";
 
-import { Art, Icon } from '../Art';
-import { LEVELS, UNLOCK_PERCENT } from '../content';
-import { useLearning } from '../state/LearningProvider';
-import { latestAttempt } from '../state/engine';
-import {
-  Body,
-  Button,
-  Encouragement,
-  Screen,
-  Title,
-  colors,
-} from '../components/ui';
+import { Art, Icon } from "../Art";
+import { LEVELS, UNLOCK_PERCENT } from "../content";
+import { useLearning } from "../state/LearningProvider";
+import { isLevelUnlocked, latestAttempt } from "../state/engine";
+import { Body, Encouragement, Screen, Title, colors } from "../components/ui";
 
 export default function LevelsScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
 
+  // Enable soft BGM focus mode during play level selection
+  useEffect(() => {
+    setBgmFocusMode(true);
+    return () => {
+      setBgmFocusMode(false);
+      stopAudio();
+    };
+  }, []);
+
   async function start(level) {
     const levelObj = LEVELS.find((l) => l.id === level);
     const next = await dispatch({
-      type: 'START',
+      type: "START",
       level,
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       at: new Date().toISOString(),
     });
 
     if (next) {
-      navigation.navigate('Activity', {
-        title: `${levelObj?.name || ''} Level`,
+      navigation.navigate("Activity", {
+        title: `${levelObj?.name || ""} Level`,
       });
     }
   }
 
-  function requestStart(level) {
-    if (state.session && state.session.phase !== 'done') {
+  function handleLevelPress(level) {
+    const active =
+      state.session?.level === level.id && state.session?.phase !== "done";
+
+    // 1. If this level is already in progress, seamlessly resume immediately!
+    if (active) {
+      const levelObj = LEVELS.find((l) => l.id === level.id);
+      navigation.navigate("Activity", {
+        title: `${levelObj?.name || ""} Level`,
+      });
+      return;
+    }
+
+    // 2. If another level is in progress, confirm before replacing
+    if (state.session && state.session.phase !== "done") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (
+          window.confirm(
+            "Start a new activity? Your unfinished activity will be replaced.",
+          )
+        ) {
+          start(level.id);
+        }
+        return;
+      }
+
       Alert.alert(
-        'Start a new activity?',
-        'Your unfinished activity will be replaced. Saved stars and completed results will stay.',
+        "Start a new activity?",
+        "Your unfinished activity will be replaced. Saved stars and completed results will stay.",
         [
-          { text: 'Keep my activity', style: 'cancel' },
-          { text: 'Start new', onPress: () => start(level) },
-        ]
+          { text: "Keep my activity", style: "cancel" },
+          { text: "Start new", onPress: () => start(level.id) },
+        ],
       );
       return;
     }
 
-    start(level);
+    start(level.id);
   }
 
   return (
-    <Screen>
-      <View>
-        <Title>Choose Your Level</Title>
-        <Body style={styles.subtitle}>
-          Keep learning and build your vocabulary!
-        </Body>
-      </View>
+    <Screen testID="screen-levels">
+      <View style={styles.contentWrapper}>
+        <View testID="levels-header" style={styles.header}>
+          <Title testID="levels-title" style={styles.title}>
+            Choose Your Level
+          </Title>
+          <Body testID="levels-subtitle" style={styles.subtitle}>
+            Keep learning and build your vocabulary!
+          </Body>
+        </View>
 
-      {state.session && state.session.phase !== 'done' && (
-        <Button
-          title="Continue my activity"
-          icon="book"
-          arrow
-          disabled={busy}
-          onPress={() => {
-            const currentLevel = LEVELS.find((l) => l.id === state.session?.level);
-            navigation.navigate('Activity', {
-              title: `${currentLevel?.name || ''} Level`,
-            });
-          }}
-        />
-      )}
+        <View testID="levels-list" style={styles.levelList}>
+        {LEVELS.map((level) => {
+          const unlocked = isLevelUnlocked(state, level.id);
+          const result = latestAttempt(state, level.id);
 
-      {LEVELS.map((level) => {
-        const unlocked = state.unlocked.includes(level.id);
-        const result = latestAttempt(state, level.id);
+          const active =
+            state.session?.level === level.id && state.session.phase !== "done";
 
-        const active =
-          state.session?.level === level.id &&
-          state.session.phase !== 'done';
+          const statusLabel = !unlocked
+            ? "Locked"
+            : active
+              ? "In Progress"
+              : result
+                ? "Completed"
+                : "Unlocked";
 
-        const statusLabel = !unlocked
-          ? 'Locked'
-          : active
-            ? 'In Progress'
-            : result
-              ? 'Completed'
-              : 'Unlocked';
+          const statusStyle = !unlocked
+            ? styles.lockedStatus
+            : active
+              ? styles.inProgressStatus
+              : result
+                ? styles.completedStatus
+                : styles.unlockedStatus;
 
-        const statusStyle = !unlocked
-          ? styles.lockedStatus
-          : active
-            ? styles.inProgressStatus
-            : styles.unlockedStatus;
+          const textColor = !unlocked
+            ? "#8A8596"
+            : active
+              ? "#D24B3B"
+              : result
+                ? "#1E8D5B"
+                : colors.primary;
 
-        const textColor = !unlocked
-          ? '#85818D'
-          : active
-            ? '#D45B45'
-            : '#3B9B74';
-
-        return (
-          <Pressable
-            key={level.id}
-            accessibilityRole="button"
-            accessibilityLabel={`Level ${level.id}, ${level.name}. ${statusLabel}.`}
-            accessibilityState={{ disabled: !unlocked || busy }}
-            disabled={!unlocked || busy}
-            onPress={() => requestStart(level.id)}
-            style={({ pressed }) => [
-              styles.levelCard,
-              !unlocked && styles.lockedCard,
-              pressed && { transform: [{ scale: 0.985 }] },
-            ]}
-          >
-            <View style={[styles.status, statusStyle]}>
-              <Text
-                style={[
-                  styles.statusText,
-                  { color: textColor },
-                ]}
+          return (
+            <Pressable
+              key={level.id}
+              testID={`level-card-${level.id}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Level ${level.id}, ${level.name}. ${statusLabel}.`}
+              accessibilityState={{ disabled: !unlocked || busy }}
+              disabled={!unlocked || busy}
+              onPress={() => handleLevelPress(level)}
+              style={({ pressed }) => [
+                styles.levelCard,
+                active && styles.activeCard,
+                !unlocked && styles.lockedCard,
+                pressed && !busy && { transform: [{ scale: 0.985 }] },
+              ]}
+            >
+              <View
+                testID={`level-status-${level.id}`}
+                style={[styles.status, statusStyle]}
               >
-                {statusLabel}
-              </Text>
-            </View>
+                <Text style={[styles.statusText, { color: textColor }]}>
+                  {statusLabel}
+                </Text>
+              </View>
 
-            <View style={[styles.owl, !unlocked && { opacity: 0.42 }]}>
-              <Art
-                name={
-                  !unlocked
-                    ? 'owl-thinking'
-                    : level.id === 1
-                      ? 'owl-cheering'
-                      : 'owl-reading'
-                }
-                height={128}
-              />
-            </View>
-
-            <View style={styles.levelText}>
-              <Text style={styles.levelTitle}>
-                Level {level.id}: {level.name}
-              </Text>
-
-              <Text style={styles.description}>{level.title}</Text>
-
-              <View style={styles.score}>
-                <Icon
-                  name="star"
-                  size={20}
-                  color={result || unlocked ? '#F3C55C' : '#DDD7E8'}
-                />
-                <Icon
-                  name="star"
-                  size={20}
-                  color={
-                    result && result.total > 0 && result.score / result.total >= 0.5
-                      ? '#F3C55C'
-                      : '#DDD7E8'
+              <View style={[styles.owl, !unlocked && { opacity: 0.45 }]}>
+                <Art
+                  name={
+                    !unlocked
+                      ? "owl_sleeping"
+                      : level.stars === 3
+                        ? "owl_excited"
+                        : level.stars === 2
+                          ? "owl_cheering"
+                          : level.stars === 1
+                            ? "owl_happy"
+                            : level.id === 1
+                              ? "owl_reading"
+                              : level.id === 2
+                                ? "owl_thinking"
+                                : "owl_excited"
                   }
+                  height={124}
                 />
-                <Icon
-                  name="star"
-                  size={20}
-                  color={
-                    result && result.total > 0 && result.score / result.total >= 0.8
-                      ? '#F3C55C'
-                      : '#DDD7E8'
-                  }
-                />
-                {result && (
-                  <Text style={styles.scoreText}>
-                    {result.score}/{result.total} stars
-                  </Text>
-                )}
-                {!result && unlocked && (
-                  <Text style={styles.small}>Ready when you are!</Text>
-                )}
-                {!unlocked && (
-                  <Text style={styles.small}>
-                    {(state.masteryThreshold != null
-                      ? state.masteryThreshold
-                      : UNLOCK_PERCENT) === 0
-                      ? `Complete ${level.id === 2 ? 'Easy' : 'Average'} to unlock`
-                      : `Earn ${
-                          state.masteryThreshold != null
-                            ? state.masteryThreshold
-                            : UNLOCK_PERCENT
-                        }% in ${level.id === 2 ? 'Easy' : 'Average'}`}
-                  </Text>
+              </View>
+
+              <View style={styles.levelText}>
+                <Text
+                  style={[
+                    styles.levelTitle,
+                    active && { color: colors.primary },
+                  ]}
+                >
+                  Level {level.id}: {level.name}
+                </Text>
+
+                <Text style={styles.description}>{level.title}</Text>
+
+                {active ? (
+                  <View style={styles.resumeRow}>
+                    <Text style={styles.resumeText}>Continue Activity</Text>
+                    <Icon name="arrow" size={14} color={colors.primary} />
+                  </View>
+                ) : (
+                  <View style={styles.score}>
+                    <Icon
+                      name="star"
+                      size={18}
+                      color={result || unlocked ? "#F5A623" : "#D9D3E6"}
+                    />
+                    <Icon
+                      name="star"
+                      size={18}
+                      color={
+                        result &&
+                        result.total > 0 &&
+                        result.score / result.total >= 0.5
+                          ? "#F5A623"
+                          : "#D9D3E6"
+                      }
+                    />
+                    <Icon
+                      name="star"
+                      size={18}
+                      color={
+                        result &&
+                        result.total > 0 &&
+                        result.score / result.total >= 0.8
+                          ? "#F5A623"
+                          : "#D9D3E6"
+                      }
+                    />
+                    {result && (
+                      <Text style={styles.scoreText}>
+                        {result.score}/{result.total} stars
+                      </Text>
+                    )}
+                    
+                    {!unlocked && (
+                      <Text style={styles.small}>
+                        {(state.masteryThreshold != null
+                          ? state.masteryThreshold
+                          : UNLOCK_PERCENT) === 0
+                          ? `Complete ${level.id === 2 ? "Easy" : "Average"} to unlock`
+                          : `Earn ${
+                              state.masteryThreshold != null
+                                ? state.masteryThreshold
+                                : UNLOCK_PERCENT
+                            }% in ${level.id === 2 ? "Easy" : "Average"}`}
+                      </Text>
+                    )}
+                  </View>
                 )}
               </View>
-            </View>
 
-            <View style={styles.chevron}>
-              <Icon
-                name={unlocked ? 'arrow' : 'lock'}
-                size={18}
-                color={unlocked ? colors.blue : '#9A95A7'}
-              />
-            </View>
-          </Pressable>
-        );
-      })}
+              <View style={[styles.chevron, active && styles.chevronActive]}>
+                <Icon
+                  name={unlocked ? "arrow" : "lock"}
+                  size={16}
+                  color={
+                    active ? "#FFFFFF" : unlocked ? colors.primary : "#9A95A7"
+                  }
+                />
+              </View>
+            </Pressable>
+          );
+        })}
+        </View>
 
-      <Encouragement />
+        <Encouragement />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  contentWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    paddingVertical: 10,
+    gap: 16,
+  },
+  header: {
+    gap: 4,
+  },
+  title: {
+    fontSize: 28,
+    lineHeight: 34,
+    color: colors.darkPurple,
+  },
   subtitle: {
     fontSize: 16,
-    marginTop: 5,
+    lineHeight: 22,
     color: colors.muted,
   },
+  levelList: {
+    gap: 18,
+  },
   levelCard: {
-    minHeight: 170,
-    backgroundColor: 'rgba(255,255,255,.9)',
-    borderRadius: 25,
-    padding: 14,
-    paddingTop: 28,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 7,
-    shadowColor: '#8E7BA9',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
+    minHeight: 172,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 26,
+    paddingHorizontal: 18,
+    paddingVertical: 22,
+    paddingTop: 32,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    borderWidth: 1.5,
+    borderColor: "#ECE6F7",
+    shadowColor: "#7C67A6",
+    shadowOpacity: 0.09,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
     elevation: 2,
+    position: "relative",
+  },
+  activeCard: {
+    borderColor: colors.primary,
+    borderWidth: 2,
+    backgroundColor: "#FAF7FF",
+    shadowOpacity: 0.14,
   },
   lockedCard: {
-    backgroundColor: 'rgba(238,235,244,.85)',
+    backgroundColor: "rgba(240,237,246,.75)",
+    borderColor: "#E7E2F0",
   },
   owl: {
-    width: '35%',
+    width: "30%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   levelText: {
     flex: 1,
-    gap: 7,
+    gap: 5,
   },
   levelTitle: {
-    fontFamily: 'Nunito_900Black',
-    fontSize: 19,
+    fontFamily: "Nunito_900Black",
+    fontSize: 22,
+    lineHeight: 28,
     color: colors.darkPurple,
   },
   description: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    lineHeight: 22,
     color: colors.text,
   },
+  resumeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 4,
+  },
+  resumeText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14.5,
+    color: colors.primary,
+  },
   small: {
-    fontFamily: 'Nunito_600SemiBold',
-    fontSize: 13,
-    lineHeight: 19,
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12.5,
+    lineHeight: 17,
     color: colors.muted,
   },
   score: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginTop: 4,
   },
   scoreText: {
-    fontFamily: 'Nunito_800ExtraBold',
-    fontSize: 15,
-    color: '#8D7040',
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13.5,
+    color: "#8D7040",
   },
   status: {
-    position: 'absolute',
-    right: 12,
+    position: "absolute",
+    right: 14,
     top: 10,
     borderRadius: 10,
-    paddingHorizontal: 9,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 3.5,
   },
   unlockedStatus: {
-    backgroundColor: '#E4F6ED',
+    backgroundColor: "#EBF4FE",
   },
   inProgressStatus: {
-    backgroundColor: '#FFEAE5',
+    backgroundColor: "#FEEDEA",
+  },
+  completedStatus: {
+    backgroundColor: "#E8F8F0",
   },
   lockedStatus: {
-    backgroundColor: '#E5E1EB',
+    backgroundColor: "#E9E4F0",
   },
   statusText: {
-    fontFamily: 'Nunito_700Bold',
-    fontSize: 11,
-    color: '#469B7D',
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11.5,
+    letterSpacing: 0.2,
   },
   chevron: {
-    height: 31,
-    width: 27,
-    borderRadius: 12,
-    backgroundColor: '#EEE8FA',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    backgroundColor: "#F0EBF9",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  chevronActive: {
+    backgroundColor: colors.primary,
   },
 });

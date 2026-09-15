@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 300 300" fill="none">
+
+    <!-- Shadow -->
+    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+
+    <!-- Feet -->
+    <path d="M118 259 L107 274 M118 263 L122 275
+      M176 259 L166 275 M176 263 L185 274"
+      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Left wing drooping sadly -->
+    <path d="M83 160 Q42 185 52 230 Q62 248 80 238 L104 198 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+
+    <!-- Right wing drooping -->
+    <path d="M215 158 Q248 175 252 210 Q248 230 232 225 L212 195 Z"
+      fill="#C89760" stroke="#936747" stroke-width="4"/>
+
+    <!-- Body -->
+    <path d="M76 105 L68 49 L111 69
+      Q147 43 190 66 L220 40 L223 103
+      Q240 126 233 170
+      Q237 253 151 263
+      Q67 259 67 177 Q60 135 76 105 Z"
+      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+
+    <!-- Face cream patch -->
+    <path d="M88 99 Q111 71 146 96
+      Q182 70 209 99
+      Q228 130 208 161
+      Q183 183 148 174
+      Q109 187 86 159
+      Q67 131 88 99 Z"
+      fill="#FFF1D0"/>
+
+    <!-- Belly -->
+    <ellipse cx="149" cy="211" rx="57" ry="43" fill="#FFF1D0"/>
+
+    <!-- Ear tufts drooping slightly -->
+    <path d="M90 68 L96 53 M125 62 L133 48 M170 60 L178 48"
+      stroke="#936747" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Sad half-closed eyes (heavy eyelids) -->
+    <ellipse cx="114" cy="118" rx="14" ry="16" fill="#59402E"/>
+    <ellipse cx="183" cy="118" rx="14" ry="16" fill="#59402E"/>
+    <circle cx="110" cy="112" r="4" fill="white"/>
+    <circle cx="179" cy="112" r="4" fill="white"/>
+    <!-- Heavy sad eyelid covers top half -->
+    <path d="M100 108 Q114 102 128 108 Q122 118 106 118 Z" fill="#D4AE7C"/>
+    <path d="M169 108 Q183 102 197 108 Q191 118 175 118 Z" fill="#D4AE7C"/>
+
+    <!-- Rosy cheeks (smaller, paler) -->
+    <ellipse cx="93" cy="140" rx="10" ry="6" fill="#EFABA2" opacity=".5"/>
+    <ellipse cx="208" cy="140" rx="10" ry="6" fill="#EFABA2" opacity=".5"/>
+
+    <!-- Beak (No human mouth below it) -->
+    <path d="M138 133 Q149 126 160 133 L149 149 Z"
+      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
+
+    <!-- Purple scarf/chest -->
+    <path d="M78 163 Q148 188 222 162 L210 189
+      Q155 211 89 186 Z"
+      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
+    <path d="M93 185 L76 205 L103 201 L111 187"
+      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
+
+    <!-- Tear drops -->
+    <path d="M100 148 Q102 158 100 163 Q96 158 100 148 Z" fill="#A8D4F0"/>
+    <path d="M198 148 Q200 158 198 163 Q194 158 198 148 Z" fill="#A8D4F0"/>
+
+    <!-- Sparkles dimmed/absent - just faint -->
+    <path d="M44 71 L35 57 M54 65 L51 48 M32 81 L20 77"
+      stroke="#F5CC65" stroke-width="4" opacity=".3" stroke-linecap="round"/>
+
+  </svg>

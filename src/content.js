@@ -184,7 +184,7 @@ const easyMatching = {
   type: 'matching',
   category: 'vocabulary',
   prompt: 'Match each target word with its correct picture!',
-  pairs: pack.words.slice(0, 4).map((word) => ({
+  pairs: pack.words.slice(0, 6).map((word) => ({
     id: word.id,
     wordId: word.id,
     word: word.word,
@@ -274,17 +274,65 @@ export function performance(score, total) {
 }
 
 export function answerLabel(question) {
-  return question.choices.find(
-    (choice) => choice.id === question.answerId
-  ).label;
+  const choice = (question.choices || []).find(
+    (c) => c.id === question.answerId
+  );
+  return choice ? choice.label : '';
+}
+
+export function getFeedbackDetails(question, correct) {
+  const isMatching =
+    question?.type === 'matching' ||
+    question?.answerId === 'all_matched' ||
+    (question?.choices && question.choices.some(c => c.id === 'all_matched'));
+
+  const correctLabel = answerLabel(question);
+  let rawExplanation = (question.explanation || '').trim();
+
+  // Strip redundant duplicate prefixes like "hat: ", "hat. ", "hat - "
+  if (correctLabel) {
+    const pColon = `${correctLabel}:`;
+    const pDot = `${correctLabel}.`;
+    const pDash = `${correctLabel} -`;
+    if (rawExplanation.toLowerCase().startsWith(pColon.toLowerCase())) {
+      rawExplanation = rawExplanation.slice(pColon.length).trim();
+    } else if (rawExplanation.toLowerCase().startsWith(pDot.toLowerCase())) {
+      rawExplanation = rawExplanation.slice(pDot.length).trim();
+    } else if (rawExplanation.toLowerCase().startsWith(pDash.toLowerCase())) {
+      rawExplanation = rawExplanation.slice(pDash.length).trim();
+    }
+  }
+
+  // Capitalize first letter of explanation
+  if (rawExplanation) {
+    rawExplanation = rawExplanation.charAt(0).toUpperCase() + rawExplanation.slice(1);
+  }
+
+  const title = correct ? 'Great Job!' : 'Nice Try!';
+
+  let fullSpeech = '';
+  if (isMatching) {
+    fullSpeech = correct
+      ? `${title} All pairs matched! ${rawExplanation}`.trim()
+      : `${title} Let's keep matching words with their pictures.`.trim();
+  } else {
+    fullSpeech = correct
+      ? `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim()
+      : `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim();
+  }
+
+  return {
+    correct,
+    title,
+    isMatching,
+    correctLabel: isMatching ? 'All pairs matched!' : correctLabel,
+    explanation: rawExplanation,
+    fullSpeech,
+  };
 }
 
 export function feedbackFor(question, correct) {
-  const result = correct
-    ? 'Great Job! You earned 1 star.'
-    : `Nice Try! The correct answer is ${answerLabel(question)}.`;
-
-  return `${result} ${question.explanation}`;
+  return getFeedbackDetails(question, correct).fullSpeech;
 }
 
 // Fail visibly at startup instead of letting invalid content corrupt scores.

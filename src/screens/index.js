@@ -1,8 +1,10 @@
-// Re-exports for backward compatibility
 export { default as WelcomeScreen } from "./WelcomeScreen";
 export { default as HomeScreen, HomeTile } from "./HomeScreen";
+export { default as LevelsScreen } from "./LevelsScreen";
 export { default as ReviewScreen } from "./ReviewScreen";
 export { default as ProgressScreen } from "./ProgressScreen";
 export { default as BadgesScreen, BadgeList } from "./BadgesScreen";
 export { default as FinalScreen, Confetti } from "./FinalScreen";
 export { default as AboutScreen } from "./AboutScreen";
+export { default as ActivityScreen, newSessionAction } from "./ActivityScreen";
+export { default as ResultsScreen } from "./ResultsScreen";
