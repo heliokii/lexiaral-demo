@@ -809,7 +809,13 @@ export function InteractiveStoryReaderWidget({
 
   const parts = expression ? story.text.split(expression) : [story.text];
 
-  const scenarioSvg = getStoryScenarioSvg(story);
+  const primaryWordId =
+    story.target_word_ids?.[0] ||
+    story.id?.replace(/^story-\d+-/, "").replace(/^story-/, "") ||
+    story.title?.toLowerCase().replace(/^(the|\d+\.)\s*/i, "").trim();
+
+  const storyImage = getWordImage(primaryWordId);
+  const scenarioSvg = !storyImage ? getStoryScenarioSvg(story) : null;
 
   const handleToggleReading = () => {
     if (isReading) {
@@ -868,7 +874,21 @@ export function InteractiveStoryReaderWidget({
         </View>
       </View>
 
-      {scenarioSvg ? (
+      {storyImage ? (
+        <View
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel={`Picture of ${primaryWordId} for ${story.title?.replace(/^\d+\.\s*/, "") || "the story"}`}
+          style={styles.storyScenarioWrapper}
+        >
+          <Image
+            source={storyImage}
+            style={styles.storyRealImage}
+            resizeMode="contain"
+            fadeDuration={0}
+          />
+        </View>
+      ) : scenarioSvg ? (
         <View
           accessible
           accessibilityRole="image"
@@ -927,7 +947,10 @@ export function InteractiveStoryReaderWidget({
                 const isCurrent = item.id === story.id;
                 const cleanTitle = item.title.replace(/^\d+\.\s*/, "");
                 const primaryWordId =
-                  item.target_word_ids?.[0] || item.id.replace(/^story-\d+-/, "");
+                  item.target_word_ids?.[0] ||
+                  item.id.replace(/^story-\d+-/, "").replace(/^story-/, "") ||
+                  cleanTitle.toLowerCase().replace(/^(the|\d+\.)\s*/i, "").trim();
+                const optionImage = getWordImage(primaryWordId);
                 const iconXml =
                   illustrations[primaryWordId] || illustrations[item.id];
                 const targetLabels = (item.target_word_ids || [])
@@ -957,7 +980,14 @@ export function InteractiveStoryReaderWidget({
                         isCurrent && styles.storyOptionIconWrapCurrent,
                       ]}
                     >
-                      {iconXml ? (
+                      {optionImage ? (
+                        <Image
+                          source={optionImage}
+                          style={{ width: 34, height: 34, borderRadius: 8 }}
+                          resizeMode="cover"
+                          fadeDuration={0}
+                        />
+                      ) : iconXml ? (
                         <SvgXml xml={iconXml} width={34} height={34} />
                       ) : (
                         <Icon
@@ -1296,6 +1326,7 @@ const styles = StyleSheet.create({
   },
   storyScenarioWrapper: {
     width: "100%",
+    height: 195,
     borderRadius: 18,
     overflow: "hidden",
     borderWidth: 1.5,
@@ -1306,9 +1337,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.09,
     shadowRadius: 8,
     elevation: 2,
-    marginVertical: 4,
+    marginVertical: 6,
     alignItems: "center",
     justifyContent: "center",
+  },
+  storyRealImage: {
+    width: "100%",
+    height: "100%",
   },
   hint: {
     fontSize: 16,
