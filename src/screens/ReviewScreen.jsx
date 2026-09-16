@@ -5,6 +5,7 @@ import { CONTENT } from "../content";
 import { Art, Icon } from "../Art";
 import { Body, Screen, Title, colors } from "../components/ui";
 import { ReviewFlashcard } from "../components/learning";
+import { preloadAllWordImages } from "../assets/wordImages";
 import {
   playCardShuffleSfx,
   playCardSwipeSfx,
@@ -67,8 +68,9 @@ export function ReviewScreen() {
   const currentWord = words[safeIndex];
   const currentLevelInfo = DIFFICULTY_LEVELS.find((l) => l.id === selectedDifficulty);
 
-  // Enable soft BGM focus mode while studying flashcards
+  // Enable soft BGM focus mode while studying flashcards and preload images for instant swipe
   useEffect(() => {
+    preloadAllWordImages();
     setBgmFocusMode(true);
     return () => {
       setBgmFocusMode(false);
@@ -381,7 +383,7 @@ export function ReviewScreen() {
               },
             ]}
           >
-            <ReviewFlashcard key={currentWord.id} word={currentWord} />
+            <ReviewFlashcard word={currentWord} />
           </Animated.View>
 
           <View testID="review-card-pager-row" style={styles.cardPagerRow}>

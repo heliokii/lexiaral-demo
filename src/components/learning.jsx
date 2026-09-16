@@ -50,6 +50,7 @@ export function WordPicture({ word, height = 170 }) {
         <Image
           source={realImage}
           style={{ width: "100%", height, resizeMode: "contain" }}
+          fadeDuration={0}
         />
       </View>
     );
@@ -192,114 +193,127 @@ export function AnswerChoices({
   onAnswer,
   pictures = false,
 }) {
-  const { width } = useWindowDimensions();
+  const isFourChoices = question.choices && question.choices.length === 4;
+  const isCompact =
+    isFourChoices &&
+    question.choices.every((choice) => (choice.label || "").length <= 32);
+  const useGrid = pictures || isCompact;
 
-  // 2x2 Grid Enforcement:
-  // - Pictures ALWAYS use 2x2 grid so mobile portrait doesn't collapse into 4 huge vertical cards.
-  // - 4-choice questions with compact vocabulary labels (<= 26 chars) always use 2x2 grid.
-  const compactAnswers =
-    question.choices.length === 4 &&
-    question.choices.every((choice) => (choice.label || "").length <= 26);
+  const renderChoiceButton = (choice, index) => {
+    const revealed = selected != null;
+    const correct = revealed && choice.id === question.answerId;
+    const chosen = selected?.choiceId === choice.id;
+    const wrong = revealed && chosen && !correct;
 
-  const grid = pictures || compactAnswers;
+    const badgeState = correct
+      ? "correct"
+      : wrong
+        ? "wrong"
+        : chosen
+          ? "selected"
+          : "default";
+
+    const letter = CHOICE_LETTERS[index] || String.fromCharCode(65 + index);
+
+    return (
+      <Pressable
+        key={choice.id}
+        testID={`choice-btn-${choice.id}`}
+        accessibilityRole="button"
+        accessibilityLabel={
+          pictures
+            ? `Option ${letter}: Picture ${index + 1}, ${WORDS[choice.wordId]?.word || ""}`
+            : `Option ${letter}: ${choice.label}`
+        }
+        accessibilityState={{
+          disabled: disabled || revealed,
+          selected: chosen,
+        }}
+        disabled={disabled || revealed}
+        onPress={() => onAnswer(choice.id)}
+        style={({ pressed }) => [
+          styles.answer,
+          useGrid && styles.gridTile,
+          pictures && styles.pictureTile,
+          chosen && !revealed && styles.answerSelected,
+          correct && styles.correct,
+          wrong && styles.wrong,
+          pressed && !revealed && { transform: [{ scale: 0.98 }] },
+        ]}
+      >
+        {pictures ? (
+          <View style={styles.pictureChoiceContainer}>
+            <View style={styles.pictureBadgeWrap}>
+              <ChoiceBadge letter={letter} state={badgeState} />
+            </View>
+            <WordPicture word={WORDS[choice.wordId]} height={105} />
+          </View>
+        ) : useGrid ? (
+          <View style={styles.choiceRowGrid}>
+            <ChoiceBadge letter={letter} state={badgeState} />
+            <Text
+              style={[
+                styles.answerText,
+                styles.answerTextGrid,
+                correct && { color: "#176640" },
+                wrong && { color: "#8A2B1D" },
+              ]}
+              numberOfLines={2}
+            >
+              {choice.label}
+            </Text>
+            <View style={{ width: 28 }} />
+          </View>
+        ) : (
+          <View style={styles.choiceRowLinear}>
+            <ChoiceBadge letter={letter} state={badgeState} />
+            <Text
+              style={[
+                styles.answerText,
+                styles.answerTextLinear,
+                correct && { color: "#176640" },
+                wrong && { color: "#8A2B1D" },
+              ]}
+            >
+              {choice.label}
+            </Text>
+          </View>
+        )}
+
+        {correct && (
+          <View style={styles.choiceFeedbackTagCorrect}>
+            <Icon name="check" size={12} color="#FFFFFF" />
+            <Text style={styles.choiceFeedbackTextCorrect}>Correct</Text>
+          </View>
+        )}
+
+        {wrong && (
+          <View style={styles.choiceFeedbackTagWrong}>
+            <Text style={styles.choiceFeedbackTextWrong}>Nice try</Text>
+          </View>
+        )}
+      </Pressable>
+    );
+  };
+
+  if (useGrid && isFourChoices) {
+    return (
+      <View style={styles.gridContainer}>
+        <View style={styles.gridRow}>
+          {renderChoiceButton(question.choices[0], 0)}
+          {renderChoiceButton(question.choices[1], 1)}
+        </View>
+        <View style={styles.gridRow}>
+          {renderChoiceButton(question.choices[2], 2)}
+          {renderChoiceButton(question.choices[3], 3)}
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <View style={[styles.answers, grid && styles.answerGrid]}>
-      {question.choices.map((choice, index) => {
-        const revealed = selected != null;
-        const correct = revealed && choice.id === question.answerId;
-        const chosen = selected?.choiceId === choice.id;
-        const wrong = revealed && chosen && !correct;
-
-        const badgeState = correct
-          ? "correct"
-          : wrong
-            ? "wrong"
-            : chosen
-              ? "selected"
-              : "default";
-
-        const letter = CHOICE_LETTERS[index] || String.fromCharCode(65 + index);
-
-        return (
-          <Pressable
-            key={choice.id}
-            testID={`choice-btn-${choice.id}`}
-            accessibilityRole="button"
-            accessibilityLabel={
-              pictures
-                ? `Option ${letter}: Picture ${index + 1}, ${WORDS[choice.wordId].word}`
-                : `Option ${letter}: ${choice.label}`
-            }
-            accessibilityState={{
-              disabled: disabled || revealed,
-              selected: chosen,
-            }}
-            disabled={disabled || revealed}
-            onPress={() => onAnswer(choice.id)}
-            style={({ pressed }) => [
-              styles.answer,
-              grid && styles.gridTile,
-              pictures && styles.pictureTile,
-              chosen && !revealed && styles.answerSelected,
-              correct && styles.correct,
-              wrong && styles.wrong,
-              pressed && !revealed && { transform: [{ scale: 0.98 }] },
-            ]}
-          >
-            {pictures ? (
-              <View style={styles.pictureChoiceContainer}>
-                <View style={styles.pictureBadgeWrap}>
-                  <ChoiceBadge letter={letter} state={badgeState} />
-                </View>
-                <WordPicture word={WORDS[choice.wordId]} height={112} />
-              </View>
-            ) : grid ? (
-              <View style={styles.choiceRowGrid}>
-                <ChoiceBadge letter={letter} state={badgeState} />
-                <Text
-                  style={[
-                    styles.answerText,
-                    styles.answerTextGrid,
-                    correct && { color: "#176640" },
-                    wrong && { color: "#8A2B1D" },
-                  ]}
-                >
-                  {choice.label}
-                </Text>
-                <View style={{ width: 32 }} />
-              </View>
-            ) : (
-              <View style={styles.choiceRowLinear}>
-                <ChoiceBadge letter={letter} state={badgeState} />
-                <Text
-                  style={[
-                    styles.answerText,
-                    styles.answerTextLinear,
-                    correct && { color: "#176640" },
-                    wrong && { color: "#8A2B1D" },
-                  ]}
-                >
-                  {choice.label}
-                </Text>
-              </View>
-            )}
-
-            {correct && (
-              <View style={styles.choiceFeedbackTagCorrect}>
-                <Icon name="check" size={12} color="#FFFFFF" />
-                <Text style={styles.choiceFeedbackTextCorrect}>Correct</Text>
-              </View>
-            )}
-
-            {wrong && (
-              <View style={styles.choiceFeedbackTagWrong}>
-                <Text style={styles.choiceFeedbackTextWrong}>Nice try</Text>
-              </View>
-            )}
-          </Pressable>
-        );
-      })}
+    <View style={styles.answers}>
+      {question.choices.map((choice, index) => renderChoiceButton(choice, index))}
     </View>
   );
 }
@@ -1121,6 +1135,15 @@ const styles = StyleSheet.create({
   answers: {
     gap: 12,
   },
+  gridContainer: {
+    width: "100%",
+    gap: 12,
+  },
+  gridRow: {
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
+  },
   answerGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -1128,9 +1151,9 @@ const styles = StyleSheet.create({
     rowGap: 12,
   },
   answer: {
-    minHeight: 82,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
+    minHeight: 74,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 22,
@@ -1146,11 +1169,13 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   gridTile: {
-    width: "48.5%",
+    flex: 1,
+    minWidth: 0,
   },
   pictureTile: {
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    minHeight: 125,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
   },
   choiceBadge: {
     width: 32,

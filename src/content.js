@@ -1,5 +1,6 @@
 import pack from '../assets/content.json';
 import { illustrations } from './illustrations';
+import { WORD_IMAGES } from './assets/wordImages';
 
 export const CONTENT = pack;
 
@@ -365,7 +366,7 @@ export function validateContent() {
 
     const imageKey = word.image_url.replace('asset://', '');
 
-    if (!illustrations[imageKey]) {
+    if (!WORD_IMAGES[imageKey] && !illustrations[imageKey]) {
       throw new Error(`Missing bundled illustration: ${word.image_url}`);
     }
 

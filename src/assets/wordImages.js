@@ -65,3 +65,32 @@ export function getWordImage(wordId) {
   const key = String(wordId).toLowerCase().trim();
   return WORD_IMAGES[key] || null;
 }
+
+let preloaded = false;
+
+export function preloadAllWordImages() {
+  if (preloaded) return;
+  preloaded = true;
+
+  try {
+    const modules = Object.values(WORD_IMAGES);
+    modules.forEach((mod) => {
+      let uri = null;
+      if (typeof mod === 'string') {
+        uri = mod;
+      } else if (mod?.uri) {
+        uri = mod.uri;
+      } else if (mod?.default) {
+        uri = typeof mod.default === 'string' ? mod.default : mod.default.uri;
+      }
+
+      if (typeof window !== 'undefined' && uri) {
+        const img = new window.Image();
+        img.src = uri;
+        if (img.decode) {
+          img.decode().catch(() => {});
+        }
+      }
+    });
+  } catch {}
+}
