@@ -267,7 +267,7 @@ for item in pdf_50:
             prompt_text = q_list[q_idx] if q_idx < len(q_list) else f"Question about {word_str}?"
             # Clean up prompt text (remove leading numbers, fix unicode)
             prompt_text = re.sub(r'^\d+\.\s*', '', prompt_text)
-            prompt_text = prompt_text.replace('\uFFFD', "'").replace('', "'")
+            prompt_text = prompt_text.replace('\uFFFD', "'")
 
             choices = [ans] + distractors
             questions_data.append({
@@ -281,7 +281,7 @@ for item in pdf_50:
     else:
         # Fallback generator from PDF questions
         for q_idx, q_prompt in enumerate(q_list[:5]):
-            cleaned_p = re.sub(r'^\d+\.\s*', '', q_prompt).replace('\uFFFD', "'").replace('', "'")
+            cleaned_p = re.sub(r'^\d+\.\s*', '', q_prompt).replace('\uFFFD', "'")
             questions_data.append({
                 "id": f"q-{word_id}-{q_idx+1}",
                 "category": "comprehension",
@@ -295,7 +295,7 @@ for item in pdf_50:
     story_entry = {
         "id": f"story-{word_id}",
         "title": story_t,
-        "text": story_text.replace('\uFFFD', "'").replace('', "'"),
+        "text": story_text.replace('\uFFFD', "'"),
         "target_word_ids": [word_id],
         "difficulty": diff,
         "introduced_level": lvl,
