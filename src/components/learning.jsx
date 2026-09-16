@@ -26,10 +26,34 @@ import {
   stopAudio,
 } from "../audio";
 import { Art, Icon } from "../Art";
+import { getWordImage } from "../assets/wordImages";
 import { Body, Button, Card, Title, colors, fonts } from "./ui";
 
 export function WordPicture({ word, height = 170 }) {
   if (!word) return null;
+
+  // 0. High priority: Real photographic images from official ARAL curriculum
+  const realImage = getWordImage(word.id || word.word);
+  if (realImage) {
+    return (
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={`Picture of ${word.word}`}
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height,
+        }}
+      >
+        <Image
+          source={realImage}
+          style={{ width: "100%", height, resizeMode: "contain" }}
+        />
+      </View>
+    );
+  }
 
   const rawUrl = word.image_url || "";
   const key = rawUrl.replace("asset://", "");
@@ -168,14 +192,16 @@ export function AnswerChoices({
   onAnswer,
   pictures = false,
 }) {
-  const { width, fontScale } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
-  const compactAnswers = question.choices.every(
-    (choice) => choice.label.length <= 18,
-  );
+  // 2x2 Grid Enforcement:
+  // - Pictures ALWAYS use 2x2 grid so mobile portrait doesn't collapse into 4 huge vertical cards.
+  // - 4-choice questions with compact vocabulary labels (<= 26 chars) always use 2x2 grid.
+  const compactAnswers =
+    question.choices.length === 4 &&
+    question.choices.every((choice) => (choice.label || "").length <= 26);
 
-  // Larger accessibility text switches to one column.
-  const grid = width >= 340 && fontScale < 1.35 && (pictures || compactAnswers);
+  const grid = pictures || compactAnswers;
 
   return (
     <View style={[styles.answers, grid && styles.answerGrid]}>
@@ -214,6 +240,7 @@ export function AnswerChoices({
             style={({ pressed }) => [
               styles.answer,
               grid && styles.gridTile,
+              pictures && styles.pictureTile,
               chosen && !revealed && styles.answerSelected,
               correct && styles.correct,
               wrong && styles.wrong,
@@ -1120,6 +1147,10 @@ const styles = StyleSheet.create({
   },
   gridTile: {
     width: "48.5%",
+  },
+  pictureTile: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
   choiceBadge: {
     width: 32,

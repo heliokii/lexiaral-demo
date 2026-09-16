@@ -380,29 +380,47 @@ function getBgmAudio() {
   return window.__LEXIARAL_BGM_SINGLETON__;
 }
 
-let gestureUnlockActive = false;
+let interactionUnlocked = false;
+
+// Universal audio & speech synthesis unlocker for mobile devices (iOS Safari, Android Chrome)
+export function unlockAudioAndSpeech() {
+  if (typeof window === 'undefined') return;
+
+  // 1. Resume Web Audio Context
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  } else if (!audioCtx) {
+    getAudioContext();
+  }
+
+  // 2. Prime and wake up Speech Synthesis on mobile browsers
+  if (window.speechSynthesis) {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      if (!interactionUnlocked) {
+        const prime = new SpeechSynthesisUtterance('');
+        prime.volume = 0.01;
+        prime.rate = 1.0;
+        window.speechSynthesis.speak(prime);
+      }
+    } catch {}
+  }
+
+  // 3. Resume background music if active
+  if (bgmActive && !muted) {
+    const audio = getBgmAudio();
+    if (audio && audio.paused) {
+      audio.play().catch(() => {});
+    }
+  }
+
+  interactionUnlocked = true;
+}
 
 function attachInteractionUnlock() {
-  if (gestureUnlockActive || typeof window === 'undefined') return;
-  gestureUnlockActive = true;
-
-  const onGesture = () => {
-    console.log('[Audio] Interaction detected, attempting to unlock BGM...');
-    const audio = getBgmAudio();
-    if (bgmActive && !muted && audio && audio.paused) {
-      audio.play()
-        .then(() => console.log('[Audio] BGM successfully unlocked and playing'))
-        .catch(err => console.error('[Audio] BGM unlock play failed:', err));
-    }
-    ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((evt) => {
-      window.removeEventListener(evt, onGesture, true);
-    });
-    gestureUnlockActive = false;
-  };
-
-  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((evt) => {
-    window.addEventListener(evt, onGesture, { capture: true, once: true });
-  });
+  unlockAudioAndSpeech();
 }
 
 // Pause BGM when tab is inactive, resume single instance when returning
@@ -600,8 +618,8 @@ function isDisqualifiedMaleVoice(name) {
   return DISQUALIFIED_MALE_VOICES.some((m) => lower.includes(m));
 }
 
-// Resolves a high-quality, friendly female voice for young learners
-function getBestFemaleVoice() {
+// Resolves a high-quality, friendly voice for young learners (prioritizing Philippine English)
+function getBestFemaleVoice(targetLang = 'en-PH') {
   if (typeof window === 'undefined' || !window.speechSynthesis) return null;
   if (cachedFemaleVoice) return cachedFemaleVoice;
 
@@ -609,14 +627,30 @@ function getBestFemaleVoice() {
     const voices = window.speechSynthesis.getVoices();
     if (!voices || !voices.length) return null;
 
-    // Filter English voices
+    // 1. Search for Philippine English voice (Android Google Speech, Samsung TTS, or Windows en-PH)
+    const phVoice = voices.find((v) => {
+      const l = (v.lang || '').toLowerCase().replace('_', '-');
+      const n = (v.name || '').toLowerCase();
+      const isPH = l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines') || n.includes('(ph)');
+      return isPH && !isDisqualifiedMaleVoice(n);
+    }) || voices.find((v) => {
+      const l = (v.lang || '').toLowerCase().replace('_', '-');
+      return l === 'en-ph' || l.startsWith('en-ph');
+    });
+
+    if (phVoice) {
+      cachedFemaleVoice = phVoice;
+      return cachedFemaleVoice;
+    }
+
+    // 2. Filter English voices
     const englishVoices = voices.filter(
       (v) => v.lang && (v.lang.toLowerCase().startsWith('en') || v.lang.includes('US'))
     );
 
     const candidates = englishVoices.length > 0 ? englishVoices : voices;
 
-    // 1. Search for prioritized known female voices (excluding any male indicators)
+    // 3. Search for prioritized known friendly female voices (excluding any male indicators)
     for (const pref of PREFERRED_FEMALE_VOICES) {
       const match = candidates.find((v) => {
         const n = (v.name || '').toLowerCase();
@@ -628,7 +662,7 @@ function getBestFemaleVoice() {
       }
     }
 
-    // 2. Search for explicit female or woman label
+    // 4. Search for explicit female or woman label
     const explicitFemale = candidates.find((v) => {
       const n = (v.name || '').toLowerCase();
       return (n.includes('female') || n.includes('woman')) && !isDisqualifiedMaleVoice(n);
@@ -638,7 +672,7 @@ function getBestFemaleVoice() {
       return cachedFemaleVoice;
     }
 
-    // 3. Fallback: select any candidate that is definitely not a male voice
+    // 5. Fallback: select any candidate that is definitely not a male voice
     const nonMale = candidates.find((v) => !isDisqualifiedMaleVoice(v.name));
     if (nonMale) {
       cachedFemaleVoice = nonMale;
@@ -662,19 +696,17 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   } catch {}
 }
 
-// Speak text using friendly female voice and light, clear tone
-export async function speak(text, language = 'en-US', reportErrors = false) {
+// Speak text using friendly teacher voice and calm, clear instructional pace
+export async function speak(text, language = 'en-PH', reportErrors = false) {
   if (muted || !text || typeof text !== 'string') return;
 
   const cleanText = text.trim();
   if (!cleanText) return;
 
-  // 1. Check if speech was active, stop previous audio
-  const wasActive =
-    typeof window !== 'undefined' &&
-    window.speechSynthesis &&
-    (window.speechSynthesis.speaking || window.speechSynthesis.pending);
+  // Unpause / unlock mobile audio session
+  unlockAudioAndSpeech();
 
+  // 1. Stop any previous speech
   stopAudio();
 
   // 2. Issue a new ticket for this request
@@ -690,21 +722,18 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
   };
 
   try {
-    // Web Speech API execution (Chrome, Edge, Safari, Firefox)
+    // Web Speech API execution (Chrome, Edge, Safari, Firefox - Desktop & Mobile)
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      // If previous speech was active and cancelled, give Chrome a brief tick to flush
-      if (wasActive) {
-        await new Promise((resolve) => setTimeout(resolve, 35));
-      }
-
       if (muted || ticket !== currentTicket) return;
 
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = language || 'en-US';
-      utterance.rate = 0.88; // Comfortable instructional pace
-      utterance.pitch = 1.18; // Lighter, friendly, cheerful tone for Grade 3 pupils
+      const femaleVoice = getBestFemaleVoice(language);
 
-      const femaleVoice = getBestFemaleVoice();
+      // Target Philippine English (en-PH) or the resolved voice's language
+      utterance.lang = femaleVoice ? femaleVoice.lang : (language || 'en-PH');
+      utterance.rate = 0.78; // Calm, clear, instructional teacher pace for Grade 3 pupils (resolves "mabilis masyado")
+      utterance.pitch = 1.06; // Warm, natural, friendly tone (no chipmunk squeak)
+
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
@@ -718,6 +747,9 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
         if (activeUtterance === utterance) {
           activeUtterance = null;
         }
+        if (window._activeSpeechUtterance === utterance) {
+          window._activeSpeechUtterance = null;
+        }
       };
 
       utterance.onerror = (e) => {
@@ -725,12 +757,16 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
         if (activeUtterance === utterance) {
           activeUtterance = null;
         }
+        if (window._activeSpeechUtterance === utterance) {
+          window._activeSpeechUtterance = null;
+        }
         if (e && e.error !== 'canceled' && e.error !== 'interrupted') {
           report();
         }
       };
 
       activeUtterance = utterance;
+      // Keep alive in global window reference to prevent Android Chrome GC bug from cutting speech
       window._activeSpeechUtterance = utterance;
 
       if (window.speechSynthesis.paused) {
@@ -741,32 +777,43 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
       return;
     }
 
-    // Native mobile platforms (iOS / Android) via expo-speech
+    // Native mobile platforms (iOS / Android) via expo-speech (e.g. USB hot reload in Expo Go)
     let voiceIdentifier = null;
     try {
       const available = await Speech.getAvailableVoicesAsync();
-      const eng = (available || []).filter(
-        (v) => v.language && (v.language.startsWith('en') || v.language.includes('US'))
-      );
-      const female = eng.find((v) => {
+      // 1. Search for Philippine English voice in native device TTS
+      const phVoice = (available || []).find((v) => {
+        const l = (v.language || '').toLowerCase().replace('_', '-');
         const n = (v.name || '').toLowerCase();
-        return (
-          n.includes('samantha') ||
-          n.includes('zira') ||
-          n.includes('jenny') ||
-          n.includes('aria') ||
-          n.includes('female')
-        );
+        return (l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines')) && !isDisqualifiedMaleVoice(n);
       });
-      if (female) voiceIdentifier = female.identifier;
+
+      if (phVoice) {
+        voiceIdentifier = phVoice.identifier;
+      } else {
+        const eng = (available || []).filter(
+          (v) => v.language && (v.language.startsWith('en') || v.language.includes('US'))
+        );
+        const female = eng.find((v) => {
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('samantha') ||
+            n.includes('zira') ||
+            n.includes('jenny') ||
+            n.includes('aria') ||
+            n.includes('female')
+          );
+        });
+        if (female) voiceIdentifier = female.identifier;
+      }
     } catch {}
 
     if (muted || ticket !== currentTicket) return;
 
     Speech.speak(cleanText, {
-      language,
-      rate: 0.88,
-      pitch: 1.15,
+      language: voiceIdentifier ? undefined : (language || 'en-PH'),
+      rate: 0.78,
+      pitch: 1.06,
       voice: voiceIdentifier,
       onError: report,
     });
@@ -779,22 +826,22 @@ export function pronounce(word) {
   if (!word) return;
 
   if (typeof word === 'string') {
-    speak(word, 'en-US', true);
+    speak(word, 'en-PH', true);
     return;
   }
 
-  // If word has audio_url format: tts://en-US/cat
+  // If word has audio_url format: tts://en-US/cat or tts://en-PH/cat
   if (word.audio_url) {
     const match = /^tts:\/\/([^/]+)\/(.+)$/.exec(word.audio_url);
     if (match) {
-      speak(decodeURIComponent(match[2]), match[1], true);
+      speak(decodeURIComponent(match[2]), match[1] || 'en-PH', true);
       return;
     }
   }
 
   // Fallback to word text directly
   if (word.word) {
-    speak(word.word, 'en-US', true);
+    speak(word.word, 'en-PH', true);
     return;
   }
 
@@ -808,17 +855,18 @@ export async function initAudio() {
   console.log('[Audio] All assets pre-resolved:', resolvedPaths);
 }
 
-// Global "First-Interaction" BGM Trigger
-// Some browsers strictly require the FIRST audio play to be inside a direct user event.
+// Global "First-Interaction" Audio, TTS, and BGM Trigger
+// Browsers strictly require user activation to unlock AudioContext, TTS, and Audio elements
 if (typeof window !== 'undefined') {
-  const forceStartBgm = () => {
-    console.log('[Audio] Global interaction trigger: attempting to force start BGM');
+  const onFirstInteraction = () => {
+    console.log('[Audio] Global interaction trigger: unlocking audio, speech, and BGM');
+    unlockAudioAndSpeech();
     startBgm();
-    ['click', 'touchstart', 'keydown'].forEach(evt =>
-      window.removeEventListener(evt, forceStartBgm)
+    ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt =>
+      window.removeEventListener(evt, onFirstInteraction, true)
     );
   };
-  ['click', 'touchstart', 'keydown'].forEach(evt =>
-    window.addEventListener(evt, forceStartBgm, { once: true })
+  ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt =>
+    window.addEventListener(evt, onFirstInteraction, { capture: true, once: true })
   );
 }
