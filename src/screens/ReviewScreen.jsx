@@ -278,7 +278,7 @@ export function ReviewScreen() {
 
   // 2. FLASHCARD STUDY SCREEN (Filtered to selected level)
   return (
-    <Screen testID="screen-review">
+    <Screen testID="screen-review" hideBack={true}>
       <View testID="review-header" style={{ gap: 6 }}>
         <View style={styles.headerTopRow}>
           <Pressable
@@ -402,7 +402,7 @@ export function ReviewScreen() {
               <Icon
                 name="arrowLeft"
                 size={16}
-                color={safeIndex === 0 ? "#BFB8CB" : colors.primary}
+                color={safeIndex === 0 ? "#9A8EB0" : colors.primary}
               />
               <Text
                 style={[
@@ -446,7 +446,7 @@ export function ReviewScreen() {
                 size={16}
                 color={
                   safeIndex >= words.length - 1
-                    ? "#BFB8CB"
+                    ? "#9A8EB0"
                     : colors.primary
                 }
               />
@@ -625,8 +625,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
-    marginTop: 24,
-    marginBottom: 16,
+    marginTop: 10,
+    marginBottom: 8,
     paddingVertical: 6,
   },
   pagerBtn: {
@@ -646,9 +646,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   pagerBtnDisabled: {
-    opacity: 0.45,
-    backgroundColor: "#F7F5FA",
-    borderColor: "#EAE6F0",
+    backgroundColor: "#F1EDF8",
+    borderColor: "#E3DCED",
     elevation: 0,
     shadowOpacity: 0,
   },
@@ -658,7 +657,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   pagerBtnTextDisabled: {
-    color: "#8C8599",
+    color: "#9A8EB0",
   },
   pagerPill: {
     paddingHorizontal: 16,
