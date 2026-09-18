@@ -10,14 +10,17 @@ import assets from './assets.generated';
  */
 export function Art({
   name,
-  width = '100%',
-  height = 180,
+  width,
+  height,
   label,
   style,
 }) {
   const xml = assets[name] || assets[name?.replace(/-/g, '_')];
 
   if (!xml) return null;
+
+  const finalHeight = height ?? (width ?? 180);
+  const finalWidth = width ?? (height ?? 180);
 
   return (
     <View
@@ -26,9 +29,17 @@ export function Art({
       accessibilityLabel={label}
       accessibilityElementsHidden={!label}
       importantForAccessibility={label ? 'yes' : 'no-hide-descendants'}
-      style={style}
+      style={[
+        {
+          width: finalWidth,
+          height: finalHeight,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        style,
+      ]}
     >
-      <SvgXml xml={xml} width={width} height={height} />
+      <SvgXml xml={xml} width={finalWidth} height={finalHeight} />
     </View>
   );
 }

@@ -1,5 +1,6 @@
 import pack from '../assets/content.json';
 import { illustrations } from './illustrations';
+import { WORD_IMAGES } from './assets/wordImages';
 
 export const CONTENT = pack;
 
@@ -35,6 +36,66 @@ export const UNLOCK_PERCENT = 0;
 const rotate = (items, offset) => {
   const n = offset % items.length;
   return [...items.slice(n), ...items.slice(0, n)];
+};
+
+export function shuffleArray(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = result[i];
+    result[i] = result[j];
+    result[j] = temp;
+  }
+  return result;
+}
+
+export const EASY_WORDS = pack.words.filter(
+  (word) => word.difficulty === 'easy' || word.introduced_level === 1
+);
+
+export const AVERAGE_WORDS = pack.words.filter(
+  (word) => word.difficulty === 'average' || word.introduced_level === 2
+);
+
+export const DIFFICULT_WORDS = pack.words.filter(
+  (word) => word.difficulty === 'difficult' || word.introduced_level === 3
+);
+
+export const createWordChoices = (target, pool, useDefinitions = false) => {
+  const candidatePool = pool && pool.length >= 4 ? pool : pack.words;
+  const otherWords = shuffleArray(
+    candidatePool.filter((word) => word.id !== target.id)
+  ).slice(0, 3);
+  const selected = shuffleArray([target, ...otherWords]);
+
+  return selected.map((word) => ({
+    id: word.id,
+    label: useDefinitions ? word.definition : word.word,
+    wordId: word.id,
+  }));
+};
+
+export const createSentenceChoices = (targetWord, pool) => {
+  const candidatePool = (
+    pool && pool.length >= 3 ? pool : pack.words
+  ).filter((w) => w.example_sentence);
+  const otherWords = shuffleArray(
+    candidatePool.filter((w) => w.id !== targetWord.id)
+  ).slice(0, 2);
+  const distractor1 =
+    otherWords[0]?.example_sentence ||
+    `The ${targetWord.word} is flying in the sky.`;
+  const distractor2 =
+    otherWords[1]?.example_sentence ||
+    `We ate a ${targetWord.word} for breakfast.`;
+
+  const options = [
+    { id: targetWord.id, label: targetWord.example_sentence },
+    { id: `${targetWord.id}-wrong1`, label: distractor1 },
+    { id: `${targetWord.id}-wrong2`, label: distractor2 },
+  ];
+
+  return shuffleArray(options);
 };
 
 const wordChoices = (target, offset, useDefinitions = false) => {
@@ -136,7 +197,7 @@ const average = pack.words.flatMap((word, index) => [
     prompt: `What does "${word.word}" mean in this sentence?`,
     choices: wordChoices(word, index + 3, true),
     answerId: word.id,
-    explanation: word.definition,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   },
   {
     id: `average-best-use-${word.id}`,
@@ -162,7 +223,7 @@ const difficultVocabulary = pack.story.target_word_ids.map((id, index) => {
     prompt: `In the story, what does "${word.word}" mean?`,
     choices: wordChoices(word, index + 1, true),
     answerId: id,
-    explanation: `${word.story_context} ${word.definition}`,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   };
 });
 
@@ -214,7 +275,7 @@ export function getQuestionsForStory(story) {
     prompt: `In the story, what does "${word.word}" mean?`,
     choices: wordChoices(word, index + 1, true),
     answerId: word.id,
-    explanation: `${word.story_context} ${word.definition}`,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   }));
 
   const comp = (story.questions || []).map((question, index) => ({
@@ -242,27 +303,169 @@ export const QUESTIONS = {
     easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'dog'),
     easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'sun'),
     easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'egg'),
-    easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'hill'),
-    easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'pet'),
-    easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'happy'),
+    easy.find((q) => q.type === 'pictureToWord' && q.wordId === 'pen'),
+    easy.find((q) => q.type === 'wordToPicture' && q.wordId === 'pig'),
+    easy.find((q) => q.type === 'listenAndChoose' && q.wordId === 'hen'),
     easyMatching,
   ].filter(Boolean),
 
   2: [
-    average.find((q) => q.type === 'sentence' && q.wordId === 'cat'),
-    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'mat'),
-    average.find((q) => q.type === 'meaning' && q.wordId === 'hat'),
-    average.find((q) => q.type === 'bestUse' && q.wordId === 'dog'),
-    average.find((q) => q.type === 'sentence' && q.wordId === 'sun'),
-    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'egg'),
-    average.find((q) => q.type === 'meaning' && q.wordId === 'hill'),
-    average.find((q) => q.type === 'bestUse' && q.wordId === 'happy'),
-    average.find((q) => q.type === 'sentence' && q.wordId === 'pet'),
-    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'den'),
+    average.find((q) => q.type === 'sentence' && q.wordId === 'basket'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'moon'),
+    average.find((q) => q.type === 'meaning' && q.wordId === 'ball'),
+    average.find((q) => q.type === 'bestUse' && q.wordId === 'book'),
+    average.find((q) => q.type === 'sentence' && q.wordId === 'bark'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'nest'),
+    average.find((q) => q.type === 'meaning' && q.wordId === 'test'),
+    average.find((q) => q.type === 'bestUse' && q.wordId === 'pencil'),
+    average.find((q) => q.type === 'sentence' && q.wordId === 'candle'),
+    average.find((q) => q.type === 'pictureSentence' && q.wordId === 'road'),
   ].filter(Boolean),
 
   3: [...difficultVocabulary, ...comprehension],
 };
+
+export function generateSessionQuestions(level, options = {}) {
+  if (level === 1) {
+    const easyWords = EASY_WORDS.length >= 9 ? EASY_WORDS : pack.words;
+    const shuffled = shuffleArray(easyWords);
+    const selectedWords = shuffled.slice(0, 9);
+
+    const pictureToWordQuestions = selectedWords.slice(0, 3).map((word) => ({
+      id: `easy-picture-${word.id}`,
+      type: 'pictureToWord',
+      category: 'vocabulary',
+      wordId: word.id,
+      prompt: 'Which word matches the picture?',
+      choices: createWordChoices(word, easyWords, false),
+      answerId: word.id,
+      explanation: word.definition,
+    }));
+
+    const wordToPictureQuestions = selectedWords.slice(3, 6).map((word) => ({
+      id: `easy-word-${word.id}`,
+      type: 'wordToPicture',
+      category: 'vocabulary',
+      wordId: word.id,
+      prompt: `Which picture shows "${word.word}"?`,
+      choices: createWordChoices(word, easyWords, false),
+      answerId: word.id,
+      explanation: word.definition,
+    }));
+
+    const listenQuestions = selectedWords.slice(6, 9).map((word) => ({
+      id: `easy-listen-${word.id}`,
+      type: 'listenAndChoose',
+      category: 'vocabulary',
+      wordId: word.id,
+      prompt: 'Listen to the word. Which word did you hear?',
+      choices: createWordChoices(word, easyWords, false),
+      answerId: word.id,
+      explanation: `${word.word}: ${word.definition}`,
+    }));
+
+    // Randomize the sequence of individual activities
+    const randomizedQuestions = shuffleArray([
+      ...pictureToWordQuestions,
+      ...wordToPictureQuestions,
+      ...listenQuestions,
+    ]);
+
+    // Matching pairs for the 10th activity: pick 6 random easy words
+    const matchingCandidates = shuffleArray(easyWords).slice(0, 6);
+    const dynamicMatching = {
+      id: 'easy-matching-all',
+      type: 'matching',
+      category: 'vocabulary',
+      prompt: 'Match each target word with its correct picture!',
+      pairs: matchingCandidates.map((word) => ({
+        id: word.id,
+        wordId: word.id,
+        word: word.word,
+        image: word.image_url,
+      })),
+      choices: [
+        { id: 'all_matched', label: 'All pairs matched!' },
+        { id: 'keep_matching', label: 'Keep matching' },
+      ],
+      answerId: 'all_matched',
+      explanation: 'All vocabulary words are correctly matched with their pictures.',
+    };
+
+    return [...randomizedQuestions, dynamicMatching];
+  }
+
+  if (level === 2) {
+    const avgWords = AVERAGE_WORDS.length >= 10 ? AVERAGE_WORDS : pack.words;
+    const shuffled = shuffleArray(avgWords);
+    const selectedWords = shuffled.slice(0, 10);
+
+    const sentenceQuestions = selectedWords.slice(0, 3).map((word) => ({
+      id: `average-blank-${word.id}`,
+      type: 'sentence',
+      category: 'vocabulary',
+      wordId: word.id,
+      sentence: word.sentence_blank,
+      prompt: 'Which word completes the sentence?',
+      choices: createWordChoices(word, avgWords, false),
+      answerId: word.id,
+      explanation: `${word.word}: ${word.definition}`,
+    }));
+
+    const picSentenceQuestions = selectedWords.slice(3, 6).map((word) => ({
+      id: `average-pic-${word.id}`,
+      type: 'pictureSentence',
+      category: 'vocabulary',
+      wordId: word.id,
+      sentence: word.sentence_blank,
+      prompt: 'Look at the picture and complete the sentence:',
+      choices: createWordChoices(word, avgWords, false),
+      answerId: word.id,
+      explanation: `${word.word}: ${word.definition}`,
+    }));
+
+    const meaningQuestions = selectedWords.slice(6, 8).map((word) => ({
+      id: `average-meaning-${word.id}`,
+      type: 'meaning',
+      category: 'vocabulary',
+      wordId: word.id,
+      sentence: word.example_sentence,
+      prompt: `What does "${word.word}" mean in this sentence?`,
+      choices: createWordChoices(word, avgWords, true),
+      answerId: word.id,
+      explanation: word.example_sentence
+        ? `Example: "${word.example_sentence}"`
+        : `"${word.word}" means: ${word.definition}`,
+    }));
+
+    const bestUseQuestions = selectedWords.slice(8, 10).map((word) => ({
+      id: `average-best-use-${word.id}`,
+      type: 'bestUse',
+      category: 'vocabulary',
+      wordId: word.id,
+      sentence: `Word: ${word.word}`,
+      prompt: `Which sentence uses "${word.word}" correctly?`,
+      choices: createSentenceChoices(word, avgWords),
+      answerId: word.id,
+      explanation: `Correct: "${word.example_sentence}"`,
+    }));
+
+    return shuffleArray([
+      ...sentenceQuestions,
+      ...picSentenceQuestions,
+      ...meaningQuestions,
+      ...bestUseQuestions,
+    ]);
+  }
+
+  if (level === 3) {
+    const storyId = options.storyId || CONTENT.story?.id || 'story-cat';
+    const story = (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
+    return getQuestionsForStory(story);
+  }
+
+  return QUESTIONS[level] || [];
+}
 
 export function performance(score, total) {
   const percentage = total ? (score / total) * 100 : 0;
@@ -303,6 +506,19 @@ export function getFeedbackDetails(question, correct) {
     }
   }
 
+  // If explanation is verbatim identical to correctLabel, suppress to prevent repetition
+  if (correctLabel && rawExplanation.trim().toLowerCase() === correctLabel.trim().toLowerCase()) {
+    rawExplanation = '';
+  }
+
+  // Clean any trailing ellipsis artifacts
+  if (rawExplanation.endsWith('...')) {
+    rawExplanation = rawExplanation.slice(0, -3).trim();
+    if (rawExplanation && !rawExplanation.endsWith('.')) {
+      rawExplanation += '.';
+    }
+  }
+
   // Capitalize first letter of explanation
   if (rawExplanation) {
     rawExplanation = rawExplanation.charAt(0).toUpperCase() + rawExplanation.slice(1);
@@ -316,9 +532,8 @@ export function getFeedbackDetails(question, correct) {
       ? `${title} All pairs matched! ${rawExplanation}`.trim()
       : `${title} Let's keep matching words with their pictures.`.trim();
   } else {
-    fullSpeech = correct
-      ? `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim()
-      : `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim();
+    const speechExp = rawExplanation ? ` ${rawExplanation}` : '';
+    fullSpeech = `${title} The correct answer is ${correctLabel}.${speechExp}`.trim();
   }
 
   return {
@@ -365,7 +580,7 @@ export function validateContent() {
 
     const imageKey = word.image_url.replace('asset://', '');
 
-    if (!illustrations[imageKey]) {
+    if (!WORD_IMAGES[imageKey] && !illustrations[imageKey]) {
       throw new Error(`Missing bundled illustration: ${word.image_url}`);
     }
 

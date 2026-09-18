@@ -39,6 +39,8 @@ import {
   WelcomeScreen,
 } from './src/screens';
 
+import { InAppBrowserModal } from './src/components/InAppBrowserModal';
+
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
 
@@ -193,6 +195,7 @@ export default function App() {
                 <Stack.Screen name="About" component={AboutScreen} />
               </Stack.Navigator>
             </NavigationContainer>
+            <InAppBrowserModal />
           </LearningProvider>
         </View>
       </View>

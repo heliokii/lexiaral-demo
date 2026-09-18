@@ -26,10 +26,35 @@ import {
   stopAudio,
 } from "../audio";
 import { Art, Icon } from "../Art";
+import { getWordImage } from "../assets/wordImages";
 import { Body, Button, Card, Title, colors, fonts } from "./ui";
 
 export function WordPicture({ word, height = 170 }) {
   if (!word) return null;
+
+  // 0. High priority: Real photographic images from official ARAL curriculum
+  const realImage = getWordImage(word.id || word.word);
+  if (realImage) {
+    return (
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={`Picture of ${word.word}`}
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          height,
+        }}
+      >
+        <Image
+          source={realImage}
+          style={{ width: "100%", height, resizeMode: "contain" }}
+          fadeDuration={0}
+        />
+      </View>
+    );
+  }
 
   const rawUrl = word.image_url || "";
   const key = rawUrl.replace("asset://", "");
@@ -168,111 +193,130 @@ export function AnswerChoices({
   onAnswer,
   pictures = false,
 }) {
-  const { width, fontScale } = useWindowDimensions();
+  const isFourChoices = question.choices && question.choices.length === 4;
+  const isCompact =
+    isFourChoices &&
+    question.choices.every((choice) => {
+      const trimmed = (choice.label || "").trim();
+      return !trimmed.includes(" ") && trimmed.length <= 7;
+    });
+  const useGrid = pictures || isCompact;
 
-  const compactAnswers = question.choices.every(
-    (choice) => choice.label.length <= 18,
-  );
+  const renderChoiceButton = (choice, index) => {
+    const revealed = selected != null;
+    const correct = revealed && choice.id === question.answerId;
+    const chosen = selected?.choiceId === choice.id;
+    const wrong = revealed && chosen && !correct;
 
-  // Larger accessibility text switches to one column.
-  const grid = width >= 340 && fontScale < 1.35 && (pictures || compactAnswers);
+    const badgeState = correct
+      ? "correct"
+      : wrong
+        ? "wrong"
+        : chosen
+          ? "selected"
+          : "default";
+
+    const letter = CHOICE_LETTERS[index] || String.fromCharCode(65 + index);
+
+    return (
+      <Pressable
+        key={choice.id}
+        testID={`choice-btn-${choice.id}`}
+        accessibilityRole="button"
+        accessibilityLabel={
+          pictures
+            ? `Option ${letter}: Picture ${index + 1}, ${WORDS[choice.wordId]?.word || ""}`
+            : `Option ${letter}: ${choice.label}`
+        }
+        accessibilityState={{
+          disabled: disabled || revealed,
+          selected: chosen,
+        }}
+        disabled={disabled || revealed}
+        onPress={() => onAnswer(choice.id)}
+        style={({ pressed }) => [
+          styles.answer,
+          useGrid && styles.gridTile,
+          pictures && styles.pictureTile,
+          chosen && !revealed && styles.answerSelected,
+          correct && styles.correct,
+          wrong && styles.wrong,
+          pressed && !revealed && { transform: [{ scale: 0.98 }] },
+        ]}
+      >
+        {pictures ? (
+          <View style={styles.pictureChoiceContainer}>
+            <View style={styles.pictureBadgeWrap}>
+              <ChoiceBadge letter={letter} state={badgeState} />
+            </View>
+            <WordPicture word={WORDS[choice.wordId]} height={105} />
+          </View>
+        ) : useGrid ? (
+          <View style={styles.choiceRowGrid}>
+            <ChoiceBadge letter={letter} state={badgeState} />
+            <Text
+              style={[
+                styles.answerText,
+                styles.answerTextGrid,
+                (choice.label || "").length >= 6 && { fontSize: 18, lineHeight: 22 },
+                correct && { color: "#176640" },
+                wrong && { color: "#8A2B1D" },
+              ]}
+              numberOfLines={2}
+            >
+              {choice.label}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.choiceRowLinear}>
+            <ChoiceBadge letter={letter} state={badgeState} />
+            <Text
+              style={[
+                styles.answerText,
+                styles.answerTextLinear,
+                correct && { color: "#176640" },
+                wrong && { color: "#8A2B1D" },
+              ]}
+            >
+              {choice.label}
+            </Text>
+          </View>
+        )}
+
+        {correct && (
+          <View style={styles.choiceFeedbackTagCorrect}>
+            <Icon name="check" size={12} color="#FFFFFF" />
+            <Text style={styles.choiceFeedbackTextCorrect}>Correct</Text>
+          </View>
+        )}
+
+        {wrong && (
+          <View style={styles.choiceFeedbackTagWrong}>
+            <Text style={styles.choiceFeedbackTextWrong}>Nice try</Text>
+          </View>
+        )}
+      </Pressable>
+    );
+  };
+
+  if (useGrid && isFourChoices) {
+    return (
+      <View style={styles.gridContainer}>
+        <View style={styles.gridRow}>
+          {renderChoiceButton(question.choices[0], 0)}
+          {renderChoiceButton(question.choices[1], 1)}
+        </View>
+        <View style={styles.gridRow}>
+          {renderChoiceButton(question.choices[2], 2)}
+          {renderChoiceButton(question.choices[3], 3)}
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <View style={[styles.answers, grid && styles.answerGrid]}>
-      {question.choices.map((choice, index) => {
-        const revealed = selected != null;
-        const correct = revealed && choice.id === question.answerId;
-        const chosen = selected?.choiceId === choice.id;
-        const wrong = revealed && chosen && !correct;
-
-        const badgeState = correct
-          ? "correct"
-          : wrong
-            ? "wrong"
-            : chosen
-              ? "selected"
-              : "default";
-
-        const letter = CHOICE_LETTERS[index] || String.fromCharCode(65 + index);
-
-        return (
-          <Pressable
-            key={choice.id}
-            testID={`choice-btn-${choice.id}`}
-            accessibilityRole="button"
-            accessibilityLabel={
-              pictures
-                ? `Option ${letter}: Picture ${index + 1}, ${WORDS[choice.wordId].word}`
-                : `Option ${letter}: ${choice.label}`
-            }
-            accessibilityState={{
-              disabled: disabled || revealed,
-              selected: chosen,
-            }}
-            disabled={disabled || revealed}
-            onPress={() => onAnswer(choice.id)}
-            style={({ pressed }) => [
-              styles.answer,
-              grid && styles.gridTile,
-              chosen && !revealed && styles.answerSelected,
-              correct && styles.correct,
-              wrong && styles.wrong,
-              pressed && !revealed && { transform: [{ scale: 0.98 }] },
-            ]}
-          >
-            {pictures ? (
-              <View style={styles.pictureChoiceContainer}>
-                <View style={styles.pictureBadgeWrap}>
-                  <ChoiceBadge letter={letter} state={badgeState} />
-                </View>
-                <WordPicture word={WORDS[choice.wordId]} height={112} />
-              </View>
-            ) : grid ? (
-              <View style={styles.choiceRowGrid}>
-                <ChoiceBadge letter={letter} state={badgeState} />
-                <Text
-                  style={[
-                    styles.answerText,
-                    styles.answerTextGrid,
-                    correct && { color: "#176640" },
-                    wrong && { color: "#8A2B1D" },
-                  ]}
-                >
-                  {choice.label}
-                </Text>
-                <View style={{ width: 32 }} />
-              </View>
-            ) : (
-              <View style={styles.choiceRowLinear}>
-                <ChoiceBadge letter={letter} state={badgeState} />
-                <Text
-                  style={[
-                    styles.answerText,
-                    styles.answerTextLinear,
-                    correct && { color: "#176640" },
-                    wrong && { color: "#8A2B1D" },
-                  ]}
-                >
-                  {choice.label}
-                </Text>
-              </View>
-            )}
-
-            {correct && (
-              <View style={styles.choiceFeedbackTagCorrect}>
-                <Icon name="check" size={12} color="#FFFFFF" />
-                <Text style={styles.choiceFeedbackTextCorrect}>Correct</Text>
-              </View>
-            )}
-
-            {wrong && (
-              <View style={styles.choiceFeedbackTagWrong}>
-                <Text style={styles.choiceFeedbackTextWrong}>Nice try</Text>
-              </View>
-            )}
-          </Pressable>
-        );
-      })}
+    <View style={styles.answers}>
+      {question.choices.map((choice, index) => renderChoiceButton(choice, index))}
     </View>
   );
 }
@@ -419,9 +463,11 @@ export function MatchingPairsQuestionWidget({
     }
   };
 
+  const isSix = pairs.length >= 6;
+
   return (
-    <View style={{ gap: 10 }}>
-      <Card style={styles.questionCard}>
+    <View style={{ gap: 8 }}>
+      <Card style={styles.matchingPromptCard}>
         <View style={styles.questionHeaderRow}>
           <Text style={styles.questionBadge}>Match Words to Pictures</Text>
           <Pressable
@@ -440,14 +486,14 @@ export function MatchingPairsQuestionWidget({
           </Pressable>
         </View>
 
-        <Body style={{ textAlign: "center", fontSize: 15, color: colors.text }}>
+        <Body style={{ textAlign: "center", fontSize: 14, color: colors.text }}>
           {question.prompt ||
             "Tap a word on the left, then tap its matching picture on the right."}
         </Body>
       </Card>
 
-      <View style={styles.matchingBoard}>
-        <View style={styles.matchingColumn}>
+      <View style={[styles.matchingBoard, isSix && { gap: 8 }]}>
+        <View style={[styles.matchingColumn, isSix && { gap: 5 }]}>
           <Text style={styles.columnHeader}>WORDS</Text>
           {wordItems.map((item) => {
             const isMatched = isCompleted || matchedIds.includes(item.wordId);
@@ -463,6 +509,7 @@ export function MatchingPairsQuestionWidget({
                 onPress={() => handleSelectWord(item.wordId)}
                 style={[
                   styles.matchCard,
+                  isSix && styles.matchCardSix,
                   isSelected && styles.matchCardSelected,
                   isMatched && styles.matchCardMatched,
                   isWrong && styles.matchCardWrong,
@@ -471,6 +518,7 @@ export function MatchingPairsQuestionWidget({
                 <Text
                   style={[
                     styles.matchWordText,
+                    isSix && styles.matchWordTextSix,
                     isMatched && { color: "#267A59" },
                     isSelected && { color: colors.darkPurple },
                   ]}
@@ -478,8 +526,8 @@ export function MatchingPairsQuestionWidget({
                   {item.word}
                 </Text>
                 {isMatched && (
-                  <View style={styles.checkBadge}>
-                    <Icon name="check" size={13} color="#FFFFFF" />
+                  <View style={[styles.checkBadge, isSix && { width: 18, height: 18, right: 4, top: 4 }]}>
+                    <Icon name="check" size={isSix ? 11 : 13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -487,7 +535,7 @@ export function MatchingPairsQuestionWidget({
           })}
         </View>
 
-        <View style={styles.matchingColumn}>
+        <View style={[styles.matchingColumn, isSix && { gap: 5 }]}>
           <Text style={styles.columnHeader}>PICTURES</Text>
           {picItems.map((item) => {
             const isMatched = isCompleted || matchedIds.includes(item.wordId);
@@ -503,14 +551,15 @@ export function MatchingPairsQuestionWidget({
                 style={[
                   styles.matchCard,
                   styles.matchPicCard,
+                  isSix && styles.matchCardSix,
                   isMatched && styles.matchCardMatched,
                   isWrong && styles.matchCardWrong,
                 ]}
               >
-                <WordPicture word={WORDS[item.wordId]} height={52} />
+                <WordPicture word={WORDS[item.wordId]} height={isSix ? 44 : 52} />
                 {isMatched && (
-                  <View style={styles.checkBadge}>
-                    <Icon name="check" size={13} color="#FFFFFF" />
+                  <View style={[styles.checkBadge, isSix && { width: 18, height: 18, right: 4, top: 4 }]}>
+                    <Icon name="check" size={isSix ? 11 : 13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -527,8 +576,8 @@ export function SentenceCompletionQuestionWidget(props) {
   const word = WORDS[question.wordId];
 
   return (
-    <View style={{ gap: 12 }}>
-      <Card style={styles.questionCard}>
+    <View style={{ gap: 10 }}>
+      <Card style={styles.sentenceQuestionCard}>
         <View style={styles.questionHeaderRow}>
           <View style={{ flex: 1, gap: 4 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -554,7 +603,7 @@ export function SentenceCompletionQuestionWidget(props) {
         </View>
 
         {question.type === "pictureSentence" && word && (
-          <WordPicture word={word} height={155} />
+          <WordPicture word={word} height={140} />
         )}
 
         <View style={styles.sentenceBox}>
@@ -668,7 +717,7 @@ export function ReviewFlashcard({ word }) {
           onPress={handleFlip}
           style={styles.flashcardFrontBody}
         >
-          <WordPicture word={word} height={230} />
+          <WordPicture word={word} height={195} />
         </Pressable>
       </Animated.View>
 
@@ -768,7 +817,13 @@ export function InteractiveStoryReaderWidget({
 
   const parts = expression ? story.text.split(expression) : [story.text];
 
-  const scenarioSvg = getStoryScenarioSvg(story);
+  const primaryWordId =
+    story.target_word_ids?.[0] ||
+    story.id?.replace(/^story-\d+-/, "").replace(/^story-/, "") ||
+    story.title?.toLowerCase().replace(/^(the|\d+\.)\s*/i, "").trim();
+
+  const storyImage = getWordImage(primaryWordId);
+  const scenarioSvg = !storyImage ? getStoryScenarioSvg(story) : null;
 
   const handleToggleReading = () => {
     if (isReading) {
@@ -827,7 +882,21 @@ export function InteractiveStoryReaderWidget({
         </View>
       </View>
 
-      {scenarioSvg ? (
+      {storyImage ? (
+        <View
+          accessible
+          accessibilityRole="image"
+          accessibilityLabel={`Picture of ${primaryWordId} for ${story.title?.replace(/^\d+\.\s*/, "") || "the story"}`}
+          style={styles.storyScenarioWrapper}
+        >
+          <Image
+            source={storyImage}
+            style={styles.storyRealImage}
+            resizeMode="contain"
+            fadeDuration={0}
+          />
+        </View>
+      ) : scenarioSvg ? (
         <View
           accessible
           accessibilityRole="image"
@@ -886,7 +955,10 @@ export function InteractiveStoryReaderWidget({
                 const isCurrent = item.id === story.id;
                 const cleanTitle = item.title.replace(/^\d+\.\s*/, "");
                 const primaryWordId =
-                  item.target_word_ids?.[0] || item.id.replace(/^story-\d+-/, "");
+                  item.target_word_ids?.[0] ||
+                  item.id.replace(/^story-\d+-/, "").replace(/^story-/, "") ||
+                  cleanTitle.toLowerCase().replace(/^(the|\d+\.)\s*/i, "").trim();
+                const optionImage = getWordImage(primaryWordId);
                 const iconXml =
                   illustrations[primaryWordId] || illustrations[item.id];
                 const targetLabels = (item.target_word_ids || [])
@@ -916,7 +988,14 @@ export function InteractiveStoryReaderWidget({
                         isCurrent && styles.storyOptionIconWrapCurrent,
                       ]}
                     >
-                      {iconXml ? (
+                      {optionImage ? (
+                        <Image
+                          source={optionImage}
+                          style={{ width: 34, height: 34, borderRadius: 8 }}
+                          resizeMode="cover"
+                          fadeDuration={0}
+                        />
+                      ) : iconXml ? (
                         <SvgXml xml={iconXml} width={34} height={34} />
                       ) : (
                         <Icon
@@ -1034,13 +1113,30 @@ export function InteractiveStoryReaderWidget({
 
 const styles = StyleSheet.create({
   questionCard: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    minHeight: 290,
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    minHeight: 220,
     justifyContent: "space-between",
-    gap: 12,
-    borderRadius: 24,
+    gap: 10,
+    borderRadius: 22,
+  },
+  sentenceQuestionCard: {
+    paddingTop: 14,
+    paddingBottom: 14,
+    paddingHorizontal: 16,
+    gap: 10,
+    borderRadius: 22,
+  },
+  matchingPromptCard: {
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    gap: 6,
+    borderRadius: 20,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1.5,
+    borderColor: "#E5DAFA",
   },
   questionHeaderRow: {
     flexDirection: "row",
@@ -1067,32 +1163,39 @@ const styles = StyleSheet.create({
   },
   questionTitle: {
     color: colors.darkPurple,
-    fontSize: 23,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 28,
     fontFamily: "Nunito_900Black",
   },
   sentenceBox: {
     backgroundColor: "#F8F6FD",
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1.5,
     borderColor: "#ECE4F7",
-    paddingVertical: 24,
-    paddingHorizontal: 18,
-    marginVertical: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginVertical: 2,
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
-    minHeight: 120,
   },
   sentenceText: {
     fontFamily: fonts.reading,
-    fontSize: 22,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 28,
     color: colors.darkPurple,
     textAlign: "center",
   },
   answers: {
     gap: 12,
+  },
+  gridContainer: {
+    width: "100%",
+    gap: 12,
+  },
+  gridRow: {
+    flexDirection: "row",
+    gap: 12,
+    width: "100%",
   },
   answerGrid: {
     flexDirection: "row",
@@ -1101,25 +1204,32 @@ const styles = StyleSheet.create({
     rowGap: 12,
   },
   answer: {
-    minHeight: 82,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
+    minHeight: 58,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 22,
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: "#E2D7F4",
     backgroundColor: "#FFFFFF",
     gap: 4,
     shadowColor: "#7456A8",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
     position: "relative",
   },
   gridTile: {
-    width: "48.5%",
+    flex: 1,
+    minWidth: 0,
+    minHeight: 68,
+  },
+  pictureTile: {
+    minHeight: 125,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
   },
   choiceBadge: {
     width: 32,
@@ -1240,6 +1350,7 @@ const styles = StyleSheet.create({
   },
   storyScenarioWrapper: {
     width: "100%",
+    height: 195,
     borderRadius: 18,
     overflow: "hidden",
     borderWidth: 1.5,
@@ -1250,9 +1361,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.09,
     shadowRadius: 8,
     elevation: 2,
-    marginVertical: 4,
+    marginVertical: 6,
     alignItems: "center",
     justifyContent: "center",
+  },
+  storyRealImage: {
+    width: "100%",
+    height: "100%",
   },
   hint: {
     fontSize: 16,
@@ -1304,8 +1419,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   matchCard: {
-    minHeight: 64,
-    paddingVertical: 8,
+    minHeight: 62,
+    paddingVertical: 6,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -1320,8 +1435,14 @@ const styles = StyleSheet.create({
     elevation: 2,
     position: "relative",
   },
+  matchCardSix: {
+    minHeight: 48,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    borderRadius: 13,
+  },
   matchPicCard: {
-    paddingVertical: 4,
+    paddingVertical: 3,
   },
   matchCardSelected: {
     borderColor: colors.purple,
@@ -1341,6 +1462,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.text,
     textAlign: "center",
+  },
+  matchWordTextSix: {
+    fontSize: 15,
+    lineHeight: 18,
   },
   checkBadge: {
     position: "absolute",
@@ -1422,7 +1547,7 @@ const styles = StyleSheet.create({
     color: "#8372A5",
   },
   flashcardContainer: {
-    height: 395,
+    height: 345,
     width: "100%",
     position: "relative",
     marginVertical: 4,

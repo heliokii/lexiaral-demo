@@ -1,6 +1,10 @@
-import { Alert } from 'react-native';
+import { Alert, AppState, Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 import { Asset } from 'expo-asset';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { preloadAllWordImages } from './assets/wordImages';
+
+const isWeb = Platform.OS === 'web';
 
 let muted = false;
 let currentTicket = 0;
@@ -8,9 +12,57 @@ let activeUtterance = null;
 let cachedFemaleVoice = null;
 let audioCtx = null;
 
+// Native player instances and session configuration
+let nativeBgmPlayer = null;
+const nativeSfxPlayers = {};
+let nativeAudioConfigured = false;
+
+async function ensureNativeAudioMode() {
+  if (isWeb || nativeAudioConfigured) return;
+  try {
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      interruptionMode: 'mixWithOthers',
+    });
+    nativeAudioConfigured = true;
+  } catch (e) {
+    console.warn('[Audio] Failed to configure native audio mode:', e);
+  }
+}
+
+function getNativeSfxPlayer(type) {
+  if (isWeb) return null;
+  if (!nativeSfxPlayers[type]) {
+    const source = SFX_PATHS[type];
+    if (!source) return null;
+    try {
+      nativeSfxPlayers[type] = createAudioPlayer(source);
+    } catch (e) {
+      console.warn('[Audio] Failed to create native SFX player for', type, e);
+      return null;
+    }
+  }
+  return nativeSfxPlayers[type];
+}
+
+function getNativeBgmPlayer() {
+  if (isWeb) return null;
+  if (!nativeBgmPlayer) {
+    try {
+      nativeBgmPlayer = createAudioPlayer(SFX_PATHS.bgm);
+      nativeBgmPlayer.loop = true;
+      nativeBgmPlayer.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
+    } catch (e) {
+      console.warn('[Audio] Failed to create native BGM player:', e);
+      return null;
+    }
+  }
+  return nativeBgmPlayer;
+}
+
 // Initialize or resume browser-native Web Audio context for zero-latency procedural SFX
 function getAudioContext() {
-  if (typeof window === 'undefined') return null;
+  if (!isWeb || typeof window === 'undefined') return null;
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return null;
@@ -27,6 +79,7 @@ function getAudioContext() {
 }
 
 const SFX_PATHS = {
+  tap: require('../assets/tap-chime.mp3'),
   correct: require('../assets/answer-correct.mp3'),
   wrong: require('../assets/answer-wrong.mp3'),
   yehey: require('../assets/yehey-kids.mp3'),
@@ -46,42 +99,72 @@ async function getResolvedPath(type) {
 
   try {
     const asset = Asset.fromModule(assetModule);
-    await asset.downloadAsync();
-    resolvedPaths[type] = asset.uri;
-    return asset.uri;
+    if (asset.localUri) {
+      resolvedPaths[type] = asset.localUri;
+      return asset.localUri;
+    }
+    // Timeout of 1.5 seconds so asset downloads over Metro never block
+    await Promise.race([
+      asset.downloadAsync(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
+    ]);
+    resolvedPaths[type] = asset.localUri || asset.uri || null;
+    return resolvedPaths[type];
   } catch (e) {
-    console.error(`[Audio] Failed to resolve asset for ${type}:`, e);
-    return null;
+    try {
+      const asset = Asset.fromModule(assetModule);
+      resolvedPaths[type] = asset.localUri || asset.uri || null;
+      return resolvedPaths[type];
+    } catch {
+      return null;
+    }
   }
 }
 
-
 // Reusable audio helper with instant fallback
 function playAudioClip(type, volume = 1.0, fallbackSynth) {
-  if (muted) return;
-  const path = resolvedPaths[type] || SFX_PATHS[type];
-  if (!path) {
-    if (fallbackSynth) fallbackSynth();
-    return;
+  if (muted) return null;
+
+  if (isWeb) {
+    const path = resolvedPaths[type] || SFX_PATHS[type];
+    if (!path) {
+      if (fallbackSynth) fallbackSynth();
+      return null;
+    }
+
+    if (typeof window !== 'undefined' && typeof Audio !== 'undefined') {
+      try {
+        const audio = new Audio(path);
+        audio.volume = Math.max(0, Math.min(1, volume));
+        const playPromise = audio.play();
+        if (playPromise && playPromise.catch) {
+          playPromise.catch(() => {
+            if (fallbackSynth) fallbackSynth();
+          });
+        }
+        return audio;
+      } catch {
+        if (fallbackSynth) fallbackSynth();
+      }
+    } else if (fallbackSynth) {
+      fallbackSynth();
+    }
+    return null;
   }
 
-  if (typeof window !== 'undefined' && typeof Audio !== 'undefined') {
-    try {
-      const audio = new Audio(path);
-      audio.volume = Math.max(0, Math.min(1, volume));
-      const playPromise = audio.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(() => {
-          if (fallbackSynth) fallbackSynth();
-        });
-      }
-      return audio;
-    } catch {
-      if (fallbackSynth) fallbackSynth();
+  // Native Android and iOS (Expo Go / Standalone APK)
+  try {
+    const player = getNativeSfxPlayer(type);
+    if (player) {
+      player.volume = Math.max(0, Math.min(1, volume));
+      player.seekTo(0).catch(() => {});
+      player.play();
+      return player;
     }
-  } else if (fallbackSynth) {
-    fallbackSynth();
+  } catch (e) {
+    console.warn('[Audio] Native SFX error playing', type, e);
   }
+  return null;
 }
 
 // Procedural harmonic bell chime fallback
@@ -207,25 +290,45 @@ export function playVictoryFanfare(onFinish) {
     const done = () => {
       if (!called) {
         called = true;
+        duckBgm(false);
         if (onFinish) onFinish();
       }
     };
-    audio.onended = done;
-    audio.onerror = done;
+
+    if (isWeb) {
+      audio.onended = done;
+      audio.onerror = done;
+    } else if (typeof audio.addListener === 'function') {
+      const sub = audio.addListener('playbackStatusUpdate', (status) => {
+        if (status && status.didJustFinish) {
+          if (sub && typeof sub.remove === 'function') sub.remove();
+          done();
+        }
+      });
+    }
     // Fallback timer matches the 4.23s duration of yehey-kids.mp3
     setTimeout(done, 4350);
   } else if (onFinish) {
+    duckBgm(false);
     setTimeout(onFinish, 1100);
   }
 }
 
-// Interactive button click SFX (uses the exact pleasant matching chime requested by user)
+// Interactive button click SFX (uses pleasant tactile sound)
 export function playTapSfx() {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (bgmActive && !muted && audio && audio.paused) {
-    audio.play().catch(() => {});
+  if (muted) return;
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (bgmActive && audio && audio.paused) {
+      audio.play().catch(() => {});
+    }
+    playMatchSfx();
+  } else {
+    if (bgmActive && nativeBgmPlayer && !nativeBgmPlayer.playing) {
+      nativeBgmPlayer.play();
+    }
+    playAudioClip('tap', 0.75);
   }
-  playMatchSfx();
 }
 
 // Procedural paper card-flip fallback
@@ -306,32 +409,36 @@ export function playCardShuffleSfx() {
 // Short, light chime for pair matches in vocabulary activities
 export function playMatchSfx() {
   if (muted) return;
-  try {
-    const ctx = getAudioContext();
-    if (!ctx) return;
-    const now = ctx.currentTime;
+  if (isWeb) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
 
-    const notes = [
-      { freq: 659.25, time: 0, duration: 0.14, gain: 0.4 },
-      { freq: 880.0, time: 0.06, duration: 0.22, gain: 0.5 },
-    ];
+      const notes = [
+        { freq: 659.25, time: 0, duration: 0.14, gain: 0.4 },
+        { freq: 880.0, time: 0.06, duration: 0.22, gain: 0.5 },
+      ];
 
-    notes.forEach(({ freq, time, duration, gain: peakGain }) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + time);
+      notes.forEach(({ freq, time, duration, gain: peakGain }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + time);
 
-      gain.gain.setValueAtTime(0.001, now + time);
-      gain.gain.exponentialRampToValueAtTime(peakGain, now + time + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + time + duration);
+        gain.gain.setValueAtTime(0.001, now + time);
+        gain.gain.exponentialRampToValueAtTime(peakGain, now + time + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + time + duration);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now + time);
-      osc.stop(now + time + duration + 0.02);
-    });
-  } catch {}
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + time);
+        osc.stop(now + time + duration + 0.02);
+      });
+    } catch {}
+  } else {
+    playAudioClip('tap', 0.85);
+  }
 }
 
 // Strict Global BGM Singleton & Cleanup Architecture
@@ -344,7 +451,7 @@ let bgmActive = false;
 let bgmFocusMode = false;
 
 // Explicitly clean up any previous/orphaned audio instances currently attached to window or DOM
-if (typeof window !== 'undefined') {
+if (isWeb && typeof window !== 'undefined') {
   if (window.__LEXIARAL_BGM_SINGLETON__) {
     try {
       window.__LEXIARAL_BGM_SINGLETON__.pause();
@@ -380,33 +487,51 @@ function getBgmAudio() {
   return window.__LEXIARAL_BGM_SINGLETON__;
 }
 
-let gestureUnlockActive = false;
+let interactionUnlocked = false;
 
-function attachInteractionUnlock() {
-  if (gestureUnlockActive || typeof window === 'undefined') return;
-  gestureUnlockActive = true;
+// Universal audio & speech synthesis unlocker for mobile devices (iOS Safari, Android Chrome)
+export function unlockAudioAndSpeech() {
+  if (typeof window === 'undefined') return;
 
-  const onGesture = () => {
-    console.log('[Audio] Interaction detected, attempting to unlock BGM...');
+  // 1. Resume Web Audio Context
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  } else if (!audioCtx) {
+    getAudioContext();
+  }
+
+  // 2. Prime and wake up Speech Synthesis on mobile browsers
+  if (window.speechSynthesis) {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      if (!interactionUnlocked) {
+        const prime = new SpeechSynthesisUtterance('');
+        prime.volume = 0.01;
+        prime.rate = 1.0;
+        window.speechSynthesis.speak(prime);
+      }
+    } catch {}
+  }
+
+  // 3. Resume background music if active
+  if (bgmActive && !muted) {
     const audio = getBgmAudio();
-    if (bgmActive && !muted && audio && audio.paused) {
-      audio.play()
-        .then(() => console.log('[Audio] BGM successfully unlocked and playing'))
-        .catch(err => console.error('[Audio] BGM unlock play failed:', err));
+    if (audio && audio.paused) {
+      audio.play().catch(() => {});
     }
-    ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((evt) => {
-      window.removeEventListener(evt, onGesture, true);
-    });
-    gestureUnlockActive = false;
-  };
+  }
 
-  ['pointerdown', 'keydown', 'touchstart', 'click'].forEach((evt) => {
-    window.addEventListener(evt, onGesture, { capture: true, once: true });
-  });
+  interactionUnlocked = true;
 }
 
-// Pause BGM when tab is inactive, resume single instance when returning
-if (typeof document !== 'undefined') {
+function attachInteractionUnlock() {
+  unlockAudioAndSpeech();
+}
+
+// Pause BGM when tab is inactive, resume single instance when returning (Web)
+if (isWeb && typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
   document.addEventListener('visibilitychange', () => {
     const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
     if (document.hidden) {
@@ -421,20 +546,39 @@ if (typeof document !== 'undefined') {
   });
 }
 
+// Pause BGM when app moves to background, resume when active (Native)
+if (!isWeb) {
+  AppState.addEventListener('change', (nextAppState) => {
+    if (nextAppState === 'active') {
+      if (bgmActive && !muted) {
+        resumeBgm();
+      }
+    } else if (nextAppState === 'background' || nextAppState === 'inactive') {
+      pauseBgm();
+    }
+  });
+}
+
 export function isBgmActive() {
   return bgmActive;
 }
 
 export function setBgmFocusMode(enabled = true) {
   bgmFocusMode = Boolean(enabled);
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  const targetVol = activeUtterance
+    ? BGM_DUCK_VOLUME
+    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.volume = targetVol;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      if (activeUtterance) {
-        audio.volume = BGM_DUCK_VOLUME;
-      } else {
-        audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
-      }
+      nativeBgmPlayer.volume = targetVol;
     } catch {}
   }
 }
@@ -442,83 +586,132 @@ export function setBgmFocusMode(enabled = true) {
 export function startBgm() {
   bgmActive = true;
   if (muted) return;
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
+  if (isWeb) {
+    if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  const audio = getBgmAudio();
-  if (audio) {
-    audio.volume = activeUtterance
-      ? BGM_DUCK_VOLUME
-      : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+    console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
 
-    if (!audio.paused) {
-      console.log('[Audio] BGM already playing');
-      return;
+    const audio = getBgmAudio();
+    if (audio) {
+      audio.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+      if (!audio.paused) {
+        console.log('[Audio] BGM already playing');
+        return;
+      }
+
+      console.log('[Audio] Attempting to play BGM...');
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise
+          .then(() => console.log('[Audio] BGM started immediately'))
+          .catch((err) => {
+            console.warn('[Audio] Autoplay blocked, attaching interaction unlock. Error:', err.message);
+            attachInteractionUnlock();
+          });
+      }
     }
-
-    console.log('[Audio] Attempting to play BGM...');
-    const playPromise = audio.play();
-    if (playPromise && playPromise.catch) {
-      playPromise
-        .then(() => console.log('[Audio] BGM started immediately'))
-        .catch((err) => {
-          console.warn('[Audio] Autoplay blocked, attaching interaction unlock. Error:', err.message);
-          attachInteractionUnlock();
-        });
+  } else {
+    // Native Android / iOS
+    const player = getNativeBgmPlayer();
+    if (player) {
+      player.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      if (!player.playing) {
+        player.play();
+        console.log('[Audio] Native BGM started');
+      }
     }
   }
 }
 
 export function stopBgm() {
   bgmActive = false;
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      audio.pause();
-      audio.currentTime = 0;
+      nativeBgmPlayer.pause();
+      nativeBgmPlayer.seekTo(0).catch(() => {});
     } catch {}
   }
 }
 
 export function pauseBgm() {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio && !audio.paused) {
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio && !audio.paused) {
+      try {
+        audio.pause();
+      } catch {}
+    }
+  } else if (nativeBgmPlayer && nativeBgmPlayer.playing) {
     try {
-      audio.pause();
+      nativeBgmPlayer.pause();
     } catch {}
   }
 }
 
 export function resumeBgm() {
   if (muted || !bgmActive) return;
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  const audio = getBgmAudio();
-  if (audio) {
-    audio.volume = activeUtterance
-      ? BGM_DUCK_VOLUME
-      : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+  if (isWeb) {
+    if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-    // If already playing, do not play again!
-    if (!audio.paused) return;
+    const audio = getBgmAudio();
+    if (audio) {
+      audio.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
 
-    const playPromise = audio.play();
-    if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {
-        attachInteractionUnlock();
-      });
+      if (!audio.paused) return;
+
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(() => {
+          attachInteractionUnlock();
+        });
+      }
+    }
+  } else {
+    // Native Android / iOS
+    const player = getNativeBgmPlayer();
+    if (player) {
+      player.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      if (!player.playing) {
+        player.play();
+      }
     }
   }
 }
 
 export function duckBgm(duck = true) {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  const targetVol = duck
+    ? BGM_DUCK_VOLUME
+    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.volume = targetVol;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      audio.volume = duck
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      nativeBgmPlayer.volume = targetVol;
     } catch {}
   }
 }
@@ -526,11 +719,15 @@ export function duckBgm(duck = true) {
 // Audio preference restored by LearningProvider
 export function configureAudio(enabled) {
   muted = !enabled;
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
   if (muted) {
     stopAudio();
-    if (audio && !audio.paused) {
-      audio.pause();
+    if (isWeb) {
+      const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+      if (audio && !audio.paused) {
+        audio.pause();
+      }
+    } else if (nativeBgmPlayer && nativeBgmPlayer.playing) {
+      nativeBgmPlayer.pause();
     }
   } else {
     startBgm();
@@ -600,8 +797,8 @@ function isDisqualifiedMaleVoice(name) {
   return DISQUALIFIED_MALE_VOICES.some((m) => lower.includes(m));
 }
 
-// Resolves a high-quality, friendly female voice for young learners
-function getBestFemaleVoice() {
+// Resolves a high-quality, friendly voice for young learners (prioritizing Philippine English)
+function getBestFemaleVoice(targetLang = 'en-PH') {
   if (typeof window === 'undefined' || !window.speechSynthesis) return null;
   if (cachedFemaleVoice) return cachedFemaleVoice;
 
@@ -609,14 +806,30 @@ function getBestFemaleVoice() {
     const voices = window.speechSynthesis.getVoices();
     if (!voices || !voices.length) return null;
 
-    // Filter English voices
+    // 1. Search for Philippine English voice (Android Google Speech, Samsung TTS, or Windows en-PH)
+    const phVoice = voices.find((v) => {
+      const l = (v.lang || '').toLowerCase().replace('_', '-');
+      const n = (v.name || '').toLowerCase();
+      const isPH = l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines') || n.includes('(ph)');
+      return isPH && !isDisqualifiedMaleVoice(n);
+    }) || voices.find((v) => {
+      const l = (v.lang || '').toLowerCase().replace('_', '-');
+      return l === 'en-ph' || l.startsWith('en-ph');
+    });
+
+    if (phVoice) {
+      cachedFemaleVoice = phVoice;
+      return cachedFemaleVoice;
+    }
+
+    // 2. Filter English voices
     const englishVoices = voices.filter(
       (v) => v.lang && (v.lang.toLowerCase().startsWith('en') || v.lang.includes('US'))
     );
 
     const candidates = englishVoices.length > 0 ? englishVoices : voices;
 
-    // 1. Search for prioritized known female voices (excluding any male indicators)
+    // 3. Search for prioritized known friendly female voices (excluding any male indicators)
     for (const pref of PREFERRED_FEMALE_VOICES) {
       const match = candidates.find((v) => {
         const n = (v.name || '').toLowerCase();
@@ -628,7 +841,7 @@ function getBestFemaleVoice() {
       }
     }
 
-    // 2. Search for explicit female or woman label
+    // 4. Search for explicit female or woman label
     const explicitFemale = candidates.find((v) => {
       const n = (v.name || '').toLowerCase();
       return (n.includes('female') || n.includes('woman')) && !isDisqualifiedMaleVoice(n);
@@ -638,7 +851,7 @@ function getBestFemaleVoice() {
       return cachedFemaleVoice;
     }
 
-    // 3. Fallback: select any candidate that is definitely not a male voice
+    // 5. Fallback: select any candidate that is definitely not a male voice
     const nonMale = candidates.find((v) => !isDisqualifiedMaleVoice(v.name));
     if (nonMale) {
       cachedFemaleVoice = nonMale;
@@ -653,7 +866,7 @@ function getBestFemaleVoice() {
 }
 
 // Refresh cache when voices load asynchronously in browser
-if (typeof window !== 'undefined' && window.speechSynthesis) {
+if (isWeb && typeof window !== 'undefined' && window.speechSynthesis) {
   try {
     window.speechSynthesis.onvoiceschanged = () => {
       cachedFemaleVoice = null;
@@ -662,19 +875,17 @@ if (typeof window !== 'undefined' && window.speechSynthesis) {
   } catch {}
 }
 
-// Speak text using friendly female voice and light, clear tone
-export async function speak(text, language = 'en-US', reportErrors = false) {
+// Speak text using friendly teacher voice and calm, clear instructional pace
+export async function speak(text, language = 'en-PH', reportErrors = false) {
   if (muted || !text || typeof text !== 'string') return;
 
   const cleanText = text.trim();
   if (!cleanText) return;
 
-  // 1. Check if speech was active, stop previous audio
-  const wasActive =
-    typeof window !== 'undefined' &&
-    window.speechSynthesis &&
-    (window.speechSynthesis.speaking || window.speechSynthesis.pending);
+  // Unpause / unlock mobile audio session
+  unlockAudioAndSpeech();
 
+  // 1. Stop any previous speech
   stopAudio();
 
   // 2. Issue a new ticket for this request
@@ -690,21 +901,18 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
   };
 
   try {
-    // Web Speech API execution (Chrome, Edge, Safari, Firefox)
+    // Web Speech API execution (Chrome, Edge, Safari, Firefox - Desktop & Mobile)
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      // If previous speech was active and cancelled, give Chrome a brief tick to flush
-      if (wasActive) {
-        await new Promise((resolve) => setTimeout(resolve, 35));
-      }
-
       if (muted || ticket !== currentTicket) return;
 
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = language || 'en-US';
-      utterance.rate = 0.88; // Comfortable instructional pace
-      utterance.pitch = 1.18; // Lighter, friendly, cheerful tone for Grade 3 pupils
+      const femaleVoice = getBestFemaleVoice(language);
 
-      const femaleVoice = getBestFemaleVoice();
+      // Target Philippine English (en-PH) or the resolved voice's language
+      utterance.lang = femaleVoice ? femaleVoice.lang : (language || 'en-PH');
+      utterance.rate = 0.78; // Calm, clear, instructional teacher pace for Grade 3 pupils (resolves "mabilis masyado")
+      utterance.pitch = 1.06; // Warm, natural, friendly tone (no chipmunk squeak)
+
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
@@ -718,6 +926,9 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
         if (activeUtterance === utterance) {
           activeUtterance = null;
         }
+        if (window._activeSpeechUtterance === utterance) {
+          window._activeSpeechUtterance = null;
+        }
       };
 
       utterance.onerror = (e) => {
@@ -725,12 +936,16 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
         if (activeUtterance === utterance) {
           activeUtterance = null;
         }
+        if (window._activeSpeechUtterance === utterance) {
+          window._activeSpeechUtterance = null;
+        }
         if (e && e.error !== 'canceled' && e.error !== 'interrupted') {
           report();
         }
       };
 
       activeUtterance = utterance;
+      // Keep alive in global window reference to prevent Android Chrome GC bug from cutting speech
       window._activeSpeechUtterance = utterance;
 
       if (window.speechSynthesis.paused) {
@@ -741,34 +956,61 @@ export async function speak(text, language = 'en-US', reportErrors = false) {
       return;
     }
 
-    // Native mobile platforms (iOS / Android) via expo-speech
+    // Native mobile platforms (iOS / Android) via expo-speech (e.g. USB hot reload in Expo Go)
     let voiceIdentifier = null;
     try {
       const available = await Speech.getAvailableVoicesAsync();
-      const eng = (available || []).filter(
-        (v) => v.language && (v.language.startsWith('en') || v.language.includes('US'))
-      );
-      const female = eng.find((v) => {
+      // 1. Search for Philippine English voice in native device TTS
+      const phVoice = (available || []).find((v) => {
+        const l = (v.language || '').toLowerCase().replace('_', '-');
         const n = (v.name || '').toLowerCase();
-        return (
-          n.includes('samantha') ||
-          n.includes('zira') ||
-          n.includes('jenny') ||
-          n.includes('aria') ||
-          n.includes('female')
-        );
+        return (l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines')) && !isDisqualifiedMaleVoice(n);
       });
-      if (female) voiceIdentifier = female.identifier;
+
+      if (phVoice) {
+        voiceIdentifier = phVoice.identifier;
+      } else {
+        const eng = (available || []).filter(
+          (v) => v.language && (v.language.startsWith('en') || v.language.includes('US'))
+        );
+        const female = eng.find((v) => {
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('samantha') ||
+            n.includes('zira') ||
+            n.includes('jenny') ||
+            n.includes('aria') ||
+            n.includes('female')
+          );
+        });
+        if (female) voiceIdentifier = female.identifier;
+      }
     } catch {}
 
     if (muted || ticket !== currentTicket) return;
 
+    activeUtterance = true;
+    duckBgm(true);
+
+    const onFinishSpeech = () => {
+      activeUtterance = null;
+      duckBgm(false);
+    };
+
     Speech.speak(cleanText, {
-      language,
-      rate: 0.88,
-      pitch: 1.15,
+      language: voiceIdentifier ? undefined : (language || 'en-PH'),
+      rate: 0.78,
+      pitch: 1.06,
       voice: voiceIdentifier,
-      onError: report,
+      onStart: () => {
+        duckBgm(true);
+      },
+      onDone: onFinishSpeech,
+      onStopped: onFinishSpeech,
+      onError: (err) => {
+        onFinishSpeech();
+        report();
+      },
     });
   } catch {
     report();
@@ -779,22 +1021,22 @@ export function pronounce(word) {
   if (!word) return;
 
   if (typeof word === 'string') {
-    speak(word, 'en-US', true);
+    speak(word, 'en-PH', true);
     return;
   }
 
-  // If word has audio_url format: tts://en-US/cat
+  // If word has audio_url format: tts://en-US/cat or tts://en-PH/cat
   if (word.audio_url) {
     const match = /^tts:\/\/([^/]+)\/(.+)$/.exec(word.audio_url);
     if (match) {
-      speak(decodeURIComponent(match[2]), match[1], true);
+      speak(decodeURIComponent(match[2]), match[1] || 'en-PH', true);
       return;
     }
   }
 
   // Fallback to word text directly
   if (word.word) {
-    speak(word.word, 'en-US', true);
+    speak(word.word, 'en-PH', true);
     return;
   }
 
@@ -802,23 +1044,36 @@ export function pronounce(word) {
 }
 
 export async function initAudio() {
-  console.log('[Audio] Initializing and pre-resolving assets...');
-  const types = Object.keys(SFX_PATHS);
-  await Promise.all(types.map(type => getResolvedPath(type)));
-  console.log('[Audio] All assets pre-resolved:', resolvedPaths);
+  console.log('[Audio] Initializing and pre-resolving assets in background...');
+  await ensureNativeAudioMode();
+
+  try {
+    preloadAllWordImages();
+  } catch {}
+
+  try {
+    const types = Object.keys(SFX_PATHS);
+    await Promise.all(types.map(type => getResolvedPath(type)));
+    console.log('[Audio] All assets pre-resolved:', resolvedPaths);
+  } catch (e) {
+    console.warn('[Audio] Non-fatal asset pre-resolution issue:', e);
+  }
 }
 
-// Global "First-Interaction" BGM Trigger
-// Some browsers strictly require the FIRST audio play to be inside a direct user event.
-if (typeof window !== 'undefined') {
-  const forceStartBgm = () => {
-    console.log('[Audio] Global interaction trigger: attempting to force start BGM');
+// Global "First-Interaction" Audio, TTS, and BGM Trigger
+// Browsers strictly require user activation to unlock AudioContext, TTS, and Audio elements
+if (isWeb && typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  const onFirstInteraction = () => {
+    console.log('[Audio] Global interaction trigger: unlocking audio, speech, and BGM');
+    unlockAudioAndSpeech();
     startBgm();
-    ['click', 'touchstart', 'keydown'].forEach(evt =>
-      window.removeEventListener(evt, forceStartBgm)
-    );
+    ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
+      if (typeof window.removeEventListener === 'function') {
+        window.removeEventListener(evt, onFirstInteraction, true);
+      }
+    });
   };
-  ['click', 'touchstart', 'keydown'].forEach(evt =>
-    window.addEventListener(evt, forceStartBgm, { once: true })
-  );
+  ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
+    window.addEventListener(evt, onFirstInteraction, { capture: true, once: true });
+  });
 }

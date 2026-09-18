@@ -36,7 +36,8 @@ export function LearningProvider({ children }) {
 
     try {
       validateContent();
-      await initAudio();
+      // Non-blocking background audio asset resolution
+      initAudio().catch((err) => console.warn('[Audio] Background initAudio warning:', err));
 
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       const restored = raw
