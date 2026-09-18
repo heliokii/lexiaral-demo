@@ -196,7 +196,10 @@ export function AnswerChoices({
   const isFourChoices = question.choices && question.choices.length === 4;
   const isCompact =
     isFourChoices &&
-    question.choices.every((choice) => (choice.label || "").length <= 32);
+    question.choices.every((choice) => {
+      const trimmed = (choice.label || "").trim();
+      return !trimmed.includes(" ") && trimmed.length <= 7;
+    });
   const useGrid = pictures || isCompact;
 
   const renderChoiceButton = (choice, index) => {
@@ -255,6 +258,7 @@ export function AnswerChoices({
               style={[
                 styles.answerText,
                 styles.answerTextGrid,
+                (choice.label || "").length >= 6 && { fontSize: 18, lineHeight: 22 },
                 correct && { color: "#176640" },
                 wrong && { color: "#8A2B1D" },
               ]}
@@ -262,7 +266,6 @@ export function AnswerChoices({
             >
               {choice.label}
             </Text>
-            <View style={{ width: 28 }} />
           </View>
         ) : (
           <View style={styles.choiceRowLinear}>
@@ -460,9 +463,11 @@ export function MatchingPairsQuestionWidget({
     }
   };
 
+  const isSix = pairs.length >= 6;
+
   return (
-    <View style={{ gap: 10 }}>
-      <Card style={styles.questionCard}>
+    <View style={{ gap: 8 }}>
+      <Card style={styles.matchingPromptCard}>
         <View style={styles.questionHeaderRow}>
           <Text style={styles.questionBadge}>Match Words to Pictures</Text>
           <Pressable
@@ -481,14 +486,14 @@ export function MatchingPairsQuestionWidget({
           </Pressable>
         </View>
 
-        <Body style={{ textAlign: "center", fontSize: 15, color: colors.text }}>
+        <Body style={{ textAlign: "center", fontSize: 14, color: colors.text }}>
           {question.prompt ||
             "Tap a word on the left, then tap its matching picture on the right."}
         </Body>
       </Card>
 
-      <View style={styles.matchingBoard}>
-        <View style={styles.matchingColumn}>
+      <View style={[styles.matchingBoard, isSix && { gap: 8 }]}>
+        <View style={[styles.matchingColumn, isSix && { gap: 5 }]}>
           <Text style={styles.columnHeader}>WORDS</Text>
           {wordItems.map((item) => {
             const isMatched = isCompleted || matchedIds.includes(item.wordId);
@@ -504,6 +509,7 @@ export function MatchingPairsQuestionWidget({
                 onPress={() => handleSelectWord(item.wordId)}
                 style={[
                   styles.matchCard,
+                  isSix && styles.matchCardSix,
                   isSelected && styles.matchCardSelected,
                   isMatched && styles.matchCardMatched,
                   isWrong && styles.matchCardWrong,
@@ -512,6 +518,7 @@ export function MatchingPairsQuestionWidget({
                 <Text
                   style={[
                     styles.matchWordText,
+                    isSix && styles.matchWordTextSix,
                     isMatched && { color: "#267A59" },
                     isSelected && { color: colors.darkPurple },
                   ]}
@@ -519,8 +526,8 @@ export function MatchingPairsQuestionWidget({
                   {item.word}
                 </Text>
                 {isMatched && (
-                  <View style={styles.checkBadge}>
-                    <Icon name="check" size={13} color="#FFFFFF" />
+                  <View style={[styles.checkBadge, isSix && { width: 18, height: 18, right: 4, top: 4 }]}>
+                    <Icon name="check" size={isSix ? 11 : 13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -528,7 +535,7 @@ export function MatchingPairsQuestionWidget({
           })}
         </View>
 
-        <View style={styles.matchingColumn}>
+        <View style={[styles.matchingColumn, isSix && { gap: 5 }]}>
           <Text style={styles.columnHeader}>PICTURES</Text>
           {picItems.map((item) => {
             const isMatched = isCompleted || matchedIds.includes(item.wordId);
@@ -544,14 +551,15 @@ export function MatchingPairsQuestionWidget({
                 style={[
                   styles.matchCard,
                   styles.matchPicCard,
+                  isSix && styles.matchCardSix,
                   isMatched && styles.matchCardMatched,
                   isWrong && styles.matchCardWrong,
                 ]}
               >
-                <WordPicture word={WORDS[item.wordId]} height={52} />
+                <WordPicture word={WORDS[item.wordId]} height={isSix ? 44 : 52} />
                 {isMatched && (
-                  <View style={styles.checkBadge}>
-                    <Icon name="check" size={13} color="#FFFFFF" />
+                  <View style={[styles.checkBadge, isSix && { width: 18, height: 18, right: 4, top: 4 }]}>
+                    <Icon name="check" size={isSix ? 11 : 13} color="#FFFFFF" />
                   </View>
                 )}
               </Pressable>
@@ -568,8 +576,8 @@ export function SentenceCompletionQuestionWidget(props) {
   const word = WORDS[question.wordId];
 
   return (
-    <View style={{ gap: 12 }}>
-      <Card style={styles.questionCard}>
+    <View style={{ gap: 10 }}>
+      <Card style={styles.sentenceQuestionCard}>
         <View style={styles.questionHeaderRow}>
           <View style={{ flex: 1, gap: 4 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -595,7 +603,7 @@ export function SentenceCompletionQuestionWidget(props) {
         </View>
 
         {question.type === "pictureSentence" && word && (
-          <WordPicture word={word} height={155} />
+          <WordPicture word={word} height={140} />
         )}
 
         <View style={styles.sentenceBox}>
@@ -709,7 +717,7 @@ export function ReviewFlashcard({ word }) {
           onPress={handleFlip}
           style={styles.flashcardFrontBody}
         >
-          <WordPicture word={word} height={230} />
+          <WordPicture word={word} height={195} />
         </Pressable>
       </Animated.View>
 
@@ -1105,13 +1113,30 @@ export function InteractiveStoryReaderWidget({
 
 const styles = StyleSheet.create({
   questionCard: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    minHeight: 290,
+    paddingTop: 16,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    minHeight: 220,
     justifyContent: "space-between",
-    gap: 12,
-    borderRadius: 24,
+    gap: 10,
+    borderRadius: 22,
+  },
+  sentenceQuestionCard: {
+    paddingTop: 14,
+    paddingBottom: 14,
+    paddingHorizontal: 16,
+    gap: 10,
+    borderRadius: 22,
+  },
+  matchingPromptCard: {
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    gap: 6,
+    borderRadius: 20,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1.5,
+    borderColor: "#E5DAFA",
   },
   questionHeaderRow: {
     flexDirection: "row",
@@ -1138,27 +1163,25 @@ const styles = StyleSheet.create({
   },
   questionTitle: {
     color: colors.darkPurple,
-    fontSize: 23,
-    lineHeight: 29,
+    fontSize: 22,
+    lineHeight: 28,
     fontFamily: "Nunito_900Black",
   },
   sentenceBox: {
     backgroundColor: "#F8F6FD",
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1.5,
     borderColor: "#ECE4F7",
-    paddingVertical: 24,
-    paddingHorizontal: 18,
-    marginVertical: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginVertical: 2,
     justifyContent: "center",
     alignItems: "center",
-    flex: 1,
-    minHeight: 120,
   },
   sentenceText: {
     fontFamily: fonts.reading,
-    fontSize: 22,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 28,
     color: colors.darkPurple,
     textAlign: "center",
   },
@@ -1181,26 +1204,27 @@ const styles = StyleSheet.create({
     rowGap: 12,
   },
   answer: {
-    minHeight: 74,
-    paddingVertical: 14,
+    minHeight: 58,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 22,
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: "#E2D7F4",
     backgroundColor: "#FFFFFF",
     gap: 4,
     shadowColor: "#7456A8",
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
     position: "relative",
   },
   gridTile: {
     flex: 1,
     minWidth: 0,
+    minHeight: 68,
   },
   pictureTile: {
     minHeight: 125,
@@ -1395,8 +1419,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   matchCard: {
-    minHeight: 64,
-    paddingVertical: 8,
+    minHeight: 62,
+    paddingVertical: 6,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -1411,8 +1435,14 @@ const styles = StyleSheet.create({
     elevation: 2,
     position: "relative",
   },
+  matchCardSix: {
+    minHeight: 48,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    borderRadius: 13,
+  },
   matchPicCard: {
-    paddingVertical: 4,
+    paddingVertical: 3,
   },
   matchCardSelected: {
     borderColor: colors.purple,
@@ -1432,6 +1462,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.text,
     textAlign: "center",
+  },
+  matchWordTextSix: {
+    fontSize: 15,
+    lineHeight: 18,
   },
   checkBadge: {
     position: "absolute",
@@ -1513,7 +1547,7 @@ const styles = StyleSheet.create({
     color: "#8372A5",
   },
   flashcardContainer: {
-    height: 395,
+    height: 345,
     width: "100%",
     position: "relative",
     marginVertical: 4,
