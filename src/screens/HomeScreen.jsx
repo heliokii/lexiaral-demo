@@ -82,7 +82,7 @@ export function HomeScreen({ navigation }) {
         testID="home-hero-card"
         style={[styles.hero, stacked && styles.heroStacked]}
       >
-        <View style={{ width: stacked ? "55%" : "46%" }}>
+        <View style={{ width: stacked ? "55%" : "46%", alignItems: "center", justifyContent: "center" }}>
           <AnimatedLexi
             name={
               state.lifetimeStars >= 9

@@ -79,6 +79,7 @@ function getAudioContext() {
 }
 
 const SFX_PATHS = {
+  tap: require('../assets/tap-chime.mp3'),
   correct: require('../assets/answer-correct.mp3'),
   wrong: require('../assets/answer-wrong.mp3'),
   yehey: require('../assets/yehey-kids.mp3'),
@@ -326,7 +327,7 @@ export function playTapSfx() {
     if (bgmActive && nativeBgmPlayer && !nativeBgmPlayer.playing) {
       nativeBgmPlayer.play();
     }
-    playAudioClip('cardFlip', 0.45);
+    playAudioClip('tap', 0.75);
   }
 }
 
@@ -436,7 +437,7 @@ export function playMatchSfx() {
       });
     } catch {}
   } else {
-    playAudioClip('correct', 0.5);
+    playAudioClip('tap', 0.85);
   }
 }
 

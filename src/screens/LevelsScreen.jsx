@@ -162,7 +162,8 @@ export default function LevelsScreen({ navigation }) {
                                 ? "owl_thinking"
                                 : "owl_excited"
                   }
-                  height={124}
+                  width={96}
+                  height={96}
                 />
               </View>
 

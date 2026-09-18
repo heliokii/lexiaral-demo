@@ -86,8 +86,8 @@ export function FinalScreen({ navigation }) {
         <Confetti />
 
         <View testID="final-celebration-hero" style={[styles.celebration, compact && styles.heroStacked]}>
-          <View style={{ width: compact ? "65%" : "48%" }}>
-            <Art name={allCompleted ? "owl_excited" : "owl_cheering"} height={compact ? 170 : 200} />
+          <View style={{ width: compact ? "65%" : "48%", alignItems: "center", justifyContent: "center" }}>
+            <Art name={allCompleted ? "owl_excited" : "owl_cheering"} width={compact ? 170 : 200} height={compact ? 170 : 200} />
           </View>
 
           <View style={{ flex: 1, gap: 6 }}>
@@ -175,7 +175,7 @@ export function FinalScreen({ navigation }) {
       {/* Vocabulary Master Badge Status: Avoid redundant second owl when badge is not yet unlocked */}
       {master ? (
         <Card testID="final-master-badge-card" style={styles.masterBadgeCard}>
-          <Art name="medal" height={100} />
+          <Art name="medal" width={100} height={100} />
           <View style={{ gap: 2, alignItems: "center" }}>
             <Title style={styles.center}>Vocabulary Master</Title>
             <Body style={{ fontSize: 15, color: "#238055" }}>Badge earned!</Body>
