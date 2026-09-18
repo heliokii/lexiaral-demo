@@ -48,12 +48,25 @@ async function getResolvedPath(type) {
 
   try {
     const asset = Asset.fromModule(assetModule);
-    await asset.downloadAsync();
-    resolvedPaths[type] = asset.uri;
-    return asset.uri;
+    if (asset.localUri) {
+      resolvedPaths[type] = asset.localUri;
+      return asset.localUri;
+    }
+    // Timeout of 1.5 seconds so asset downloads over Metro never block
+    await Promise.race([
+      asset.downloadAsync(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500)),
+    ]);
+    resolvedPaths[type] = asset.localUri || asset.uri || null;
+    return resolvedPaths[type];
   } catch (e) {
-    console.error(`[Audio] Failed to resolve asset for ${type}:`, e);
-    return null;
+    try {
+      const asset = Asset.fromModule(assetModule);
+      resolvedPaths[type] = asset.localUri || asset.uri || null;
+      return resolvedPaths[type];
+    } catch {
+      return null;
+    }
   }
 }
 
@@ -851,10 +864,14 @@ export function pronounce(word) {
 }
 
 export async function initAudio() {
-  console.log('[Audio] Initializing and pre-resolving assets...');
-  const types = Object.keys(SFX_PATHS);
-  await Promise.all(types.map(type => getResolvedPath(type)));
-  console.log('[Audio] All assets pre-resolved:', resolvedPaths);
+  console.log('[Audio] Initializing and pre-resolving assets in background...');
+  try {
+    const types = Object.keys(SFX_PATHS);
+    await Promise.all(types.map(type => getResolvedPath(type)));
+    console.log('[Audio] All assets pre-resolved:', resolvedPaths);
+  } catch (e) {
+    console.warn('[Audio] Non-fatal asset pre-resolution issue:', e);
+  }
 }
 
 // Global "First-Interaction" Audio, TTS, and BGM Trigger
