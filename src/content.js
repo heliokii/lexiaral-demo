@@ -137,7 +137,7 @@ const average = pack.words.flatMap((word, index) => [
     prompt: `What does "${word.word}" mean in this sentence?`,
     choices: wordChoices(word, index + 3, true),
     answerId: word.id,
-    explanation: word.definition,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   },
   {
     id: `average-best-use-${word.id}`,
@@ -163,7 +163,7 @@ const difficultVocabulary = pack.story.target_word_ids.map((id, index) => {
     prompt: `In the story, what does "${word.word}" mean?`,
     choices: wordChoices(word, index + 1, true),
     answerId: id,
-    explanation: `${word.story_context} ${word.definition}`,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   };
 });
 
@@ -215,7 +215,7 @@ export function getQuestionsForStory(story) {
     prompt: `In the story, what does "${word.word}" mean?`,
     choices: wordChoices(word, index + 1, true),
     answerId: word.id,
-    explanation: `${word.story_context} ${word.definition}`,
+    explanation: word.example_sentence ? `Example: "${word.example_sentence}"` : `"${word.word}" means: ${word.definition}`,
   }));
 
   const comp = (story.questions || []).map((question, index) => ({
@@ -304,6 +304,19 @@ export function getFeedbackDetails(question, correct) {
     }
   }
 
+  // If explanation is verbatim identical to correctLabel, suppress to prevent repetition
+  if (correctLabel && rawExplanation.trim().toLowerCase() === correctLabel.trim().toLowerCase()) {
+    rawExplanation = '';
+  }
+
+  // Clean any trailing ellipsis artifacts
+  if (rawExplanation.endsWith('...')) {
+    rawExplanation = rawExplanation.slice(0, -3).trim();
+    if (rawExplanation && !rawExplanation.endsWith('.')) {
+      rawExplanation += '.';
+    }
+  }
+
   // Capitalize first letter of explanation
   if (rawExplanation) {
     rawExplanation = rawExplanation.charAt(0).toUpperCase() + rawExplanation.slice(1);
@@ -317,9 +330,8 @@ export function getFeedbackDetails(question, correct) {
       ? `${title} All pairs matched! ${rawExplanation}`.trim()
       : `${title} Let's keep matching words with their pictures.`.trim();
   } else {
-    fullSpeech = correct
-      ? `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim()
-      : `${title} The correct answer is ${correctLabel}. ${rawExplanation}`.trim();
+    const speechExp = rawExplanation ? ` ${rawExplanation}` : '';
+    fullSpeech = `${title} The correct answer is ${correctLabel}.${speechExp}`.trim();
   }
 
   return {
