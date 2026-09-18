@@ -1,5 +1,7 @@
 // Direct, production-safe Metro require mappings for all 50 official ARAL vocabulary words
 // Ensures images are bundled with content hashes by Metro and work across Web, Netlify, Vercel, and Native Expo
+import { Platform } from 'react-native';
+import { Asset } from 'expo-asset';
 
 export const WORD_IMAGES = {
   // Level 1 - Easy (20 Words)
@@ -74,23 +76,28 @@ export function preloadAllWordImages() {
 
   try {
     const modules = Object.values(WORD_IMAGES);
-    modules.forEach((mod) => {
-      let uri = null;
-      if (typeof mod === 'string') {
-        uri = mod;
-      } else if (mod?.uri) {
-        uri = mod.uri;
-      } else if (mod?.default) {
-        uri = typeof mod.default === 'string' ? mod.default : mod.default.uri;
-      }
-
-      if (typeof window !== 'undefined' && uri) {
-        const img = new window.Image();
-        img.src = uri;
-        if (img.decode) {
-          img.decode().catch(() => {});
+    if (Platform.OS === 'web') {
+      modules.forEach((mod) => {
+        let uri = null;
+        if (typeof mod === 'string') {
+          uri = mod;
+        } else if (mod?.uri) {
+          uri = mod.uri;
+        } else if (mod?.default) {
+          uri = typeof mod.default === 'string' ? mod.default : mod.default.uri;
         }
-      }
-    });
+
+        if (typeof window !== 'undefined' && uri) {
+          const img = new window.Image();
+          img.src = uri;
+          if (img.decode) {
+            img.decode().catch(() => {});
+          }
+        }
+      });
+    } else {
+      // Native Android and iOS: pre-cache all vocabulary images in background
+      Asset.loadAsync(modules).catch(() => {});
+    }
   } catch {}
 }

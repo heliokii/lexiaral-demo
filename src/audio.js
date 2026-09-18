@@ -1,6 +1,8 @@
-import { Alert, Platform } from 'react-native';
+import { Alert, AppState, Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 import { Asset } from 'expo-asset';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
+import { preloadAllWordImages } from './assets/wordImages';
 
 const isWeb = Platform.OS === 'web';
 
@@ -9,6 +11,54 @@ let currentTicket = 0;
 let activeUtterance = null;
 let cachedFemaleVoice = null;
 let audioCtx = null;
+
+// Native player instances and session configuration
+let nativeBgmPlayer = null;
+const nativeSfxPlayers = {};
+let nativeAudioConfigured = false;
+
+async function ensureNativeAudioMode() {
+  if (isWeb || nativeAudioConfigured) return;
+  try {
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      interruptionMode: 'mixWithOthers',
+    });
+    nativeAudioConfigured = true;
+  } catch (e) {
+    console.warn('[Audio] Failed to configure native audio mode:', e);
+  }
+}
+
+function getNativeSfxPlayer(type) {
+  if (isWeb) return null;
+  if (!nativeSfxPlayers[type]) {
+    const source = SFX_PATHS[type];
+    if (!source) return null;
+    try {
+      nativeSfxPlayers[type] = createAudioPlayer(source);
+    } catch (e) {
+      console.warn('[Audio] Failed to create native SFX player for', type, e);
+      return null;
+    }
+  }
+  return nativeSfxPlayers[type];
+}
+
+function getNativeBgmPlayer() {
+  if (isWeb) return null;
+  if (!nativeBgmPlayer) {
+    try {
+      nativeBgmPlayer = createAudioPlayer(SFX_PATHS.bgm);
+      nativeBgmPlayer.loop = true;
+      nativeBgmPlayer.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
+    } catch (e) {
+      console.warn('[Audio] Failed to create native BGM player:', e);
+      return null;
+    }
+  }
+  return nativeBgmPlayer;
+}
 
 // Initialize or resume browser-native Web Audio context for zero-latency procedural SFX
 function getAudioContext() {
@@ -70,33 +120,50 @@ async function getResolvedPath(type) {
   }
 }
 
-
 // Reusable audio helper with instant fallback
 function playAudioClip(type, volume = 1.0, fallbackSynth) {
-  if (muted) return;
-  const path = resolvedPaths[type] || SFX_PATHS[type];
-  if (!path) {
-    if (fallbackSynth) fallbackSynth();
-    return;
+  if (muted) return null;
+
+  if (isWeb) {
+    const path = resolvedPaths[type] || SFX_PATHS[type];
+    if (!path) {
+      if (fallbackSynth) fallbackSynth();
+      return null;
+    }
+
+    if (typeof window !== 'undefined' && typeof Audio !== 'undefined') {
+      try {
+        const audio = new Audio(path);
+        audio.volume = Math.max(0, Math.min(1, volume));
+        const playPromise = audio.play();
+        if (playPromise && playPromise.catch) {
+          playPromise.catch(() => {
+            if (fallbackSynth) fallbackSynth();
+          });
+        }
+        return audio;
+      } catch {
+        if (fallbackSynth) fallbackSynth();
+      }
+    } else if (fallbackSynth) {
+      fallbackSynth();
+    }
+    return null;
   }
 
-  if (typeof window !== 'undefined' && typeof Audio !== 'undefined') {
-    try {
-      const audio = new Audio(path);
-      audio.volume = Math.max(0, Math.min(1, volume));
-      const playPromise = audio.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(() => {
-          if (fallbackSynth) fallbackSynth();
-        });
-      }
-      return audio;
-    } catch {
-      if (fallbackSynth) fallbackSynth();
+  // Native Android and iOS (Expo Go / Standalone APK)
+  try {
+    const player = getNativeSfxPlayer(type);
+    if (player) {
+      player.volume = Math.max(0, Math.min(1, volume));
+      player.seekTo(0).catch(() => {});
+      player.play();
+      return player;
     }
-  } else if (fallbackSynth) {
-    fallbackSynth();
+  } catch (e) {
+    console.warn('[Audio] Native SFX error playing', type, e);
   }
+  return null;
 }
 
 // Procedural harmonic bell chime fallback
@@ -222,25 +289,45 @@ export function playVictoryFanfare(onFinish) {
     const done = () => {
       if (!called) {
         called = true;
+        duckBgm(false);
         if (onFinish) onFinish();
       }
     };
-    audio.onended = done;
-    audio.onerror = done;
+
+    if (isWeb) {
+      audio.onended = done;
+      audio.onerror = done;
+    } else if (typeof audio.addListener === 'function') {
+      const sub = audio.addListener('playbackStatusUpdate', (status) => {
+        if (status && status.didJustFinish) {
+          if (sub && typeof sub.remove === 'function') sub.remove();
+          done();
+        }
+      });
+    }
     // Fallback timer matches the 4.23s duration of yehey-kids.mp3
     setTimeout(done, 4350);
   } else if (onFinish) {
+    duckBgm(false);
     setTimeout(onFinish, 1100);
   }
 }
 
-// Interactive button click SFX (uses the exact pleasant matching chime requested by user)
+// Interactive button click SFX (uses pleasant tactile sound)
 export function playTapSfx() {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (bgmActive && !muted && audio && audio.paused) {
-    audio.play().catch(() => {});
+  if (muted) return;
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (bgmActive && audio && audio.paused) {
+      audio.play().catch(() => {});
+    }
+    playMatchSfx();
+  } else {
+    if (bgmActive && nativeBgmPlayer && !nativeBgmPlayer.playing) {
+      nativeBgmPlayer.play();
+    }
+    playAudioClip('cardFlip', 0.45);
   }
-  playMatchSfx();
 }
 
 // Procedural paper card-flip fallback
@@ -321,32 +408,36 @@ export function playCardShuffleSfx() {
 // Short, light chime for pair matches in vocabulary activities
 export function playMatchSfx() {
   if (muted) return;
-  try {
-    const ctx = getAudioContext();
-    if (!ctx) return;
-    const now = ctx.currentTime;
+  if (isWeb) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
 
-    const notes = [
-      { freq: 659.25, time: 0, duration: 0.14, gain: 0.4 },
-      { freq: 880.0, time: 0.06, duration: 0.22, gain: 0.5 },
-    ];
+      const notes = [
+        { freq: 659.25, time: 0, duration: 0.14, gain: 0.4 },
+        { freq: 880.0, time: 0.06, duration: 0.22, gain: 0.5 },
+      ];
 
-    notes.forEach(({ freq, time, duration, gain: peakGain }) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + time);
+      notes.forEach(({ freq, time, duration, gain: peakGain }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + time);
 
-      gain.gain.setValueAtTime(0.001, now + time);
-      gain.gain.exponentialRampToValueAtTime(peakGain, now + time + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + time + duration);
+        gain.gain.setValueAtTime(0.001, now + time);
+        gain.gain.exponentialRampToValueAtTime(peakGain, now + time + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + time + duration);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now + time);
-      osc.stop(now + time + duration + 0.02);
-    });
-  } catch {}
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + time);
+        osc.stop(now + time + duration + 0.02);
+      });
+    } catch {}
+  } else {
+    playAudioClip('correct', 0.5);
+  }
 }
 
 // Strict Global BGM Singleton & Cleanup Architecture
@@ -438,7 +529,7 @@ function attachInteractionUnlock() {
   unlockAudioAndSpeech();
 }
 
-// Pause BGM when tab is inactive, resume single instance when returning
+// Pause BGM when tab is inactive, resume single instance when returning (Web)
 if (isWeb && typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
   document.addEventListener('visibilitychange', () => {
     const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
@@ -454,20 +545,39 @@ if (isWeb && typeof document !== 'undefined' && typeof document.addEventListener
   });
 }
 
+// Pause BGM when app moves to background, resume when active (Native)
+if (!isWeb) {
+  AppState.addEventListener('change', (nextAppState) => {
+    if (nextAppState === 'active') {
+      if (bgmActive && !muted) {
+        resumeBgm();
+      }
+    } else if (nextAppState === 'background' || nextAppState === 'inactive') {
+      pauseBgm();
+    }
+  });
+}
+
 export function isBgmActive() {
   return bgmActive;
 }
 
 export function setBgmFocusMode(enabled = true) {
   bgmFocusMode = Boolean(enabled);
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  const targetVol = activeUtterance
+    ? BGM_DUCK_VOLUME
+    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.volume = targetVol;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      if (activeUtterance) {
-        audio.volume = BGM_DUCK_VOLUME;
-      } else {
-        audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
-      }
+      nativeBgmPlayer.volume = targetVol;
     } catch {}
   }
 }
@@ -475,83 +585,132 @@ export function setBgmFocusMode(enabled = true) {
 export function startBgm() {
   bgmActive = true;
   if (muted) return;
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
+  if (isWeb) {
+    if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  const audio = getBgmAudio();
-  if (audio) {
-    audio.volume = activeUtterance
-      ? BGM_DUCK_VOLUME
-      : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+    console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
 
-    if (!audio.paused) {
-      console.log('[Audio] BGM already playing');
-      return;
+    const audio = getBgmAudio();
+    if (audio) {
+      audio.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+      if (!audio.paused) {
+        console.log('[Audio] BGM already playing');
+        return;
+      }
+
+      console.log('[Audio] Attempting to play BGM...');
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise
+          .then(() => console.log('[Audio] BGM started immediately'))
+          .catch((err) => {
+            console.warn('[Audio] Autoplay blocked, attaching interaction unlock. Error:', err.message);
+            attachInteractionUnlock();
+          });
+      }
     }
-
-    console.log('[Audio] Attempting to play BGM...');
-    const playPromise = audio.play();
-    if (playPromise && playPromise.catch) {
-      playPromise
-        .then(() => console.log('[Audio] BGM started immediately'))
-        .catch((err) => {
-          console.warn('[Audio] Autoplay blocked, attaching interaction unlock. Error:', err.message);
-          attachInteractionUnlock();
-        });
+  } else {
+    // Native Android / iOS
+    const player = getNativeBgmPlayer();
+    if (player) {
+      player.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      if (!player.playing) {
+        player.play();
+        console.log('[Audio] Native BGM started');
+      }
     }
   }
 }
 
 export function stopBgm() {
   bgmActive = false;
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      audio.pause();
-      audio.currentTime = 0;
+      nativeBgmPlayer.pause();
+      nativeBgmPlayer.seekTo(0).catch(() => {});
     } catch {}
   }
 }
 
 export function pauseBgm() {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio && !audio.paused) {
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio && !audio.paused) {
+      try {
+        audio.pause();
+      } catch {}
+    }
+  } else if (nativeBgmPlayer && nativeBgmPlayer.playing) {
     try {
-      audio.pause();
+      nativeBgmPlayer.pause();
     } catch {}
   }
 }
 
 export function resumeBgm() {
   if (muted || !bgmActive) return;
-  if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-  const audio = getBgmAudio();
-  if (audio) {
-    audio.volume = activeUtterance
-      ? BGM_DUCK_VOLUME
-      : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+  if (isWeb) {
+    if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-    // If already playing, do not play again!
-    if (!audio.paused) return;
+    const audio = getBgmAudio();
+    if (audio) {
+      audio.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
 
-    const playPromise = audio.play();
-    if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {
-        attachInteractionUnlock();
-      });
+      if (!audio.paused) return;
+
+      const playPromise = audio.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(() => {
+          attachInteractionUnlock();
+        });
+      }
+    }
+  } else {
+    // Native Android / iOS
+    const player = getNativeBgmPlayer();
+    if (player) {
+      player.volume = activeUtterance
+        ? BGM_DUCK_VOLUME
+        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      if (!player.playing) {
+        player.play();
+      }
     }
   }
 }
 
 export function duckBgm(duck = true) {
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-  if (audio) {
+  const targetVol = duck
+    ? BGM_DUCK_VOLUME
+    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+
+  if (isWeb) {
+    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+    if (audio) {
+      try {
+        audio.volume = targetVol;
+      } catch {}
+    }
+  } else if (nativeBgmPlayer) {
     try {
-      audio.volume = duck
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      nativeBgmPlayer.volume = targetVol;
     } catch {}
   }
 }
@@ -559,11 +718,15 @@ export function duckBgm(duck = true) {
 // Audio preference restored by LearningProvider
 export function configureAudio(enabled) {
   muted = !enabled;
-  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
   if (muted) {
     stopAudio();
-    if (audio && !audio.paused) {
-      audio.pause();
+    if (isWeb) {
+      const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+      if (audio && !audio.paused) {
+        audio.pause();
+      }
+    } else if (nativeBgmPlayer && nativeBgmPlayer.playing) {
+      nativeBgmPlayer.pause();
     }
   } else {
     startBgm();
@@ -825,12 +988,28 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
 
     if (muted || ticket !== currentTicket) return;
 
+    activeUtterance = true;
+    duckBgm(true);
+
+    const onFinishSpeech = () => {
+      activeUtterance = null;
+      duckBgm(false);
+    };
+
     Speech.speak(cleanText, {
       language: voiceIdentifier ? undefined : (language || 'en-PH'),
       rate: 0.78,
       pitch: 1.06,
       voice: voiceIdentifier,
-      onError: report,
+      onStart: () => {
+        duckBgm(true);
+      },
+      onDone: onFinishSpeech,
+      onStopped: onFinishSpeech,
+      onError: (err) => {
+        onFinishSpeech();
+        report();
+      },
     });
   } catch {
     report();
@@ -865,6 +1044,12 @@ export function pronounce(word) {
 
 export async function initAudio() {
   console.log('[Audio] Initializing and pre-resolving assets in background...');
+  await ensureNativeAudioMode();
+
+  try {
+    preloadAllWordImages();
+  } catch {}
+
   try {
     const types = Object.keys(SFX_PATHS);
     await Promise.all(types.map(type => getResolvedPath(type)));
