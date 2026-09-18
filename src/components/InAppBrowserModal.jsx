@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -11,6 +12,10 @@ import { colors } from "./ui";
 import { playTapSfx } from "../audio";
 
 export function InAppBrowserModal() {
+  if (Platform.OS !== "web") {
+    return null;
+  }
+
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

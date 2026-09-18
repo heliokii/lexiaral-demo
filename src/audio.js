@@ -1,6 +1,8 @@
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import * as Speech from 'expo-speech';
 import { Asset } from 'expo-asset';
+
+const isWeb = Platform.OS === 'web';
 
 let muted = false;
 let currentTicket = 0;
@@ -10,7 +12,7 @@ let audioCtx = null;
 
 // Initialize or resume browser-native Web Audio context for zero-latency procedural SFX
 function getAudioContext() {
-  if (typeof window === 'undefined') return null;
+  if (!isWeb || typeof window === 'undefined') return null;
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioContextClass) return null;
@@ -344,7 +346,7 @@ let bgmActive = false;
 let bgmFocusMode = false;
 
 // Explicitly clean up any previous/orphaned audio instances currently attached to window or DOM
-if (typeof window !== 'undefined') {
+if (isWeb && typeof window !== 'undefined') {
   if (window.__LEXIARAL_BGM_SINGLETON__) {
     try {
       window.__LEXIARAL_BGM_SINGLETON__.pause();
@@ -424,7 +426,7 @@ function attachInteractionUnlock() {
 }
 
 // Pause BGM when tab is inactive, resume single instance when returning
-if (typeof document !== 'undefined') {
+if (isWeb && typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
   document.addEventListener('visibilitychange', () => {
     const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
     if (document.hidden) {
@@ -687,7 +689,7 @@ function getBestFemaleVoice(targetLang = 'en-PH') {
 }
 
 // Refresh cache when voices load asynchronously in browser
-if (typeof window !== 'undefined' && window.speechSynthesis) {
+if (isWeb && typeof window !== 'undefined' && window.speechSynthesis) {
   try {
     window.speechSynthesis.onvoiceschanged = () => {
       cachedFemaleVoice = null;
@@ -857,16 +859,18 @@ export async function initAudio() {
 
 // Global "First-Interaction" Audio, TTS, and BGM Trigger
 // Browsers strictly require user activation to unlock AudioContext, TTS, and Audio elements
-if (typeof window !== 'undefined') {
+if (isWeb && typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
   const onFirstInteraction = () => {
     console.log('[Audio] Global interaction trigger: unlocking audio, speech, and BGM');
     unlockAudioAndSpeech();
     startBgm();
-    ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt =>
-      window.removeEventListener(evt, onFirstInteraction, true)
-    );
+    ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
+      if (typeof window.removeEventListener === 'function') {
+        window.removeEventListener(evt, onFirstInteraction, true);
+      }
+    });
   };
-  ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt =>
-    window.addEventListener(evt, onFirstInteraction, { capture: true, once: true })
-  );
+  ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
+    window.addEventListener(evt, onFirstInteraction, { capture: true, once: true });
+  });
 }
