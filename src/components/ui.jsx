@@ -344,6 +344,37 @@ export function ActivityHeader({ title, onBack }) {
   );
 }
 
+export function VolumeSlider({ value, onChange, label }) {
+  const [width, setWidth] = React.useState(0);
+
+  const handlePress = (e) => {
+    const { locationX } = e.nativeEvent;
+    const newValue = Math.max(0, Math.min(1, locationX / width));
+    onChange(newValue);
+  };
+
+  return (
+    <View style={styles.sliderContainer}>
+      <View style={styles.sliderHeader}>
+        <Text style={styles.sliderLabel}>{label}</Text>
+        <Text style={styles.sliderValue}>{Math.round(value * 100)}%</Text>
+      </View>
+      <Pressable
+        style={styles.sliderTrack}
+        onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
+        onPress={handlePress}
+      >
+        <View
+          style={[
+            styles.sliderFill,
+            { width: `${value * 100}%` },
+          ]}
+        />
+      </Pressable>
+    </View>
+  );
+}
+
 export function ProgressBar({ value, label, color = colors.purple, testID }) {
   const safeValue = Math.max(0, Math.min(1, value));
 
@@ -559,5 +590,36 @@ const styles = StyleSheet.create({
   headerAudioBtnMuted: {
     backgroundColor: '#F3EFF8',
     borderColor: '#DDD6E8',
+  },
+  sliderContainer: {
+    gap: 8,
+    width: '100%',
+    marginVertical: 8,
+  },
+  sliderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sliderLabel: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 16,
+    color: colors.text,
+  },
+  sliderValue: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 16,
+    color: colors.primary,
+  },
+  sliderTrack: {
+    height: 12,
+    backgroundColor: '#E7E1F4',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  sliderFill: {
+    height: '100%',
+    backgroundColor: colors.primary,
+    borderRadius: 6,
   },
 });

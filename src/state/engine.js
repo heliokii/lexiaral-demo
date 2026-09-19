@@ -51,6 +51,7 @@ export function initialState(pupilName = '', masteryThreshold = 0, selectedStory
     masteryThreshold: typeof masteryThreshold === 'number' ? masteryThreshold : 0,
     selectedStoryId: typeof selectedStoryId === 'string' ? selectedStoryId : (CONTENT.story?.id || 'story-cat'),
     audioEnabled: true,
+    bgmVolume: 1.0,
     unlocked: isDemo ? [1, 2, 3] : [1],
     badges: [],
     encounteredWordIds: [],
@@ -143,6 +144,14 @@ export function reduceState(state, action) {
   switch (action.type) {
     case 'SET_AUDIO':
       return { ...state, audioEnabled: Boolean(action.enabled) };
+
+    case 'SET_BGM_VOLUME':
+      return {
+        ...state,
+        bgmVolume: typeof action.volume === 'number'
+          ? Math.max(0, Math.min(1, action.volume))
+          : state.bgmVolume,
+      };
 
     case 'START': {
       const isUnlocked =
@@ -425,6 +434,7 @@ export function validateSavedState(state) {
     state.schemaVersion !== 1 ||
     state.contentId !== CONTENT.id ||
     typeof state.audioEnabled !== 'boolean' ||
+    typeof state.bgmVolume !== 'number' ||
     (state.pupilName !== undefined && typeof state.pupilName !== 'string') ||
     (state.masteryThreshold !== undefined &&
       typeof state.masteryThreshold !== 'number') ||

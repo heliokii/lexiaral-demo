@@ -10,7 +10,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CONTENT, validateContent } from '../content';
-import { configureAudio, initAudio } from '../audio';
+import { configureAudio, initAudio, setBgmUserVolume } from '../audio';
 import {
   initialState,
   reduceState,
@@ -46,6 +46,7 @@ export function LearningProvider({ children }) {
 
       stateRef.current = restored;
       configureAudio(restored.audioEnabled);
+      setBgmUserVolume(restored.bgmVolume);
       setState(restored);
     } catch (err) {
       setLoadError(

@@ -449,6 +449,27 @@ const BGM_DUCK_VOLUME = 0.005;   // During speech narration - smooth ducking (0.
 
 let bgmActive = false;
 let bgmFocusMode = false;
+let userBgmVolume = 1.0;
+
+// Explicitly clean up any previous/orphaned audio instances currently attached to window or DOM
+function applyEffectiveBgmVolume() {
+  const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
+  if (!audio) return;
+
+  let baseVolume = BGM_DEFAULT_VOLUME;
+  if (activeUtterance) {
+    baseVolume = BGM_DUCK_VOLUME;
+  } else if (bgmFocusMode) {
+    baseVolume = BGM_FOCUS_VOLUME;
+  }
+
+  audio.volume = baseVolume * userBgmVolume;
+}
+
+export function setBgmUserVolume(volume) {
+  userBgmVolume = Math.max(0, Math.min(1, volume));
+  applyEffectiveBgmVolume();
+}
 
 // Explicitly clean up any previous/orphaned audio instances currently attached to window or DOM
 if (isWeb && typeof window !== 'undefined') {
@@ -471,13 +492,11 @@ function getBgmAudio() {
       const audio = new Audio(path);
       audio.loop = true;
       audio.preload = 'auto';
-      audio.volume = bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME;
-
-      // Pre-load the file to avoid delay on play()
-      audio.load();
 
       window.__LEXIARAL_BGM_SINGLETON__ = audio;
       console.log('[Audio] BGM singleton created and loading:', path);
+
+      applyEffectiveBgmVolume();
     } catch (e) {
       console.error('[Audio] Failed to create BGM Audio object:', e);
       return null;
@@ -565,22 +584,7 @@ export function isBgmActive() {
 
 export function setBgmFocusMode(enabled = true) {
   bgmFocusMode = Boolean(enabled);
-  const targetVol = activeUtterance
-    ? BGM_DUCK_VOLUME
-    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
-
-  if (isWeb) {
-    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-    if (audio) {
-      try {
-        audio.volume = targetVol;
-      } catch {}
-    }
-  } else if (nativeBgmPlayer) {
-    try {
-      nativeBgmPlayer.volume = targetVol;
-    } catch {}
-  }
+  applyEffectiveBgmVolume();
 }
 
 export function startBgm() {
@@ -590,13 +594,9 @@ export function startBgm() {
   if (isWeb) {
     if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
 
-    console.log('[Audio] startBgm() called. Active:', bgmActive, 'Muted:', muted);
-
     const audio = getBgmAudio();
     if (audio) {
-      audio.volume = activeUtterance
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      applyEffectiveBgmVolume();
 
       if (!audio.paused) {
         console.log('[Audio] BGM already playing');
@@ -618,9 +618,7 @@ export function startBgm() {
     // Native Android / iOS
     const player = getNativeBgmPlayer();
     if (player) {
-      player.volume = activeUtterance
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      applyEffectiveBgmVolume();
       if (!player.playing) {
         player.play();
         console.log('[Audio] Native BGM started');
@@ -670,9 +668,7 @@ export function resumeBgm() {
 
     const audio = getBgmAudio();
     if (audio) {
-      audio.volume = activeUtterance
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      applyEffectiveBgmVolume();
 
       if (!audio.paused) return;
 
@@ -687,9 +683,7 @@ export function resumeBgm() {
     // Native Android / iOS
     const player = getNativeBgmPlayer();
     if (player) {
-      player.volume = activeUtterance
-        ? BGM_DUCK_VOLUME
-        : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
+      applyEffectiveBgmVolume();
       if (!player.playing) {
         player.play();
       }
@@ -698,22 +692,7 @@ export function resumeBgm() {
 }
 
 export function duckBgm(duck = true) {
-  const targetVol = duck
-    ? BGM_DUCK_VOLUME
-    : (bgmFocusMode ? BGM_FOCUS_VOLUME : BGM_DEFAULT_VOLUME);
-
-  if (isWeb) {
-    const audio = typeof window !== 'undefined' ? window.__LEXIARAL_BGM_SINGLETON__ : null;
-    if (audio) {
-      try {
-        audio.volume = targetVol;
-      } catch {}
-    }
-  } else if (nativeBgmPlayer) {
-    try {
-      nativeBgmPlayer.volume = targetVol;
-    } catch {}
-  }
+  applyEffectiveBgmVolume();
 }
 
 // Audio preference restored by LearningProvider

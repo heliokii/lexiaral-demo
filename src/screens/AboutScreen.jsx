@@ -3,7 +3,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Art, Icon } from "../Art";
 import { useLearning } from "../state/LearningProvider";
-import { Body, Button, Card, Screen, Title, colors } from "../components/ui";
+import { Body, Button, Card, Screen, Title, VolumeSlider, colors } from "../components/ui";
 
 export function AboutScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
@@ -134,7 +134,21 @@ export function AboutScreen({ navigation }) {
           </View>
         </Pressable>
 
+        {state.audioEnabled && (
+          <VolumeSlider
+            label="Background Music Volume"
+            value={state.bgmVolume}
+            onChange={(val) =>
+              dispatch({
+                type: "SET_BGM_VOLUME",
+                volume: val,
+              })
+            }
+          />
+        )}
+
         <View style={styles.hintBox}>
+
           <Icon name="info" size={15} color={colors.muted} />
           <Text style={styles.hintText}>
             Friendly female instructional voice (light, cheerful tone) · Works fully offline.
