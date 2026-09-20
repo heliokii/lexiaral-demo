@@ -317,7 +317,7 @@ export function ActivityScreen({ navigation }) {
       <Screen
         bottomSlot={
           <Button
-            title="NEXT: ANSWER QUESTIONS"
+            title="ANSWER QUESTIONS"
             tone="purple"
             arrow
             disabled={busy}
