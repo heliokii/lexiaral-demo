@@ -80,13 +80,20 @@ export function bestAttempt(state, level) {
 
 export function sessionQuestions(session) {
   if (!session) return [];
-  if (Array.isArray(session.questions) && session.questions.length > 0) {
-    return session.questions;
-  }
   if (session.level === 3) {
     const storyId = session.storyId || CONTENT.story?.id || 'story-cat';
+    if (
+      Array.isArray(session.questions) &&
+      session.questions.length > 0 &&
+      session.questions[0]?.id?.startsWith(`${storyId}-`)
+    ) {
+      return session.questions;
+    }
     const story = (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
     return getQuestionsForStory(story);
+  }
+  if (Array.isArray(session.questions) && session.questions.length > 0) {
+    return session.questions;
   }
   return QUESTIONS[session.level] || [];
 }
@@ -190,9 +197,23 @@ export function reduceState(state, action) {
     case 'READ_DONE': {
       if (state.session?.phase !== 'story') return state;
 
+      const storyId =
+        state.session.storyId ||
+        state.selectedStoryId ||
+        CONTENT.story?.id ||
+        'story-cat';
+      const story =
+        (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
+      const questions = getQuestionsForStory(story);
+
       return {
         ...state,
-        session: { ...state.session, phase: 'quiz' },
+        session: {
+          ...state.session,
+          phase: 'quiz',
+          storyId,
+          questions,
+        },
       };
     }
 
@@ -340,6 +361,9 @@ export function reduceState(state, action) {
     case 'SELECT_STORY': {
       const storyId = action.storyId;
       if (!storyId) return state;
+      const story =
+        (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
+      const questions = getQuestionsForStory(story);
       return {
         ...state,
         selectedStoryId: storyId,
@@ -350,6 +374,7 @@ export function reduceState(state, action) {
                 storyId,
                 index: 0,
                 answers: [],
+                questions,
               }
             : state.session,
       };
