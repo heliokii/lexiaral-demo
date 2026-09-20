@@ -95,13 +95,13 @@ export function ActivityScreen({ navigation }) {
       Animated.parallel([
         Animated.spring(slideAnim, {
           toValue: 0,
-          friction: 8,
-          tension: 48,
+          friction: 9,
+          tension: 65,
           useNativeDriver: true,
         }),
         Animated.timing(backdropAnim, {
           toValue: 1,
-          duration: 180,
+          duration: 140,
           useNativeDriver: true,
         }),
       ]).start();

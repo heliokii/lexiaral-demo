@@ -59,34 +59,31 @@ export function LearningProvider({ children }) {
   }, [load]);
 
   const dispatch = useCallback(async (action) => {
-    if (writeInProgress.current || !stateRef.current) return null;
+    if (!stateRef.current) return null;
 
     const previous = stateRef.current;
     const next = reduceState(previous, action);
 
     if (next === previous) return null;
 
-    writeInProgress.current = true;
-    setBusy(true);
+    // 1. Instant optimistic state update for 0ms latency UI response
+    stateRef.current = next;
+    configureAudio(next.audioEnabled);
+    setState(next);
     setError('');
 
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    // 2. Asynchronous background persistence (non-blocking)
+    (async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        setError(
+          'Your change was not saved. Check device storage, then tap the button again.'
+        );
+      }
+    })();
 
-      stateRef.current = next;
-      configureAudio(next.audioEnabled);
-      setState(next);
-
-      return next;
-    } catch {
-      setError(
-        'Your change was not saved. Check device storage, then tap the button again.'
-      );
-      return null;
-    } finally {
-      writeInProgress.current = false;
-      setBusy(false);
-    }
+    return next;
   }, []);
 
   if (!state) {

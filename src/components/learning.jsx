@@ -469,13 +469,17 @@ export function MatchingPairsQuestionWidget({
     <View style={{ gap: 8 }}>
       <Card style={styles.matchingPromptCard}>
         <View style={styles.questionHeaderRow}>
-          <Text style={styles.questionBadge}>Match Words to Pictures</Text>
+          <Title style={styles.matchingPromptTitle}>
+            {question.prompt ||
+              "Match each target word with its correct picture!"}
+          </Title>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Hear instruction"
             onPress={() =>
               speak(
-                "Tap a word on the left, then tap its matching picture on the right.",
+                question.prompt ||
+                  "Match each target word with its correct picture! Tap a word on the left, then tap its matching picture on the right.",
                 "en-US",
                 true,
               )
@@ -485,11 +489,6 @@ export function MatchingPairsQuestionWidget({
             <Icon name="sound" size={20} color={colors.primary} />
           </Pressable>
         </View>
-
-        <Body style={{ textAlign: "left", fontSize: 14, color: colors.text }}>
-          {question.prompt ||
-            "Tap a word on the left, then tap its matching picture on the right."}
-        </Body>
       </Card>
 
       <View style={[styles.matchingBoard, isSix && { gap: 8 }]}>
@@ -582,14 +581,9 @@ export function SentenceCompletionQuestionWidget(props) {
     <View style={{ gap: 10 }}>
       <Card style={styles.sentenceQuestionCard}>
         <View style={styles.questionHeaderRow}>
-          <View style={{ flex: 1, gap: 4 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Text style={styles.questionBadge}>Level 2: Use the Word</Text>
-            </View>
-            <Title style={styles.questionTitle}>
-              {question.prompt || "Which word completes the sentence?"}
-            </Title>
-          </View>
+          <Title style={[styles.questionTitle, { flex: 1, paddingRight: 8 }]}>
+            {question.prompt || "Which word completes the sentence?"}
+          </Title>
 
           {question.type !== "bestUse" && (
             <Pressable
@@ -1132,14 +1126,20 @@ const styles = StyleSheet.create({
     borderRadius: 22,
   },
   matchingPromptCard: {
-    paddingTop: 12,
-    paddingBottom: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
-    gap: 6,
     borderRadius: 20,
     backgroundColor: "#FFFFFF",
     borderWidth: 1.5,
     borderColor: "#E5DAFA",
+  },
+  matchingPromptTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    lineHeight: 24,
+    color: colors.darkPurple,
+    flex: 1,
+    paddingRight: 8,
   },
   questionHeaderRow: {
     flexDirection: "row",
