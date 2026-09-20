@@ -521,73 +521,86 @@ export function ActivityScreen({ navigation }) {
             <SentenceCompletionQuestionWidget {...widgetProps} />
           )}
 
-          {session.level === 3 && (
-            <>
-              {showStory && (
-                <InteractiveStoryReaderWidget
-                  story={
-                    (STORIES || []).find(
-                      (s) => s.id === (session.storyId || state.selectedStoryId),
-                    ) || CONTENT.story
-                  }
-                  onSelectStory={handleSelectStory}
-                />
-              )}
+          {session.level === 3 && (() => {
+            const currentStory =
+              (STORIES || []).find(
+                (s) => s.id === (session.storyId || state.selectedStoryId),
+              ) || CONTENT.story;
 
-              <Card style={styles.storyQuestionCard}>
-                <View style={styles.storyQuestionHeaderRow}>
-                  <Pressable
-                    testID="level3-toggle-story-btn"
-                    accessible
-                    accessibilityRole="button"
-                    accessibilityLabel={
-                      showStory ? "Hide story text" : "Read story again"
-                    }
-                    onPress={() => setShowStory((value) => !value)}
-                    style={({ pressed }) => [
-                      styles.storyBadgeBtn,
-                      showStory && styles.storyBadgeBtnActive,
-                      pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
-                    ]}
-                  >
-                    <Icon
-                      name="book"
-                      size={14}
-                      color={showStory ? "#FFFFFF" : colors.primary}
-                    />
-                    <Text
-                      style={[
-                        styles.storyBadgeBtnText,
-                        showStory && styles.storyBadgeBtnTextActive,
+            return (
+              <>
+                {showStory && (
+                  <InteractiveStoryReaderWidget
+                    story={currentStory}
+                    onSelectStory={handleSelectStory}
+                  />
+                )}
+
+                <Card style={styles.storyQuestionCard}>
+                  <View style={styles.storyQuestionHeaderRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <Pressable
+                        testID="level3-toggle-story-btn"
+                        accessible
+                        accessibilityRole="button"
+                        accessibilityLabel={
+                          showStory ? "Hide story text" : "Read story again"
+                        }
+                        onPress={() => setShowStory((value) => !value)}
+                        style={({ pressed }) => [
+                          styles.storyBadgeBtn,
+                          showStory && styles.storyBadgeBtnActive,
+                          pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+                        ]}
+                      >
+                        <Icon
+                          name="book"
+                          size={14}
+                          color={showStory ? "#FFFFFF" : colors.primary}
+                        />
+                        <Text
+                          style={[
+                            styles.storyBadgeBtnText,
+                            showStory && styles.storyBadgeBtnTextActive,
+                          ]}
+                        >
+                          {showStory ? "Hide Story" : "Read Story"}
+                        </Text>
+                      </Pressable>
+
+                      {!showStory && currentStory?.title && (
+                        <View style={styles.storyContextPill}>
+                          <Text numberOfLines={1} style={styles.storyContextText}>
+                            {currentStory.title}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+
+                    <Pressable
+                      testID="level3-hear-question-btn"
+                      accessible
+                      accessibilityRole="button"
+                      accessibilityLabel="Hear the question"
+                      onPress={() => speak(question.prompt, "en-US", true)}
+                      style={({ pressed }) => [
+                        styles.questionSpeakerBtn,
+                        pressed && { opacity: 0.8, transform: [{ scale: 0.92 }] },
                       ]}
                     >
-                      {showStory ? "Hide Story" : "Read Story"}
-                    </Text>
-                  </Pressable>
+                      <Icon name="sound" size={18} color={colors.primary} />
+                    </Pressable>
+                  </View>
 
-                  <Pressable
-                    testID="level3-hear-question-btn"
-                    accessible
-                    accessibilityRole="button"
-                    accessibilityLabel="Hear the question"
-                    onPress={() => speak(question.prompt, "en-US", true)}
-                    style={({ pressed }) => [
-                      styles.questionSpeakerBtn,
-                      pressed && { opacity: 0.8, transform: [{ scale: 0.92 }] },
-                    ]}
-                  >
-                    <Icon name="sound" size={18} color={colors.primary} />
-                  </Pressable>
-                </View>
+                  <Text style={styles.storyQuestionPromptText}>
+                    {question.prompt}
+                  </Text>
+                </Card>
 
-                <Text style={styles.storyQuestionPromptText}>
-                  {question.prompt}
-                </Text>
-              </Card>
-
-              <AnswerChoices {...widgetProps} />
-            </>
-          )}
+                <AnswerChoices {...widgetProps} />
+              </>
+            );
+          })()}
         </View>
       </Screen>
 
@@ -968,7 +981,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: "#352A47",
-    textAlign: "center",
+    textAlign: "left",
   },
   storyQuestionCard: {
     backgroundColor: "#FFFFFF",
@@ -988,6 +1001,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  storyContextPill: {
+    backgroundColor: "#F5F0FC",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E6DBF9",
+    maxWidth: 160,
+  },
+  storyContextText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#6F45B8",
   },
   storyBadgeBtn: {
     flexDirection: "row",
@@ -1024,9 +1051,9 @@ const styles = StyleSheet.create({
   },
   questionBodyWrapper: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingTop: 6,
-    paddingBottom: 16,
+    paddingBottom: 20,
     gap: 16,
   },
   storyQuestionPromptText: {

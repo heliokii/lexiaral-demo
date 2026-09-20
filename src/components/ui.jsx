@@ -149,12 +149,6 @@ export function Screen({
           </View>
         )}
 
-        {busy && (
-          <Text accessibilityLiveRegion="polite" style={styles.saving}>
-            Saving your progress...
-          </Text>
-        )}
-
         {!!error && (
           <Text accessibilityRole="alert" style={styles.error}>
             {error}

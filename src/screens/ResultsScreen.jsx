@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import {
   QUESTIONS,
   UNLOCK_PERCENT,
+  WORDS,
   answerLabel,
   performance,
 } from "../content";
@@ -14,6 +15,7 @@ import { useLearning } from "../state/LearningProvider";
 import { isLevelUnlocked } from "../state/engine";
 import { Body, Button, Card, Screen, Title, colors } from "../components/ui";
 import { ConfettiCelebration } from "../components/ConfettiCelebration";
+import { WordPicture } from "../components/learning";
 import { newSessionAction } from "./ActivityScreen";
 
 function ActionTile({
@@ -357,44 +359,104 @@ export function ResultsScreen({ navigation, route }) {
               ? "Match all 6 word-picture pairs correctly"
               : answerLabel(question);
 
+            const targetWord = question.wordId ? WORDS[question.wordId] : null;
+            const hasThumbnail = Boolean(
+              targetWord &&
+                (question.type === "pictureToWord" ||
+                  question.type === "wordToPicture" ||
+                  question.type === "pictureSentence")
+            );
+
             return (
               <Card
                 key={question.id}
                 testID={`results-answer-card-${index}`}
-                style={{
-                  borderColor: answer.correct ? "#20A464" : "#E85A71",
-                  borderWidth: 1.5,
-                  backgroundColor: answer.correct ? "#F6FCF8" : "#FFF9F9",
-                  padding: 16,
-                  gap: 8,
-                }}
+                style={[
+                  styles.reviewCard,
+                  {
+                    borderColor: answer.correct ? "#79D9A8" : "#F7A8B4",
+                    backgroundColor: answer.correct ? "#FAFCFA" : "#FFF9F9",
+                  },
+                ]}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: "Nunito_800ExtraBold",
-                      fontSize: 14,
-                      color: colors.muted,
-                    }}
-                  >
-                    Question {index + 1}
-                  </Text>
+                {/* Header row: Question index + Status pill + Audio button */}
+                <View style={styles.reviewHeaderRow}>
+                  <View style={styles.reviewIndexBadge}>
+                    <Text style={styles.reviewIndexText}>
+                      Question {index + 1}
+                    </Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    {(targetWord?.word || question.prompt) && (
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Hear question"
+                        onPress={() =>
+                          speak(
+                            targetWord?.word || question.prompt.replace("____", "blank"),
+                            "en-US",
+                            true
+                          )
+                        }
+                        style={({ pressed }) => [
+                          styles.reviewSpeakerBtn,
+                          pressed && { opacity: 0.7, transform: [{ scale: 0.92 }] },
+                        ]}
+                      >
+                        <Icon name="sound" size={15} color={colors.primary} />
+                      </Pressable>
+                    )}
+
+                    <View
+                      style={[
+                        styles.reviewStatusPill,
+                        {
+                          backgroundColor: answer.correct ? "#E8F8F0" : "#FDECEE",
+                        },
+                      ]}
+                    >
+                      <Icon
+                        name={answer.correct ? "check" : "close"}
+                        size={13}
+                        color={answer.correct ? "#1E8D5B" : "#C0392B"}
+                      />
+                      <Text
+                        style={[
+                          styles.reviewStatusText,
+                          {
+                            color: answer.correct ? "#1E8D5B" : "#C0392B",
+                          },
+                        ]}
+                      >
+                        {answer.correct ? "Correct" : "Incorrect"}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Question body with optional thumbnail */}
+                <View style={styles.reviewBodyRow}>
+                  <View style={{ flex: 1, gap: 4 }}>
+                    <Text style={styles.reviewPromptText}>
+                      {question.prompt}
+                    </Text>
+                  </View>
+
+                  {hasThumbnail && (
+                    <View style={styles.reviewThumbnailWrap}>
+                      <WordPicture word={targetWord} height={46} />
+                    </View>
+                  )}
+                </View>
+
+                {/* Structured Answer Comparison Pills */}
+                <View style={{ gap: 6 }}>
                   <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 4,
-                      backgroundColor: answer.correct ? "#E8F8F0" : "#FDECEE",
-                      paddingHorizontal: 8,
-                      paddingVertical: 2,
-                      borderRadius: 12,
-                    }}
+                    style={[
+                      styles.answerPill,
+                      answer.correct ? styles.answerPillCorrect : styles.answerPillWrong,
+                    ]}
                   >
                     <Icon
                       name={answer.correct ? "check" : "close"}
@@ -402,53 +464,39 @@ export function ResultsScreen({ navigation, route }) {
                       color={answer.correct ? "#1E8D5B" : "#C0392B"}
                     />
                     <Text
-                      style={{
-                        fontFamily: "Nunito_800ExtraBold",
-                        fontSize: 13,
-                        color: answer.correct ? "#1E8D5B" : "#C0392B",
-                      }}
+                      style={[
+                        styles.answerPillText,
+                        { color: answer.correct ? "#1E8D5B" : "#C0392B" },
+                      ]}
                     >
-                      {answer.correct ? "Correct" : "Incorrect"}
+                      Your answer:{" "}
+                      <Text style={{ fontFamily: "Nunito_900Black" }}>
+                        {yourAnswerText}
+                      </Text>
                     </Text>
                   </View>
+
+                  {!answer.correct && (
+                    <View style={[styles.answerPill, styles.answerPillCorrect]}>
+                      <Icon name="check" size={14} color="#1E8D5B" />
+                      <Text style={[styles.answerPillText, { color: "#1E8D5B" }]}>
+                        Correct answer:{" "}
+                        <Text style={{ fontFamily: "Nunito_900Black" }}>
+                          {correctAnswerText}
+                        </Text>
+                      </Text>
+                    </View>
+                  )}
                 </View>
 
-                <Body style={{ fontFamily: "Nunito_700Bold", fontSize: 16 }}>
-                  {question.prompt}
-                </Body>
-
-                <Text
-                  style={{
-                    fontFamily: "Nunito_600SemiBold",
-                    fontSize: 14,
-                    color: answer.correct ? "#1E8D5B" : "#C0392B",
-                  }}
-                >
-                  Your answer: {yourAnswerText}
-                </Text>
-
-                {!answer.correct && (
-                  <Text
-                    style={{
-                      fontFamily: "Nunito_700Bold",
-                      fontSize: 14,
-                      color: "#1E8D5B",
-                    }}
-                  >
-                    Correct answer: {correctAnswerText}
-                  </Text>
-                )}
-
-                {!!question.explanation && (
-                  <Text
-                    style={{
-                      fontFamily: "Nunito_600SemiBold",
-                      fontSize: 13,
-                      color: colors.muted,
-                    }}
-                  >
-                    {question.explanation}
-                  </Text>
+                {/* Teacher Tip / Explanation Callout */}
+                {(question.explanation || targetWord?.definition) && (
+                  <View style={styles.reviewCallout}>
+                    <Icon name="star" size={14} color="#B57D18" />
+                    <Text style={styles.reviewCalloutText}>
+                      {question.explanation || targetWord?.definition}
+                    </Text>
+                  </View>
                 )}
               </Card>
             );
@@ -457,5 +505,124 @@ export function ResultsScreen({ navigation, route }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  reviewCard: {
+    borderWidth: 1.5,
+    borderRadius: 20,
+    padding: 16,
+    gap: 10,
+    shadowColor: "#8C77B0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  reviewHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  reviewIndexBadge: {
+    backgroundColor: "#F2ECFC",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  reviewIndexText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: colors.primary,
+  },
+  reviewSpeakerBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#F4EEFD",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#E1D4FA",
+  },
+  reviewStatusPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    borderRadius: 12,
+  },
+  reviewStatusText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12.5,
+  },
+  reviewBodyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  reviewPromptText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    lineHeight: 22,
+    color: colors.text,
+    textAlign: "left",
+  },
+  reviewThumbnailWrap: {
+    width: 54,
+    height: 54,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#E2D7F5",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  answerPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  answerPillCorrect: {
+    backgroundColor: "#EBF9F1",
+    borderColor: "#A9E8C7",
+  },
+  answerPillWrong: {
+    backgroundColor: "#FDF0F2",
+    borderColor: "#F8B7C1",
+  },
+  answerPillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13.5,
+    lineHeight: 18,
+    flexShrink: 1,
+  },
+  reviewCallout: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    backgroundColor: "#FBF7ED",
+    borderWidth: 1,
+    borderColor: "#F5E3B8",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginTop: 2,
+  },
+  reviewCalloutText: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#6B501B",
+    flex: 1,
+    textAlign: "left",
+  },
+});
 
 export default ResultsScreen;

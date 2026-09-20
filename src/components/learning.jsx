@@ -342,7 +342,7 @@ export function FlashcardQuestionWidget(props) {
               ? "What is this?"
               : isListenQuestion
                 ? "Listen to the word"
-                : `Find the "${word?.word || "word"}"`}
+                : "Which picture matches this word?"}
           </Title>
 
           {word && !isListenQuestion && (
@@ -486,7 +486,7 @@ export function MatchingPairsQuestionWidget({
           </Pressable>
         </View>
 
-        <Body style={{ textAlign: "center", fontSize: 14, color: colors.text }}>
+        <Body style={{ textAlign: "left", fontSize: 14, color: colors.text }}>
           {question.prompt ||
             "Tap a word on the left, then tap its matching picture on the right."}
         </Body>
@@ -559,7 +559,7 @@ export function MatchingPairsQuestionWidget({
                   isWrong && styles.matchCardWrong,
                 ]}
               >
-                <WordPicture word={WORDS[item.wordId]} height={isSix ? 44 : 52} />
+                <WordPicture word={WORDS[item.wordId]} height={isSix ? 40 : 48} />
                 {isMatched && (
                   <View style={[styles.checkBadge, isSix && { width: 18, height: 18, right: 4, top: 4 }]}>
                     <Icon name="check" size={isSix ? 11 : 13} color="#FFFFFF" />
@@ -1422,8 +1422,8 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   matchCard: {
-    minHeight: 62,
-    paddingVertical: 6,
+    height: 60,
+    paddingVertical: 4,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -1437,15 +1437,19 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
     position: "relative",
+    overflow: "hidden",
   },
   matchCardSix: {
-    minHeight: 48,
+    height: 50,
     paddingVertical: 2,
     paddingHorizontal: 4,
     borderRadius: 13,
   },
   matchPicCard: {
-    paddingVertical: 3,
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
   matchCardSelected: {
     borderColor: colors.purple,
