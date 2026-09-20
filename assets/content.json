@@ -1928,7 +1928,7 @@
         {
           "id": "q-red-1",
           "category": "comprehension",
-          "prompt": "What does Ben like to do after school?",
+          "prompt": "Who likes to paint pictures after school?",
           "choices": [
             "Ben",
             "Leo",
@@ -1936,12 +1936,25 @@
             "Dan"
           ],
           "answer": "Ben",
-          "explanation": "The story explains: Ben wants to paint a picture of an apple."
+          "explanation": "The story explains: Ben likes to paint pictures after school."
         },
         {
           "id": "q-red-2",
           "category": "comprehension",
-          "prompt": "What does Ben draw?",
+          "prompt": "What does Ben draw in the afternoon?",
+          "choices": [
+            "A big house with a small garden",
+            "A red car with a small boat",
+            "A tall school building",
+            "A farm with many animals"
+          ],
+          "answer": "A big house with a small garden",
+          "explanation": "The story explains: One afternoon, he draws a big house with a small garden."
+        },
+        {
+          "id": "q-red-3",
+          "category": "comprehension",
+          "prompt": "What color paint does Ben use for the flowers?",
           "choices": [
             "Red",
             "Blue",
@@ -1949,46 +1962,33 @@
             "Green"
           ],
           "answer": "Red",
-          "explanation": "The story explains: He opens a small jar of red paint."
-        },
-        {
-          "id": "q-red-3",
-          "category": "comprehension",
-          "prompt": "What color paint does Ben use?",
-          "choices": [
-            "An apple",
-            "A ball",
-            "A car",
-            "A house"
-          ],
-          "answer": "An apple",
-          "explanation": "The story explains: Ben wants to paint a picture of an apple."
+          "explanation": "The story explains: He takes his red paint and colors the flowers in the garden."
         },
         {
           "id": "q-red-4",
           "category": "comprehension",
-          "prompt": "What does Ben color with the red paint?",
+          "prompt": "Who does Ben show his colorful picture to?",
           "choices": [
-            "He makes a beautiful red apple",
-            "He spills the paint",
-            "He loses his brush",
-            "He paints a tree"
+            "His teacher",
+            "His mother",
+            "His friend",
+            "His brother"
           ],
-          "answer": "He makes a beautiful red apple",
-          "explanation": "The story explains: Carefully, Ben paints the apple with the bright red color."
+          "answer": "His teacher",
+          "explanation": "The story explains: When he finishes, Ben shows his colorful picture to his teacher."
         },
         {
           "id": "q-red-5",
           "category": "comprehension",
-          "prompt": "Who does Ben show his picture to?",
+          "prompt": "How does the teacher react to Ben's work?",
           "choices": [
-            "Pleased and proud with his work",
-            "Sad",
-            "Tired",
-            "Angry"
+            "Smiles and praises his beautiful work",
+            "Tells him to erase it",
+            "Gives him a test",
+            "Asks him to paint again"
           ],
-          "answer": "Pleased and proud with his work",
-          "explanation": "The story explains: Ben smiles because his red apple looks bright and beautiful."
+          "answer": "Smiles and praises his beautiful work",
+          "explanation": "The story explains: His teacher smiles and praises his beautiful work."
         }
       ]
     },
@@ -2852,7 +2852,7 @@
         {
           "id": "q-candle-1",
           "category": "comprehension",
-          "prompt": "Why does Mother light a candle?",
+          "prompt": "Who are at home when the electricity goes out?",
           "choices": [
             "Anna and her mother",
             "Mia and Leo",
@@ -2860,12 +2860,12 @@
             "Sara and Tom"
           ],
           "answer": "Anna and her mother",
-          "explanation": "The story explains: One stormy evening, the electric lights suddenly go out."
+          "explanation": "The story explains: One evening, the electricity goes out at Anna's house."
         },
         {
           "id": "q-candle-2",
           "category": "comprehension",
-          "prompt": "What happens to the electricity?",
+          "prompt": "What does Mother use to light the dark room?",
           "choices": [
             "A white candle and matches",
             "A flashlight",
@@ -3622,7 +3622,7 @@
         {
           "id": "q-switch-1",
           "category": "comprehension",
-          "prompt": "Where does Ben go?",
+          "prompt": "Who enters the room in the evening?",
           "choices": [
             "Ben",
             "Carlo",
@@ -3630,7 +3630,7 @@
             "Tom"
           ],
           "answer": "Ben",
-          "explanation": "The story explains: Ben enters the study room in the evening to do his homework."
+          "explanation": "The story explains: One evening, Ben enters his room and notices that it is dark."
         },
         {
           "id": "q-switch-2",
