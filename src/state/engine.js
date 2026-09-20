@@ -5,6 +5,7 @@ import {
   UNLOCK_PERCENT,
   STORIES,
   getQuestionsForStory,
+  generateSessionQuestions,
 } from '../content';
 
 export const BADGES = [
@@ -79,6 +80,9 @@ export function bestAttempt(state, level) {
 
 export function sessionQuestions(session) {
   if (!session) return [];
+  if (Array.isArray(session.questions) && session.questions.length > 0) {
+    return session.questions;
+  }
   if (session.level === 3) {
     const storyId = session.storyId || CONTENT.story?.id || 'story-cat';
     const story = (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
@@ -146,6 +150,12 @@ export function reduceState(state, action) {
         return state;
       }
 
+      const questions =
+        action.questions ||
+        generateSessionQuestions(action.level, {
+          storyId: action.storyId || state.selectedStoryId,
+        });
+
       return {
         ...state,
         session: {
@@ -159,6 +169,7 @@ export function reduceState(state, action) {
           phase: 'instructions',
           index: 0,
           answers: [],
+          questions,
           startedAt: action.at,
         },
       };
@@ -262,6 +273,7 @@ export function reduceState(state, action) {
         score: sessionScore(session),
         total: questions.length,
         answers: session.answers,
+        questions,
         startedAt: session.startedAt,
         completedAt: action.at,
       };
@@ -485,8 +497,8 @@ export function validateSavedState(state) {
     if (
       session.phase === 'done' &&
       (
-        session.index !== QUESTIONS[session.level].length - 1 ||
-        session.answers.length !== QUESTIONS[session.level].length ||
+        session.index !== questions.length - 1 ||
+        session.answers.length !== questions.length ||
         !ids.has(session.id)
       )
     ) {

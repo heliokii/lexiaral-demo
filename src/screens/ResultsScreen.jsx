@@ -118,7 +118,7 @@ export function ResultsScreen({ navigation, route }) {
     );
   }
 
-  const questions = QUESTIONS[attempt.level];
+  const questions = attempt.questions || QUESTIONS[attempt.level];
 
   const startLevel = async (level) => {
     const next = await dispatch(newSessionAction(level));
@@ -128,7 +128,7 @@ export function ResultsScreen({ navigation, route }) {
 
   const categoryResult = (category) => {
     const answers = attempt.answers.filter(
-      (_, index) => questions[index].category === category,
+      (_, index) => (questions?.[index]?.category || "vocabulary") === category,
     );
 
     return `${answers.filter((answer) => answer.correct).length}/${answers.length}`;
@@ -339,8 +339,10 @@ export function ResultsScreen({ navigation, route }) {
 
         {showAnswers &&
           attempt.answers.map((answer, index) => {
-            const question = questions[index];
-            const chosen = question.choices.find(
+            const question =
+              questions?.[index] || QUESTIONS[attempt.level]?.[index];
+            if (!question) return null;
+            const chosen = question.choices?.find(
               (choice) => choice.id === answer.choiceId,
             );
 

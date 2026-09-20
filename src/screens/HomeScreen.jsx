@@ -82,7 +82,7 @@ export function HomeScreen({ navigation }) {
         testID="home-hero-card"
         style={[styles.hero, stacked && styles.heroStacked]}
       >
-        <View style={{ width: stacked ? "55%" : "46%" }}>
+        <View style={{ width: stacked ? "50%" : "44%", alignItems: "center", justifyContent: "center" }}>
           <AnimatedLexi
             name={
               state.lifetimeStars >= 9
@@ -91,13 +91,13 @@ export function HomeScreen({ navigation }) {
                   ? "owl_happy"
                   : "owl-reading"
             }
-            height={stacked ? 155 : 175}
+            height={stacked ? 125 : 140}
             pupilName={state.pupilName}
             onSpeak={(spokenText) => setLexiSpeechText(spokenText)}
           />
         </View>
 
-        <View style={{ flex: 1, gap: 5 }}>
+        <View style={{ flex: 1, gap: 4 }}>
           <Title
             testID="home-hero-title"
             style={[styles.heroTitle, stacked && styles.center]}
@@ -135,7 +135,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.mainActionIconWrap}>
-            <Icon name="cards" size={38} color="#7548C7" />
+            <Icon name="cards" size={30} color="#7548C7" />
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>LEARN</Text>
@@ -158,7 +158,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.mainActionIconWrapPlay}>
-            <Icon name="book" size={38} color="#24865E" />
+            <Icon name="book" size={30} color="#24865E" />
           </View>
           <View style={{ gap: 2, alignItems: "center" }}>
             <Text style={styles.mainActionTitle}>PLAY</Text>
@@ -182,7 +182,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.statIconBadgeStar}>
-            <Icon name="star" color="#D98A09" size={36} />
+            <Icon name="star" color="#D98A09" size={28} />
           </View>
           <View style={styles.statContent}>
             <Text style={styles.statNumber}>{state.lifetimeStars}</Text>
@@ -205,7 +205,7 @@ export function HomeScreen({ navigation }) {
           ]}
         >
           <View style={styles.statIconBadgeTrophy}>
-            <Icon name="badge" color="#C73E58" size={36} />
+            <Icon name="badge" color="#C73E58" size={28} />
           </View>
           <View style={styles.statContent}>
             <Text style={styles.statNumber}>{state.badges.length}</Text>
@@ -284,31 +284,31 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   heroTitle: {
-    fontSize: 34,
-    lineHeight: 40,
+    fontSize: 28,
+    lineHeight: 34,
   },
   heroText: {
-    fontSize: 19.5,
-    lineHeight: 27,
+    fontSize: 16,
+    lineHeight: 22,
   },
   mainActionRow: {
     flexDirection: "row",
-    gap: 16,
+    gap: 14,
     marginVertical: 4,
   },
   mainActionCard: {
     flex: 1,
-    minHeight: 172,
-    borderRadius: 24,
-    padding: 16,
+    minHeight: 138,
+    borderRadius: 20,
+    padding: 12,
     alignItems: "center",
     justifyContent: "space-between",
     borderWidth: 2,
     shadowColor: "#8C77B0",
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   learnCard: {
     backgroundColor: "#FAF7FF",
@@ -319,58 +319,58 @@ const styles = StyleSheet.create({
     borderColor: "#BAEAD4",
   },
   mainActionIconWrap: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: "#EAE1FC",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 4,
+    marginTop: 2,
   },
   mainActionIconWrapPlay: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: "#D7F5E7",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 4,
+    marginTop: 2,
   },
   mainActionTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 24,
-    letterSpacing: 0.6,
+    fontSize: 20,
+    letterSpacing: 0.5,
     color: colors.text,
   },
   mainActionSub: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 13,
+    fontSize: 12,
     color: colors.muted,
   },
   actionPillLearn: {
     backgroundColor: "#EDE5FD",
-    borderRadius: 14,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
+    borderRadius: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: "#D9C8FA",
   },
   actionPillTextLearn: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 12.5,
+    fontSize: 11.5,
     color: "#6536BC",
   },
   actionPillPlay: {
     backgroundColor: "#DEFAEC",
-    borderRadius: 14,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
+    borderRadius: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: "#B0ECCB",
   },
   actionPillTextPlay: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 12.5,
+    fontSize: 11.5,
     color: "#1B734E",
   },
   homeTile: {
@@ -402,36 +402,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    borderRadius: 24,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 20,
     borderWidth: 1.5,
     borderColor: "#DECFFC",
     shadowColor: "#8C77B0",
     shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
-    marginVertical: 4,
+    marginVertical: 2,
   },
   statItem: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 16,
+    gap: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRadius: 14,
   },
   statItemPressed: {
     backgroundColor: "rgba(108, 71, 199, 0.08)",
     transform: [{ scale: 0.97 }],
   },
   statIconBadgeStar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: "#FFF7DB",
     alignItems: "center",
     justifyContent: "center",
@@ -439,9 +439,9 @@ const styles = StyleSheet.create({
     borderColor: "#FFE299",
   },
   statIconBadgeTrophy: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     backgroundColor: "#FFF0F3",
     alignItems: "center",
     justifyContent: "center",

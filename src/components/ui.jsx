@@ -57,6 +57,8 @@ export function Screen({
   scrollRef,
   bottomSlot,
   scrollEnabled = true,
+  hideBack = false,
+  onBack,
   testID,
 }) {
   const { busy, error } = useLearning();
@@ -66,6 +68,7 @@ export function Screen({
 
   const isSubScreen = !['Home', 'Welcome', 'Activity', 'Results'].includes(route.name);
   const hasNativeHeader = ['Activity', 'Results'].includes(route.name);
+  const showPersistentBack = isSubScreen && !hideBack;
 
   return (
     <View
@@ -81,20 +84,13 @@ export function Screen({
         />
       </View>
 
-      <ScrollView
-        ref={scrollRef}
-        scrollEnabled={scrollEnabled}
-        contentContainerStyle={[
-          styles.content,
-          {
-            paddingTop: hasNativeHeader ? 14 : insets.top + 10,
-            paddingBottom: bottomSlot ? 14 : 26,
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {isSubScreen && (
+      {showPersistentBack && (
+        <View
+          style={[
+            styles.persistentHeaderBar,
+            { paddingTop: Math.max(insets.top, 8) },
+          ]}
+        >
           <Pressable
             testID="screen-back-btn"
             accessibilityRole="button"
@@ -102,7 +98,11 @@ export function Screen({
             onPress={() => {
               playTapSfx();
               stopAudio();
-              navigation.navigate('Home');
+              if (onBack) {
+                onBack();
+              } else {
+                navigation.navigate('Home');
+              }
             }}
             style={({ pressed }) => [
               styles.screenBackBtn,
@@ -111,12 +111,31 @@ export function Screen({
           >
             <Icon
               name="arrowLeft"
-              size={22}
+              size={20}
               color="#8065CE"
             />
           </Pressable>
-        )}
+          <HeaderAudioToggle />
+        </View>
+      )}
 
+      <ScrollView
+        ref={scrollRef}
+        scrollEnabled={scrollEnabled}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: hasNativeHeader
+              ? 10
+              : showPersistentBack
+                ? 8
+                : Math.max(insets.top + 8, 14),
+            paddingBottom: bottomSlot ? 16 : Math.max(insets.bottom + 20, 28),
+          },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         {CONTENT.status === 'demo' && (
           <View testID="demo-status-pill" style={styles.demoPill}>
             <Text style={styles.demoText}>DEMO · Not yet ARAL-verified</Text>
@@ -138,20 +157,18 @@ export function Screen({
         {children}
       </ScrollView>
 
-      {bottomSlot ? (
+      {bottomSlot && (
         <View
           testID="bottom-slot-container"
           style={[
             styles.bottomSlotWrapper,
             {
-              paddingBottom: Math.max(insets.bottom, 12),
+              paddingBottom: Math.max(insets.bottom + 8, 16),
             },
           ]}
         >
           {bottomSlot}
         </View>
-      ) : (
-        <View style={{ height: Math.max(insets.bottom, 12) }} />
       )}
     </View>
   );
@@ -294,8 +311,14 @@ export function HeaderAudioToggle() {
 }
 
 export function ActivityHeader({ title, onBack }) {
+  const insets = useSafeAreaInsets();
   return (
-    <View style={styles.activityHeader}>
+    <View
+      style={[
+        styles.activityHeader,
+        { paddingTop: Math.max(insets.top + 6, 12) },
+      ]}
+    >
       <Pressable
         testID="activity-back-btn"
         accessible
@@ -463,17 +486,33 @@ const styles = StyleSheet.create({
     borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: 'transparent',
-    marginBottom: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    borderWidth: 1.5,
+    borderColor: '#D4C6F4',
+    shadowColor: '#7E65B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  persistentHeaderBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+    width: '100%',
+    maxWidth: 540,
+    alignSelf: 'center',
+    zIndex: 10,
   },
   encouragement: {
     fontFamily: 'Nunito_800ExtraBold',
     color: '#9B85C6',
-    fontSize: 18,
+    fontSize: 17,
     textAlign: 'center',
-    transform: [{ rotate: '-5deg' }],
-    paddingVertical: 12,
+    transform: [{ rotate: '-4deg' }],
+    paddingVertical: 4,
   },
   bottomSlotWrapper: {
     width: '100%',

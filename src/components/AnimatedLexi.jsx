@@ -352,7 +352,7 @@ export function AnimatedLexi({
     outputRange: [0.85, 1.2],
   });
 
-  const isReadingOwl = name === "owl-reading";
+  const isReadingOwl = name === "owl-reading" || name === "owl_reading";
 
   const mascotView = (
     <Animated.View
@@ -414,7 +414,7 @@ export function AnimatedLexi({
           </Animated.View>
         </View>
       ) : (
-        <Art name={name} height={height} />
+        <Art name={name} width={size} height={size} />
       )}
     </Animated.View>
   );

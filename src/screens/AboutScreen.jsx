@@ -61,7 +61,7 @@ export function AboutScreen({ navigation }) {
       {/* Hero Header */}
       <View style={styles.heroSection}>
         <View style={styles.mascotGlow}>
-          <Art name="owl_happy" height={130} />
+          <Art name="owl_happy" width={130} height={130} />
         </View>
         <Title testID="about-screen-title" style={styles.heroTitle}>
           LEXIARAL
@@ -280,6 +280,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   mascotGlow: {
+    width: 130,
+    height: 130,
     alignItems: "center",
     justifyContent: "center",
   },

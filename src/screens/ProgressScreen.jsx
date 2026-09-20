@@ -141,7 +141,7 @@ export function ProgressScreen({ navigation }) {
 
         {!recentAttempts.length ? (
           <View style={{ alignItems: "center", paddingVertical: 14, gap: 8 }}>
-            <Art name="owl_sleeping" height={95} />
+            <Art name="owl_sleeping" width={95} height={95} />
             <Body
               style={{
                 color: colors.muted,

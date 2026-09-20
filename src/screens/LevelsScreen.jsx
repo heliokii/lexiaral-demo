@@ -162,7 +162,8 @@ export default function LevelsScreen({ navigation }) {
                                 ? "owl_thinking"
                                 : "owl_excited"
                   }
-                  height={124}
+                  width={78}
+                  height={78}
                 />
               </View>
 
@@ -259,41 +260,41 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
     justifyContent: "center",
-    paddingVertical: 10,
-    gap: 16,
+    paddingVertical: 6,
+    gap: 12,
   },
   header: {
     gap: 4,
   },
   title: {
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 26,
+    lineHeight: 32,
     color: colors.darkPurple,
   },
   subtitle: {
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 21,
     color: colors.muted,
   },
   levelList: {
-    gap: 18,
+    gap: 12,
   },
   levelCard: {
-    minHeight: 172,
+    minHeight: 125,
     backgroundColor: "#FFFFFF",
-    borderRadius: 26,
-    paddingHorizontal: 18,
-    paddingVertical: 22,
-    paddingTop: 32,
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    paddingTop: 16,
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
+    gap: 12,
     borderWidth: 1.5,
     borderColor: "#ECE6F7",
     shadowColor: "#7C67A6",
-    shadowOpacity: 0.09,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
     elevation: 2,
     position: "relative",
   },
@@ -318,14 +319,14 @@ const styles = StyleSheet.create({
   },
   levelTitle: {
     fontFamily: "Nunito_900Black",
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 19,
+    lineHeight: 24,
     color: colors.darkPurple,
   },
   description: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 14.5,
+    lineHeight: 20,
     color: colors.text,
   },
   resumeRow: {
@@ -382,9 +383,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   chevron: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 36,
+    width: 36,
+    borderRadius: 18,
     backgroundColor: "#F0EBF9",
     alignItems: "center",
     justifyContent: "center",

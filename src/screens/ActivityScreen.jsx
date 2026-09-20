@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CONTENT, STORIES, getFeedbackDetails } from "../content";
 import { Art, Icon } from "../Art";
@@ -52,6 +53,7 @@ const INSTRUCTIONS = {
 };
 
 export function ActivityScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const { state, dispatch, busy } = useLearning();
   const session = state.session;
 
@@ -312,28 +314,8 @@ export function ActivityScreen({ navigation }) {
       ) || CONTENT.story;
 
     return (
-      <Screen>
-        <ActivityHeader
-          title={`Level ${session.level}`}
-          onBack={() => navigation.navigate("Home")}
-        />
-
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "space-between",
-            paddingTop: 6,
-            paddingBottom: 16,
-            gap: 16,
-          }}
-        >
-          <InteractiveStoryReaderWidget
-            story={activeStory}
-            onSelectStory={(storyId) =>
-              dispatch({ type: "SELECT_STORY", storyId })
-            }
-          />
-
+      <Screen
+        bottomSlot={
           <Button
             title="NEXT: ANSWER QUESTIONS"
             tone="purple"
@@ -343,7 +325,26 @@ export function ActivityScreen({ navigation }) {
               stopAudio();
               await dispatch({ type: "READ_DONE" });
             }}
-            style={{ minHeight: 56 }}
+            style={{ minHeight: 54 }}
+          />
+        }
+      >
+        <ActivityHeader
+          title={`Level ${session.level}`}
+          onBack={() => navigation.navigate("Home")}
+        />
+
+        <View
+          style={{
+            paddingTop: 6,
+            paddingBottom: 12,
+          }}
+        >
+          <InteractiveStoryReaderWidget
+            story={activeStory}
+            onSelectStory={(storyId) =>
+              dispatch({ type: "SELECT_STORY", storyId })
+            }
           />
         </View>
       </Screen>
@@ -569,6 +570,7 @@ export function ActivityScreen({ navigation }) {
               {
                 borderColor: isCorrect ? "#8FE3B6" : "#FFAFA7",
                 transform: [{ translateY: slideAnim }],
+                paddingBottom: Math.max(insets.bottom + 16, 24),
               },
             ]}
           >
@@ -633,8 +635,8 @@ export function ActivityScreen({ navigation }) {
             {/* Centered Body Details */}
             <View style={styles.sheetBodyContent}>
               {feedbackDetails.correctLabel ? (
-                <View style={styles.correctAnswerRow}>
-                  {feedbackDetails.isMatching ? (
+                feedbackDetails.isMatching ? (
+                  <View style={styles.correctAnswerRow}>
                     <View
                       style={[
                         styles.correctAnswerChip,
@@ -650,34 +652,62 @@ export function ActivityScreen({ navigation }) {
                         All pairs matched!
                       </Text>
                     </View>
-                  ) : (
-                    <>
+                  </View>
+                ) : feedbackDetails.correctLabel.length > 24 ? (
+                  <View style={styles.correctAnswerColLong}>
+                    <Text
+                      style={[
+                        styles.correctAnswerLabelLong,
+                        isCorrect && styles.correctAnswerLabelCorrect,
+                      ]}
+                    >
+                      CORRECT ANSWER
+                    </Text>
+                    <View
+                      style={[
+                        styles.correctAnswerChip,
+                        styles.correctAnswerCardLong,
+                        isCorrect && styles.correctAnswerChipCorrect,
+                      ]}
+                    >
                       <Text
                         style={[
-                          styles.correctAnswerLabel,
-                          isCorrect && styles.correctAnswerLabelCorrect,
+                          styles.correctAnswerChipText,
+                          styles.correctAnswerChipTextLong,
+                          isCorrect && styles.correctAnswerChipTextCorrect,
                         ]}
                       >
-                        Correct answer:
+                        {feedbackDetails.correctLabel}
                       </Text>
-                      <View
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.correctAnswerRow}>
+                    <Text
+                      style={[
+                        styles.correctAnswerLabel,
+                        isCorrect && styles.correctAnswerLabelCorrect,
+                      ]}
+                    >
+                      Correct answer:
+                    </Text>
+                    <View
+                      style={[
+                        styles.correctAnswerChip,
+                        isCorrect && styles.correctAnswerChipCorrect,
+                      ]}
+                    >
+                      <Text
                         style={[
-                          styles.correctAnswerChip,
-                          isCorrect && styles.correctAnswerChipCorrect,
+                          styles.correctAnswerChipText,
+                          isCorrect && styles.correctAnswerChipTextCorrect,
                         ]}
                       >
-                        <Text
-                          style={[
-                            styles.correctAnswerChipText,
-                            isCorrect && styles.correctAnswerChipTextCorrect,
-                          ]}
-                        >
-                          {feedbackDetails.correctLabel}
-                        </Text>
-                      </View>
-                    </>
-                  )}
-                </View>
+                        {feedbackDetails.correctLabel}
+                      </Text>
+                    </View>
+                  </View>
+                )
               ) : null}
 
               {feedbackDetails.explanation ? (
@@ -832,11 +862,26 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     flexWrap: "wrap",
+    maxWidth: "100%",
+  },
+  correctAnswerColLong: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: "100%",
+    gap: 6,
   },
   correctAnswerLabel: {
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
     color: "#6B5E80",
+  },
+  correctAnswerLabelLong: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    letterSpacing: 0.8,
+    color: "#7E6E96",
   },
   correctAnswerLabelCorrect: {
     color: "#187242",
@@ -846,8 +891,18 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#FFC5CE",
     borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    maxWidth: "100%",
+    flexShrink: 1,
+  },
+  correctAnswerCardLong: {
+    width: "100%",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    alignItems: "center",
+    justifyContent: "center",
   },
   correctAnswerChipCorrect: {
     backgroundColor: "#E8F8F0",
@@ -858,6 +913,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#A32437",
     letterSpacing: 0.3,
+    textAlign: "center",
+  },
+  correctAnswerChipTextLong: {
+    fontFamily: fonts.reading,
+    fontSize: 15,
+    lineHeight: 22,
+    letterSpacing: 0,
+    fontWeight: "700",
   },
   correctAnswerChipTextCorrect: {
     color: "#166F42",
@@ -871,18 +934,17 @@ const styles = StyleSheet.create({
   },
   storyQuestionCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 22,
-    minHeight: 180,
-    justifyContent: "space-between",
+    borderRadius: 22,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderWidth: 1.5,
     borderColor: "#E5DAFA",
-    gap: 14,
+    gap: 10,
     shadowColor: "#6B42A6",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowRadius: 8,
+    elevation: 2,
   },
   storyQuestionHeaderRow: {
     flexDirection: "row",

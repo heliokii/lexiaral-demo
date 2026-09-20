@@ -167,6 +167,36 @@ export function ConfettiCelebration() {
   return <NativeConfettiFallback />;
 }
 
+// Precomputed scattered particle specs for native mobile (iOS / Android)
+const NATIVE_PARTICLES = Array.from({ length: 60 }).map((_, i) => {
+  // Disperse X across 3% to 95%
+  const leftPct = ((i * 17.3 + 7) % 92) + 4;
+  // Stagger startY so particles are distributed vertically by up to 700px
+  const startY = -40 - ((i * 43) % 720);
+  // Vary fall distance and speed
+  const extraFall = (i * 31) % 360;
+  // Horizontal air drift / sway
+  const sway = (((i % 7) - 3) * 12);
+  // Spin turns
+  const spinTurns = (i % 2 === 0 ? 1 : -1) * (2 + (i % 4));
+  // Shape: 0=ribbon, 1=square, 2=circle, 3=diamond
+  const shapeType = i % 4;
+  const size = 8 + (i % 4) * 2.5;
+  const color = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+
+  return {
+    id: i,
+    leftPct: `${leftPct}%`,
+    startY,
+    extraFall,
+    sway,
+    spinTurns,
+    shapeType,
+    size,
+    color,
+  };
+});
+
 // Fallback for native mobile platforms (iOS / Android)
 function NativeConfettiFallback() {
   const windowDims = Dimensions.get("window");
@@ -175,42 +205,50 @@ function NativeConfettiFallback() {
   useEffect(() => {
     Animated.timing(animValue, {
       toValue: 1,
-      duration: 5500,
+      duration: 6200,
       useNativeDriver: true,
     }).start();
   }, [animValue]);
 
-  const nativeItems = Array.from({ length: 48 }).map((_, i) => ({
-    id: i,
-    left: `${(i * 2.1) % 94}%`,
-    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-    size: 10 + (i % 4) * 3,
-  }));
+  const opacity = animValue.interpolate({
+    inputRange: [0, 0.05, 0.84, 1],
+    outputRange: [0, 1, 1, 0],
+  });
 
   return (
     <View pointerEvents="none" style={styles.nativeOverlay}>
-      {nativeItems.map((item) => {
+      {NATIVE_PARTICLES.map((p) => {
         const translateY = animValue.interpolate({
           inputRange: [0, 1],
-          outputRange: [-40, windowDims.height + 60],
+          outputRange: [p.startY, windowDims.height + 60 + p.extraFall],
+        });
+
+        const translateX = animValue.interpolate({
+          inputRange: [0, 0.3, 0.65, 1],
+          outputRange: [0, p.sway, -p.sway * 0.8, p.sway * 0.5],
         });
 
         const rotate = animValue.interpolate({
           inputRange: [0, 1],
-          outputRange: ["0deg", `${360 * (item.id % 2 === 0 ? 2 : -2)}deg`],
+          outputRange: ["0deg", `${360 * p.spinTurns}deg`],
         });
+
+        const isCircle = p.shapeType === 2;
+        const isRibbon = p.shapeType === 0;
 
         return (
           <Animated.View
-            key={item.id}
+            key={p.id}
             style={[
               styles.nativePiece,
               {
-                left: item.left,
-                width: item.size,
-                height: item.size * 1.5,
-                backgroundColor: item.color,
-                transform: [{ translateY }, { rotate }],
+                left: p.leftPct,
+                width: isRibbon ? p.size * 0.7 : p.size,
+                height: isRibbon ? p.size * 1.8 : p.size,
+                borderRadius: isCircle ? p.size * 0.5 : 2,
+                backgroundColor: p.color,
+                opacity,
+                transform: [{ translateY }, { translateX }, { rotate }],
               },
             ]}
           />
@@ -233,8 +271,8 @@ const styles = StyleSheet.create({
   nativePiece: {
     position: "absolute",
     top: 0,
-    borderRadius: 2,
   },
 });
 
 export default ConfettiCelebration;
+
