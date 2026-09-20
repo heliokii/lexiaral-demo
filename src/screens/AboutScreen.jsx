@@ -204,6 +204,9 @@ export function AboutScreen({ navigation }) {
                   ]}
                 >
                   <Text
+                    numberOfLines={1}
+                    adjustsFontSizeToFit={true}
+                    minimumFontScale={0.8}
                     style={[
                       styles.segmentBtnText,
                       active && styles.segmentBtnTextActive,
@@ -474,7 +477,9 @@ const styles = StyleSheet.create({
   },
   segmentBtn: {
     flex: 1,
+    minHeight: 38,
     paddingVertical: 8,
+    paddingHorizontal: 4,
     borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",

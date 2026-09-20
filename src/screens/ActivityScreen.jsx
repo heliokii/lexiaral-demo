@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CONTENT, STORIES, getFeedbackDetails } from "../content";
@@ -108,202 +108,239 @@ export function ActivityScreen({ navigation }) {
     }
   }, [answer?.choiceId]);
 
+  const handleSelectStory = (storyId) => {
+    if (session?.answers && session.answers.length > 0) {
+      const msg = "Switch stories? Your current quiz answers will reset for the new story.";
+      if (typeof window !== "undefined" && window.confirm) {
+        if (!window.confirm(msg)) return;
+      } else {
+        Alert.alert(
+          "Switch Story?",
+          "Your current quiz answers will reset for the new story.",
+          [
+            { text: "Keep Current Story", style: "cancel" },
+            {
+              text: "Switch Story",
+              onPress: () => dispatch({ type: "SELECT_STORY", storyId }),
+            },
+          ]
+        );
+        return;
+      }
+    }
+    dispatch({ type: "SELECT_STORY", storyId });
+  };
+
   if (!session) {
     return (
-      <Screen>
+      <View style={styles.container}>
         <ActivityHeader
           title="Activity"
-          onBack={() => navigation.navigate("Home")}
+          onBack={() => {
+            stopAudio();
+            navigation.navigate("Levels");
+          }}
         />
-        <View style={{ flex: 1, justifyContent: "center", gap: 16, paddingVertical: 20 }}>
-          <Title style={{ textAlign: "center" }}>Ready to learn?</Title>
-          <Button
-            title="CHOOSE A LEVEL"
-            tone="purple"
-            arrow
-            onPress={() => navigation.replace("Levels")}
-          />
-        </View>
-      </Screen>
+        <Screen>
+          <View style={{ flex: 1, justifyContent: "center", gap: 16, paddingVertical: 20 }}>
+            <Title style={{ textAlign: "center" }}>Ready to learn?</Title>
+            <Button
+              title="CHOOSE A LEVEL"
+              tone="purple"
+              arrow
+              onPress={() => navigation.replace("Levels")}
+            />
+          </View>
+        </Screen>
+      </View>
     );
   }
 
   if (session.phase === "done") {
     return (
-      <Screen>
+      <View style={styles.container}>
         <ActivityHeader
           title={`Level ${session.level}`}
-          onBack={() => navigation.navigate("Home")}
+          onBack={() => {
+            stopAudio();
+            navigation.navigate("Levels");
+          }}
         />
-        <View style={{ flex: 1, justifyContent: "center", gap: 16, paddingVertical: 20 }}>
-          <Title style={{ textAlign: "center" }}>Activity complete!</Title>
-          <Button
-            title="SEE MY RESULT"
-            tone="purple"
-            arrow
-            onPress={() => navigation.replace("Results", { id: session.id })}
-          />
-        </View>
-      </Screen>
+        <Screen>
+          <View style={{ flex: 1, justifyContent: "center", gap: 16, paddingVertical: 20 }}>
+            <Title style={{ textAlign: "center" }}>Activity complete!</Title>
+            <Button
+              title="SEE MY RESULT"
+              tone="purple"
+              arrow
+              onPress={() => navigation.replace("Results", { id: session.id })}
+            />
+          </View>
+        </Screen>
+      </View>
     );
   }
 
   if (session.phase === "instructions") {
     return (
-      <Screen>
+      <View style={styles.container}>
         <ActivityHeader
           title={`Level ${session.level}`}
-          onBack={() => navigation.navigate("Home")}
-        />
-
-        <View
-          testID="instructions-container"
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            paddingVertical: 18,
-            gap: 16,
+          onBack={() => {
+            stopAudio();
+            navigation.navigate("Levels");
           }}
-        >
-          <Card
-            testID="instructions-card"
+        />
+        <Screen testID="screen-activity">
+          <View
+            testID="instructions-container"
             style={{
-              padding: 24,
-              borderRadius: 24,
-              borderColor: "#DCD0F8",
-              borderWidth: 1.5,
-              backgroundColor: "rgba(255, 255, 255, 0.96)",
-              alignItems: "center",
-              gap: 14,
-              shadowColor: "#5E4399",
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.08,
-              shadowRadius: 14,
-              elevation: 3,
-              position: "relative",
+              flex: 1,
+              justifyContent: "center",
+              paddingVertical: 18,
+              gap: 16,
             }}
           >
-            {/* Top-right absolute audio button */}
-            <Pressable
-              testID="instructions-hear-btn"
-              accessible
-              accessibilityRole="button"
-              accessibilityLabel="Hear instructions"
-              onPress={() =>
-                speak(
-                  `${INSTRUCTIONS[session.level]} Correct answers earn stars; mistakes help you learn!`,
-                  "en-US",
-                  true
-                )
-              }
-              style={({ pressed }) => [
-                {
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  zIndex: 10,
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
-                  backgroundColor: "#F4EEFD",
-                  borderWidth: 1,
-                  borderColor: "#E1D4FA",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  shadowColor: "#8C77B0",
-                  shadowOpacity: 0.08,
-                  shadowRadius: 4,
-                  shadowOffset: { width: 0, height: 2 },
-                  elevation: 2,
-                },
-                pressed && { opacity: 0.75, transform: [{ scale: 0.94 }] },
-              ]}
-            >
-              <Icon name="sound" size={19} color={colors.primary} />
-            </Pressable>
-
-            <View style={{ alignItems: "center", paddingVertical: 4 }}>
-              <Art name="owl_thinking" height={108} width={108} />
-            </View>
-
-            <Title
-              testID="instructions-title"
+            <Card
+              testID="instructions-card"
               style={{
-                fontSize: 24,
-                lineHeight: 30,
-                color: colors.darkPurple,
-                textAlign: "center",
-              }}
-            >
-              How to Play
-            </Title>
-
-            <Text
-              testID="instructions-text"
-              style={{
-                fontFamily: "Nunito_700Bold",
-                fontSize: 17.5,
-                lineHeight: 26,
-                color: "#2C1B4D",
-                textAlign: "center",
-                paddingHorizontal: 8,
-              }}
-            >
-              {INSTRUCTIONS[session.level]}
-            </Text>
-
-            <View
-              style={{
-                height: 1,
-                width: "90%",
-                backgroundColor: "#EFE8FC",
-                marginVertical: 2,
-              }}
-            />
-
-            <View
-              style={{
-                flexDirection: "row",
+                padding: 24,
+                borderRadius: 24,
+                borderColor: "#DCD0F8",
+                borderWidth: 1.5,
+                backgroundColor: "rgba(255, 255, 255, 0.96)",
                 alignItems: "center",
-                gap: 8,
-                backgroundColor: "#FFF8E7",
-                borderWidth: 1,
-                borderColor: "#F7DE9B",
-                borderRadius: 16,
-                paddingHorizontal: 14,
-                paddingVertical: 7,
-                alignSelf: "center",
+                gap: 14,
+                shadowColor: "#5E4399",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.08,
+                shadowRadius: 14,
+                elevation: 3,
+                position: "relative",
               }}
             >
-              <Icon name="star" size={16} color="#E59812" />
-              <Text
+              {/* Top-right absolute audio button */}
+              <Pressable
+                testID="instructions-hear-btn"
+                accessible
+                accessibilityRole="button"
+                accessibilityLabel="Hear instructions"
+                onPress={() =>
+                  speak(
+                    `${INSTRUCTIONS[session.level]} Correct answers earn stars; mistakes help you learn!`,
+                    "en-US",
+                    true
+                  )
+                }
+                style={({ pressed }) => [
+                  {
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    zIndex: 10,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: "#F4EEFD",
+                    borderWidth: 1,
+                    borderColor: "#E1D4FA",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: "#8C77B0",
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4,
+                    shadowOffset: { width: 0, height: 2 },
+                    elevation: 2,
+                  },
+                  pressed && { opacity: 0.75, transform: [{ scale: 0.94 }] },
+                ]}
+              >
+                <Icon name="sound" size={19} color={colors.primary} />
+              </Pressable>
+
+              <View style={{ alignItems: "center", paddingVertical: 4 }}>
+                <Art name="owl_thinking" height={108} width={108} />
+              </View>
+
+              <Title
+                testID="instructions-title"
                 style={{
-                  fontFamily: "Nunito_700Bold",
-                  fontSize: 13.5,
-                  lineHeight: 19,
-                  color: "#7A5918",
+                  fontSize: 24,
+                  lineHeight: 30,
+                  color: colors.darkPurple,
                   textAlign: "center",
                 }}
               >
-                Correct answers earn stars; mistakes help you learn!
-              </Text>
-            </View>
-          </Card>
+                How to Play
+              </Title>
 
-          <Button
-            testID="instructions-begin-btn"
-            title={session.level === 3 ? "READ THE STORY" : "BEGIN"}
-            tone="purple"
-            arrow
-            disabled={busy}
-            onPress={async () => {
-              stopAudio();
-              await dispatch({ type: "BEGIN" });
-            }}
-            style={{ minHeight: 56, marginTop: 8 }}
-          />
-        </View>
-      </Screen>
+              <Text
+                testID="instructions-text"
+                style={{
+                  fontFamily: "Nunito_700Bold",
+                  fontSize: 17.5,
+                  lineHeight: 26,
+                  color: "#2C1B4D",
+                  textAlign: "center",
+                  paddingHorizontal: 8,
+                }}
+              >
+                {INSTRUCTIONS[session.level]}
+              </Text>
+
+              <View
+                style={{
+                  height: 1,
+                  width: "90%",
+                  backgroundColor: "#EFE8FC",
+                  marginVertical: 2,
+                }}
+              />
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  backgroundColor: "#FFF8E7",
+                  borderWidth: 1,
+                  borderColor: "#F7DE9B",
+                  borderRadius: 16,
+                  paddingHorizontal: 14,
+                  paddingVertical: 7,
+                  alignSelf: "center",
+                }}
+              >
+                <Icon name="star" size={16} color="#E59812" />
+                <Text
+                  style={{
+                    fontFamily: "Nunito_700Bold",
+                    fontSize: 13.5,
+                    lineHeight: 19,
+                    color: "#7A5918",
+                    textAlign: "center",
+                  }}
+                >
+                  Correct answers earn stars; mistakes help you learn!
+                </Text>
+              </View>
+            </Card>
+
+            <Button
+              testID="instructions-begin-btn"
+              title={session.level === 3 ? "READ THE STORY" : "BEGIN"}
+              tone="purple"
+              arrow
+              disabled={busy}
+              onPress={async () => {
+                stopAudio();
+                await dispatch({ type: "BEGIN" });
+              }}
+              style={{ minHeight: 56, marginTop: 8 }}
+            />
+          </View>
+        </Screen>
+      </View>
     );
   }
 
@@ -314,40 +351,43 @@ export function ActivityScreen({ navigation }) {
       ) || CONTENT.story;
 
     return (
-      <Screen
-        bottomSlot={
-          <Button
-            title="ANSWER QUESTIONS"
-            tone="purple"
-            arrow
-            disabled={busy}
-            onPress={async () => {
-              stopAudio();
-              await dispatch({ type: "READ_DONE" });
-            }}
-            style={{ minHeight: 54 }}
-          />
-        }
-      >
+      <View style={styles.container}>
         <ActivityHeader
           title={`Level ${session.level}`}
-          onBack={() => navigation.navigate("Home")}
-        />
-
-        <View
-          style={{
-            paddingTop: 6,
-            paddingBottom: 12,
+          onBack={() => {
+            stopAudio();
+            navigation.navigate("Levels");
           }}
+        />
+        <Screen
+          testID="screen-activity"
+          bottomSlot={
+            <Button
+              title="ANSWER QUESTIONS"
+              tone="purple"
+              arrow
+              disabled={busy}
+              onPress={async () => {
+                stopAudio();
+                await dispatch({ type: "READ_DONE" });
+              }}
+              style={{ minHeight: 54 }}
+            />
+          }
         >
-          <InteractiveStoryReaderWidget
-            story={activeStory}
-            onSelectStory={(storyId) =>
-              dispatch({ type: "SELECT_STORY", storyId })
-            }
-          />
-        </View>
-      </Screen>
+          <View
+            style={{
+              paddingTop: 6,
+              paddingBottom: 12,
+            }}
+          >
+            <InteractiveStoryReaderWidget
+              story={activeStory}
+              onSelectStory={handleSelectStory}
+            />
+          </View>
+        </Screen>
+      </View>
     );
   }
 
@@ -490,9 +530,7 @@ export function ActivityScreen({ navigation }) {
                       (s) => s.id === (session.storyId || state.selectedStoryId),
                     ) || CONTENT.story
                   }
-                  onSelectStory={(storyId) =>
-                    dispatch({ type: "SELECT_STORY", storyId })
-                  }
+                  onSelectStory={handleSelectStory}
                 />
               )}
 

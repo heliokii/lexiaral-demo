@@ -102,6 +102,7 @@ export function ResultsScreen({ navigation, route }) {
       });
       return () => {
         isMounted = false;
+        stopAudio();
       };
     }
   }, [attempt?.id]);
@@ -342,9 +343,19 @@ export function ResultsScreen({ navigation, route }) {
             const question =
               questions?.[index] || QUESTIONS[attempt.level]?.[index];
             if (!question) return null;
+            const isMatching =
+              question.type === "matching" ||
+              question.id === "easy-matching-all" ||
+              answer.choiceId === "all_matched";
             const chosen = question.choices?.find(
               (choice) => choice.id === answer.choiceId,
             );
+            const yourAnswerText = isMatching
+              ? (answer.correct ? "All 6 word-picture pairs matched" : "Partial matching")
+              : (chosen?.label || "No answer");
+            const correctAnswerText = isMatching
+              ? "Match all 6 word-picture pairs correctly"
+              : answerLabel(question);
 
             return (
               <Card
@@ -413,7 +424,7 @@ export function ResultsScreen({ navigation, route }) {
                     color: answer.correct ? "#1E8D5B" : "#C0392B",
                   }}
                 >
-                  Your answer: {chosen?.label}
+                  Your answer: {yourAnswerText}
                 </Text>
 
                 {!answer.correct && (
@@ -424,7 +435,7 @@ export function ResultsScreen({ navigation, route }) {
                       color: "#1E8D5B",
                     }}
                   >
-                    Correct answer: {answerLabel(question)}
+                    Correct answer: {correctAnswerText}
                   </Text>
                 )}
 

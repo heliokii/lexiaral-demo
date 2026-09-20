@@ -38,7 +38,7 @@ export function ProgressScreen({ navigation }) {
             <Icon name="star" size={22} color="#D98A09" />
           </View>
           <Text style={styles.statValue}>{state.lifetimeStars}</Text>
-          <Text style={styles.statLabel}>Total Stars</Text>
+          <Text numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.8} style={styles.statLabel}>Total Stars</Text>
         </View>
 
         <View style={[styles.statTile, { borderColor: "#BDE6D2" }]}>
@@ -46,7 +46,7 @@ export function ProgressScreen({ navigation }) {
             <Icon name="book" size={22} color="#20A464" />
           </View>
           <Text style={styles.statValue}>{state.learnedWordIds.length}</Text>
-          <Text style={styles.statLabel}>Words Mastered</Text>
+          <Text numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.8} style={styles.statLabel}>Words Mastered</Text>
         </View>
 
         <View style={[styles.statTile, { borderColor: "#DECFFC" }]}>
@@ -54,7 +54,7 @@ export function ProgressScreen({ navigation }) {
             <Icon name="cards" size={22} color="#6C47C7" />
           </View>
           <Text style={styles.statValue}>{state.history.length}</Text>
-          <Text style={styles.statLabel}>Activities Done</Text>
+          <Text numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.8} style={styles.statLabel}>Activities Done</Text>
         </View>
 
         <View style={[styles.statTile, { borderColor: "#F7C9D3" }]}>
@@ -64,7 +64,7 @@ export function ProgressScreen({ navigation }) {
           <Text style={styles.statValue}>
             {state.badges.length}/{BADGES.length}
           </Text>
-          <Text style={styles.statLabel}>Badges Earned</Text>
+          <Text numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.8} style={styles.statLabel}>Badges Earned</Text>
         </View>
       </View>
 
@@ -231,7 +231,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     borderWidth: 1.5,
-    padding: 12,
+    minHeight: 108,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
     gap: 4,

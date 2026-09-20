@@ -21,40 +21,7 @@ import {
   Title,
   colors,
 } from "../components/ui";
-
-export function Confetti() {
-  const pieces = [
-    [7, 18, "#9EDCCA", -24],
-    [19, 60, "#F5C1D0", 25],
-    [32, 10, "#F4D477", -18],
-    [49, 43, "#F6BCC9", 12],
-    [65, 9, "#C4B1EF", 30],
-    [81, 58, "#F3D780", -30],
-    [94, 20, "#A9DBC9", 15],
-    [9, 170, "#D2BEF0", 22],
-    [88, 177, "#F4B9CF", -18],
-  ];
-
-  return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-      {pieces.map(([left, top, color, rotation], index) => (
-        <View
-          key={index}
-          style={{
-            position: "absolute",
-            left: `${left}%`,
-            top,
-            width: 7,
-            height: 13,
-            borderRadius: 3,
-            backgroundColor: color,
-            transform: [{ rotate: `${rotation}deg` }],
-          }}
-        />
-      ))}
-    </View>
-  );
-}
+import { ConfettiCelebration } from "../components/ConfettiCelebration";
 
 export function FinalScreen({ navigation }) {
   const { state } = useLearning();
@@ -82,10 +49,9 @@ export function FinalScreen({ navigation }) {
   }, []);
 
   return (
-    <Screen testID="screen-final">
-      <View testID="final-confetti-container" style={{ position: "relative" }}>
-        <Confetti />
-
+    <View style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+      <ConfettiCelebration />
+      <Screen testID="screen-final" hideBack={true}>
         <View testID="final-celebration-hero" style={[styles.celebration, compact && styles.heroStacked]}>
           <View style={{ width: compact ? "65%" : "48%", alignItems: "center", justifyContent: "center" }}>
             <Art name={allCompleted ? "owl_excited" : "owl_cheering"} width={compact ? 170 : 200} height={compact ? 170 : 200} />
@@ -118,7 +84,6 @@ export function FinalScreen({ navigation }) {
             </Body>
           </View>
         </View>
-      </View>
 
       <Card testID="final-results-card" style={{ gap: 12, padding: 18 }}>
         <View style={styles.resultsCardHeader}>
@@ -227,6 +192,7 @@ export function FinalScreen({ navigation }) {
         </View>
       </View>
     </Screen>
+    </View>
   );
 }
 
@@ -264,6 +230,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 4,
+    flexWrap: "wrap",
+    gap: 6,
   },
   subtotalPill: {
     flexDirection: "row",

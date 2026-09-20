@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { Art } from "../Art";
+import { Art, Icon } from "../Art";
 import { AnimatedLexi } from "../components/AnimatedLexi";
 import { useLearning } from "../state/LearningProvider";
 import { Body, Button, Card, Screen, Title, colors } from "../components/ui";
@@ -28,6 +28,21 @@ export function WelcomeScreen({ navigation }) {
   return (
     <Screen testID="screen-welcome">
       <View testID="welcome-content-container" style={styles.welcome}>
+        {Boolean(state?.pupilName) && (
+          <Pressable
+            testID="welcome-back-btn"
+            accessibilityRole="button"
+            accessibilityLabel="Back to Home"
+            onPress={() => navigation.navigate("Home")}
+            style={({ pressed }) => [
+              styles.backBtn,
+              pressed && { opacity: 0.7, transform: [{ scale: 0.96 }] },
+            ]}
+          >
+            <Icon name="arrowLeft" size={18} color="#8065CE" />
+            <Text style={styles.backBtnText}>Back to Home</Text>
+          </Pressable>
+        )}
         <Text testID="welcome-brand-text" style={styles.brand}>LEXIARAL</Text>
         <AnimatedLexi name="owl-reading" height={150} />
         <View style={{ gap: 4 }}>
@@ -71,6 +86,29 @@ export function WelcomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   center: {
     textAlign: "center",
+  },
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1.5,
+    borderColor: "#DECFFC",
+    marginBottom: 6,
+    shadowColor: "#8C77B0",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  backBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: colors.primary,
   },
   welcome: {
     flex: 1,

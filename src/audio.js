@@ -875,12 +875,19 @@ if (isWeb && typeof window !== 'undefined' && window.speechSynthesis) {
   } catch {}
 }
 
+let lastSpeakTimestamp = 0;
+
 // Speak text using friendly teacher voice and calm, clear instructional pace
 export async function speak(text, language = 'en-PH', reportErrors = false) {
   if (muted || !text || typeof text !== 'string') return;
 
   const cleanText = text.trim();
   if (!cleanText) return;
+
+  // Protect against mobile speech queue deadlock on rapid repeated taps
+  const now = Date.now();
+  if (now - lastSpeakTimestamp < 220) return;
+  lastSpeakTimestamp = now;
 
   // Unpause / unlock mobile audio session
   unlockAudioAndSpeech();

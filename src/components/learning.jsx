@@ -516,6 +516,9 @@ export function MatchingPairsQuestionWidget({
                 ]}
               >
                 <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit={true}
+                  minimumFontScale={0.8}
                   style={[
                     styles.matchWordText,
                     isSix && styles.matchWordTextSix,
@@ -1464,8 +1467,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   matchWordTextSix: {
-    fontSize: 15,
+    fontSize: 14.5,
     lineHeight: 18,
+    paddingHorizontal: 2,
   },
   checkBadge: {
     position: "absolute",

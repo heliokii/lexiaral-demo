@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -42,8 +43,14 @@ export const colors = {
 };
 
 export const fonts = {
-  vocab: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_900Black", sans-serif',
-  reading: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_700Bold", sans-serif',
+  vocab: Platform.select({
+    web: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_900Black", sans-serif',
+    default: 'Nunito_900Black',
+  }),
+  reading: Platform.select({
+    web: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_700Bold", sans-serif',
+    default: 'Nunito_700Bold',
+  }),
   ui: 'Nunito_800ExtraBold',
 };
 

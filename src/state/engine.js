@@ -460,7 +460,9 @@ export function validateSavedState(state) {
       if (!question) return true;
       return (
         answer.questionId === question.id &&
-        question.choices.some((choice) => choice.id === answer.choiceId) &&
+        (question.choices?.some((choice) => choice.id === answer.choiceId) ||
+          (question.type === 'matching' &&
+            (answer.choiceId === question.answerId || answer.choiceId === 'all_matched'))) &&
         answer.correct === (answer.choiceId === question.answerId)
       );
     });

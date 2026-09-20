@@ -141,7 +141,7 @@ export function HomeScreen({ navigation }) {
             <Text style={styles.mainActionTitle}>LEARN</Text>
           </View>
           <View style={styles.actionPillLearn}>
-            <Text style={styles.actionPillTextLearn}>Study {CONTENT.words?.length || 48} Words</Text>
+            <Text style={styles.actionPillTextLearn}>Study {CONTENT.words?.length || 50} Words</Text>
           </View>
         </Pressable>
 
