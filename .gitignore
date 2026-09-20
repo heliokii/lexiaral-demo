@@ -40,6 +40,12 @@ yarn-error.*
 /ios
 /android
 
-# Internal planning & gap analysis docs
-LEXIARAL_*.md
+# Internal context, research, & planning documents
+*.md
+!README.md
+!AGENTS.md
+context.txt
+*.pdf
+UI UX.jpg
+uiuxscreenshots/
 
