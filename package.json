@@ -22,6 +22,7 @@
   },
   "scripts": {
     "start": "expo start",
+    "test": "node scripts/test-runner.js",
     "build": "expo export --platform web",
     "android": "expo start --android",
     "ios": "expo start --ios",

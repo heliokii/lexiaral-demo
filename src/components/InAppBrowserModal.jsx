@@ -56,7 +56,8 @@ export function InAppBrowserModal() {
       const fullUrl = window.location.href;
 
       // Android Chrome intent scheme directly launches Google Chrome app from Messenger
-      const isAndroid = /android/i.test(navigator.userAgent || "");
+      const navUserAgent = typeof navigator !== "undefined" ? (navigator.userAgent || "") : "";
+      const isAndroid = /android/i.test(navUserAgent);
       if (isAndroid) {
         const intentUrl = `intent://${host}${path}${search}#Intent;scheme=https;package=com.android.chrome;end`;
         window.location.href = intentUrl;

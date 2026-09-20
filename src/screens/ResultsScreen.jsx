@@ -10,7 +10,7 @@ import {
 } from "../content";
 import { Art, Icon } from "../Art";
 import { AnimatedLexi } from "../components/AnimatedLexi";
-import { playTapSfx, playVictoryFanfare, speak } from "../audio";
+import { playTapSfx, playVictoryFanfare, speak, stopAudio } from "../audio";
 import { useLearning } from "../state/LearningProvider";
 import { isLevelUnlocked } from "../state/engine";
 import { Body, Button, Card, Screen, Title, colors } from "../components/ui";

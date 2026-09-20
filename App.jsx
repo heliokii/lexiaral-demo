@@ -40,6 +40,7 @@ import {
 } from './src/screens';
 
 import { InAppBrowserModal } from './src/components/InAppBrowserModal';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
@@ -110,8 +111,9 @@ export default function App() {
     <SafeAreaProvider style={styles.appRoot}>
       <View style={styles.desktopOuter}>
         <View style={styles.desktopFrame}>
-          <LearningProvider>
-            <StatusBar style="dark" />
+          <ErrorBoundary>
+            <LearningProvider>
+              <StatusBar style="dark" />
 
             <NavigationContainer
               ref={navigationRef}
@@ -197,6 +199,7 @@ export default function App() {
             </NavigationContainer>
             <InAppBrowserModal />
           </LearningProvider>
+          </ErrorBoundary>
         </View>
       </View>
     </SafeAreaProvider>
