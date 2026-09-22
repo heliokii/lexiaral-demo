@@ -101,16 +101,16 @@
       "sentence_blank": "Please ____ on your chair and listen carefully to your teacher."
     },
     {
-      "id": "ran",
-      "word": "ran",
-      "image_url": "asset://ran",
-      "audio_url": "tts://en-PH/ran",
-      "definition": "Moved quickly using your legs; past tense of run.",
-      "example_sentence": "Tom ran to the playground to play with his friends.",
-      "story_context": "Ben was playing outside with his friends. Suddenly, he heard his mother calling him from the house. Ben ran home as fas...",
+      "id": "run",
+      "word": "run",
+      "image_url": "asset://run",
+      "audio_url": "tts://en-PH/run",
+      "definition": "To move quickly using your legs faster than walking.",
+      "example_sentence": "Tom can run fast to the playground to play with his friends.",
+      "story_context": "Ben is playing outside with his friends. Suddenly, he hears his mother calling him. Ben can run home as fast as he can so he will not be late for dinner.",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Tom ____ to the playground to play with his friends."
+      "sentence_blank": "Tom can ____ fast to the playground to play with his friends."
     },
     {
       "id": "sad",
@@ -1223,11 +1223,11 @@
       ]
     },
     {
-      "id": "story-ran",
-      "title": "The Boy Who Ran",
-      "text": "Ben was playing outside with his friends. Suddenly, he heard his mother calling him from the house. Ben ran home as fast as he could. He wanted to help his mother carry some things. After helping her, Ben ran back outside to play with his friends.",
+      "id": "story-run",
+      "title": "The Boy Who Can Run",
+      "text": "Ben is playing outside with his friends. Suddenly, he hears his mother calling him from the house. Ben can run home as fast as he can. He wants to help his mother carry some things. After helping her, Ben can run back outside to play with his friends.",
       "target_word_ids": [
-        "ran"
+        "run"
       ],
       "difficulty": "easy",
       "introduced_level": 1,

@@ -370,6 +370,63 @@ runSuite('State Engine & User Flow Simulation', () => {
     tamperedCaught = true;
   }
   assert(tamperedCaught, 'Tampered state correctly caught by validateSavedState');
+
+  // 7. Test "Run" present tense vocabulary and content
+  const { WORDS, QUESTIONS } = require('../src/content');
+  assert(Boolean(WORDS.run), 'Word "run" is present in WORDS catalog');
+  assert(WORDS.run.word === 'run', 'Word "run" has correct word text');
+  assert(WORDS.run.definition.toLowerCase().includes('move quickly'), 'Word "run" has present tense definition');
+  assert(WORDS.ran === WORDS.run, 'WORDS.ran backwards-compatibility alias points to WORDS.run');
+
+  // 8. Test Rhyming Distractors in Level 1 & 2 Questions
+  const l1QuestionsList = QUESTIONS[1] || [];
+  const wordToPicQ = l1QuestionsList.find((q) => q.type === 'wordToPicture');
+  if (wordToPicQ) {
+    assert(wordToPicQ.choices.length === 4, 'Level 1 wordToPicture question provides 4 choices');
+  }
+  const picToWordQ = l1QuestionsList.find((q) => q.type === 'pictureToWord');
+  if (picToWordQ) {
+    assert(picToWordQ.choices.length === 4, 'Level 1 pictureToWord question provides 4 choices');
+  }
+
+  // 9. Test NAVIGATE_QUESTION (Previous / Next navigation during quiz)
+  let navState = initialState('NavPupil', 0);
+  navState = reduceState(navState, {
+    type: 'START',
+    level: 1,
+    id: 'test-nav-session',
+    at: new Date().toISOString(),
+  });
+  navState = reduceState(navState, { type: 'BEGIN' });
+  const q0 = currentQuestion(navState);
+  navState = reduceState(navState, {
+    type: 'ANSWER',
+    questionId: q0.id,
+    choiceId: q0.answerId,
+    at: new Date().toISOString(),
+  });
+  navState = reduceState(navState, {
+    type: 'NEXT',
+    questionId: q0.id,
+    at: new Date().toISOString(),
+  });
+  // Now on question index 1, answers.length = 1
+  assert(navState.session.index === 1, 'Quiz advances to index 1');
+  assert(navState.session.answers.length === 1, 'One answer recorded');
+
+  // Navigate back to index 0 (review mode)
+  navState = reduceState(navState, { type: 'NAVIGATE_QUESTION', index: 0 });
+  assert(navState.session.index === 0, 'NAVIGATE_QUESTION safely navigates back to index 0');
+  assert(navState.session.answers.length === 1, 'Previous answer preserved during navigation');
+
+  // Navigate forward to active index 1
+  navState = reduceState(navState, { type: 'NAVIGATE_QUESTION', index: 1 });
+  assert(navState.session.index === 1, 'NAVIGATE_QUESTION safely navigates forward to index 1');
+
+  // Attempt invalid navigation beyond answers.length
+  const preInvalidState = navState;
+  navState = reduceState(navState, { type: 'NAVIGATE_QUESTION', index: 5 });
+  assert(navState.session.index === 1, 'NAVIGATE_QUESTION rejects out-of-bounds target index');
 });
 
 // -------------------------------------------------------------

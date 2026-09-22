@@ -28,6 +28,51 @@ export const LEVELS = [
 export const WORDS = Object.fromEntries(
   pack.words.map((word) => [word.id, word])
 );
+if (WORDS.run && !WORDS.ran) {
+  WORDS.ran = WORDS.run;
+}
+
+export const RHYMING_DISTRACTORS = {
+  // Level 1 - Easy CVC Words
+  cat: ['mat', 'hat', 'bat', 'rat'],
+  mat: ['cat', 'hat', 'bat', 'rat'],
+  hat: ['cat', 'mat', 'bat', 'rat'],
+  rat: ['cat', 'mat', 'hat', 'bat'],
+  bat: ['cat', 'mat', 'hat', 'rat'],
+  pen: ['hen', 'ten', 'men', 'den'],
+  sun: ['run', 'fun', 'bun', 'gun'],
+  sit: ['fit', 'hit', 'bit', 'kit'],
+  run: ['sun', 'fun', 'bun', 'gun'],
+  ran: ['pan', 'can', 'fan', 'man'],
+  sad: ['mad', 'bad', 'dad', 'had'],
+  bag: ['tag', 'rag', 'wag', 'nag'],
+  map: ['cap', 'tap', 'nap', 'lap'],
+  man: ['can', 'pan', 'fan', 'van'],
+  dog: ['log', 'fog', 'jog', 'bog'],
+  cow: ['bow', 'how', 'now', 'sow'],
+  dig: ['pig', 'big', 'wig', 'fig'],
+  egg: ['leg', 'peg', 'beg', 'meg'],
+  red: ['bed', 'fed', 'led', 'wed'],
+  hen: ['pen', 'ten', 'men', 'den'],
+  pig: ['dig', 'big', 'wig', 'fig'],
+
+  // Level 2 - Average Words
+  basket: ['casket', 'gasket', 'jacket'],
+  moon: ['spoon', 'noon', 'soon'],
+  ball: ['call', 'fall', 'tall'],
+  book: ['cook', 'look', 'hook'],
+  bark: ['dark', 'park', 'mark'],
+  nest: ['test', 'rest', 'best'],
+  test: ['nest', 'rest', 'best'],
+  tell: ['bell', 'yell', 'well'],
+  pencil: ['stencil', 'utensil', 'council'],
+  candle: ['handle', 'sandal', 'bundle'],
+  nine: ['line', 'fine', 'pine'],
+  bath: ['path', 'math', 'wrath'],
+  nuts: ['huts', 'cuts', 'guts'],
+  road: ['toad', 'load', 'boat'],
+  stop: ['hop', 'top', 'mop'],
+};
 
 // Change to 70, 80, etc. only after approval by the research team.
 // Zero means: completing the previous level is sufficient.
@@ -61,7 +106,77 @@ export const DIFFICULT_WORDS = pack.words.filter(
   (word) => word.difficulty === 'difficult' || word.introduced_level === 3
 );
 
-export const createWordChoices = (target, pool, useDefinitions = false) => {
+export const createWordChoices = (
+  target,
+  pool,
+  useDefinitions = false,
+  isPictureChoice = false
+) => {
+  if (useDefinitions) {
+    const candidatePool = pool && pool.length >= 4 ? pool : pack.words;
+    const otherWords = shuffleArray(
+      candidatePool.filter((word) => word.id !== target.id)
+    ).slice(0, 3);
+    const selected = shuffleArray([target, ...otherWords]);
+
+    return selected.map((word) => ({
+      id: word.id,
+      label: word.definition,
+      wordId: word.id,
+    }));
+  }
+
+  // When choices are pictures (e.g. wordToPicture), every choice must be a valid word from WORDS with an image
+  if (isPictureChoice) {
+    const candidatePool = (pool && pool.length >= 4 ? pool : pack.words).filter(
+      (w) => w.id !== target.id
+    );
+    const rhymes =
+      RHYMING_DISTRACTORS[target.id] ||
+      RHYMING_DISTRACTORS[target.word?.toLowerCase()] ||
+      [];
+    const validRhymingWords = rhymes
+      .map((r) => WORDS[r])
+      .filter((w) => w && w.id !== target.id)
+      .slice(0, 3);
+
+    const needed = 3 - validRhymingWords.length;
+    const otherPoolWords = shuffleArray(
+      candidatePool.filter((w) => !validRhymingWords.some((rw) => rw.id === w.id))
+    ).slice(0, Math.max(0, needed));
+
+    const selectedWords = shuffleArray([
+      target,
+      ...validRhymingWords,
+      ...otherPoolWords,
+    ]);
+
+    return selectedWords.map((word) => ({
+      id: word.id,
+      label: word.word,
+      wordId: word.id,
+    }));
+  }
+
+  // Rhyming choices for Level 1 and Level 2 text questions
+  const rhymes =
+    RHYMING_DISTRACTORS[target.id] ||
+    RHYMING_DISTRACTORS[target.word?.toLowerCase()];
+  if (rhymes && rhymes.length >= 3) {
+    const rhymingChoices = rhymes.slice(0, 3).map((r) => {
+      const match = WORDS[r];
+      return {
+        id: match ? match.id : `${target.id}-rhyme-${r}`,
+        label: match ? match.word : r,
+        wordId: match ? match.id : r,
+      };
+    });
+    return shuffleArray([
+      { id: target.id, label: target.word, wordId: target.id },
+      ...rhymingChoices,
+    ]);
+  }
+
   const candidatePool = pool && pool.length >= 4 ? pool : pack.words;
   const otherWords = shuffleArray(
     candidatePool.filter((word) => word.id !== target.id)
@@ -70,7 +185,7 @@ export const createWordChoices = (target, pool, useDefinitions = false) => {
 
   return selected.map((word) => ({
     id: word.id,
-    label: useDefinitions ? word.definition : word.word,
+    label: word.word,
     wordId: word.id,
   }));
 };
@@ -98,7 +213,73 @@ export const createSentenceChoices = (targetWord, pool) => {
   return shuffleArray(options);
 };
 
-const wordChoices = (target, offset, useDefinitions = false) => {
+const wordChoices = (
+  target,
+  offset,
+  useDefinitions = false,
+  isPictureChoice = false
+) => {
+  if (useDefinitions) {
+    const selected = [
+      target,
+      ...pack.words.filter((word) => word.id !== target.id).slice(0, 3),
+    ];
+
+    return rotate(
+      selected.map((word) => ({
+        id: word.id,
+        label: word.definition,
+        wordId: word.id,
+      })),
+      offset
+    );
+  }
+
+  if (isPictureChoice) {
+    const candidatePool = pack.words.filter((w) => w.id !== target.id);
+    const rhymes =
+      RHYMING_DISTRACTORS[target.id] ||
+      RHYMING_DISTRACTORS[target.word?.toLowerCase()] ||
+      [];
+    const validRhymingWords = rhymes
+      .map((r) => WORDS[r])
+      .filter((w) => w && w.id !== target.id)
+      .slice(0, 3);
+
+    const needed = 3 - validRhymingWords.length;
+    const otherPoolWords = candidatePool
+      .filter((w) => !validRhymingWords.some((rw) => rw.id === w.id))
+      .slice(0, Math.max(0, needed));
+
+    const selected = [target, ...validRhymingWords, ...otherPoolWords];
+    return rotate(
+      selected.map((word) => ({
+        id: word.id,
+        label: word.word,
+        wordId: word.id,
+      })),
+      offset
+    );
+  }
+
+  const rhymes =
+    RHYMING_DISTRACTORS[target.id] ||
+    RHYMING_DISTRACTORS[target.word?.toLowerCase()];
+  if (rhymes && rhymes.length >= 3) {
+    const rhymingChoices = rhymes.slice(0, 3).map((r) => {
+      const match = WORDS[r];
+      return {
+        id: match ? match.id : `${target.id}-rhyme-${r}`,
+        label: match ? match.word : r,
+        wordId: match ? match.id : r,
+      };
+    });
+    return rotate(
+      [{ id: target.id, label: target.word, wordId: target.id }, ...rhymingChoices],
+      offset
+    );
+  }
+
   const selected = [
     target,
     ...pack.words.filter((word) => word.id !== target.id).slice(0, 3),
@@ -107,7 +288,7 @@ const wordChoices = (target, offset, useDefinitions = false) => {
   return rotate(
     selected.map((word) => ({
       id: word.id,
-      label: useDefinitions ? word.definition : word.word,
+      label: word.word,
       wordId: word.id,
     })),
     offset
@@ -149,7 +330,7 @@ const easy = pack.words.flatMap((word, index) => [
     category: 'vocabulary',
     wordId: word.id,
     prompt: `Which picture shows "${word.word}"?`,
-    choices: wordChoices(word, index + 1),
+    choices: wordChoices(word, index + 1, false, true),
     answerId: word.id,
     explanation: word.definition,
   },
@@ -348,7 +529,7 @@ export function generateSessionQuestions(level, options = {}) {
       category: 'vocabulary',
       wordId: word.id,
       prompt: `Which picture shows "${word.word}"?`,
-      choices: createWordChoices(word, easyWords, false),
+      choices: createWordChoices(word, easyWords, false, true),
       answerId: word.id,
       explanation: word.definition,
     }));

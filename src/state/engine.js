@@ -266,6 +266,24 @@ export function reduceState(state, action) {
       };
     }
 
+    case 'NAVIGATE_QUESTION': {
+      const session = state.session;
+      if (!session || session.phase !== 'quiz') return state;
+      const targetIndex = action.index;
+      const questions = sessionQuestions(session);
+      const maxAllowed = Math.min(session.answers.length, questions.length - 1);
+      if (typeof targetIndex !== 'number' || targetIndex < 0 || targetIndex > maxAllowed) {
+        return state;
+      }
+      return {
+        ...state,
+        session: {
+          ...session,
+          index: targetIndex,
+        },
+      };
+    }
+
     case 'NEXT': {
       const session = state.session;
 
@@ -516,7 +534,7 @@ export function validateSavedState(state) {
 
     if (
       session.phase === 'quiz' &&
-      ![session.index, session.index + 1].includes(session.answers.length)
+      (session.index > session.answers.length || session.answers.length > questions.length)
     ) {
       fail();
     }

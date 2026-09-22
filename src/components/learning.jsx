@@ -31,15 +31,17 @@ import { Body, Button, Card, Title, colors, fonts } from "./ui";
 
 export function WordPicture({ word, height = 170 }) {
   if (!word) return null;
+  const wordKey = typeof word === "string" ? word : (word.id || word.word);
+  const wordLabel = typeof word === "string" ? word : (word.word || word.id || "");
 
   // 0. High priority: Real photographic images from official ARAL curriculum
-  const realImage = getWordImage(word.id || word.word);
+  const realImage = getWordImage(wordKey);
   if (realImage) {
     return (
       <View
         accessible
         accessibilityRole="image"
-        accessibilityLabel={`Picture of ${word.word}`}
+        accessibilityLabel={`Picture of ${wordLabel}`}
         style={{
           alignItems: "center",
           justifyContent: "center",
@@ -710,11 +712,14 @@ export function ReviewFlashcard({ word }) {
           testID={`flashcard-flip-btn-${word.id}`}
           accessible
           accessibilityRole="button"
-          accessibilityLabel={`Picture of ${word.word}. Tap to flip and see word definition.`}
+          accessibilityLabel={`Picture and definition. Tap to flip card and see the word.`}
           onPress={handleFlip}
           style={styles.flashcardFrontBody}
         >
-          <WordPicture word={word} height={195} />
+          <WordPicture word={word} height={180} />
+          <View style={styles.flashcardFrontInfo}>
+            <Text style={styles.flashcardFrontDefinition}>{word.definition}</Text>
+          </View>
         </Pressable>
       </Animated.View>
 
@@ -1555,7 +1560,7 @@ const styles = StyleSheet.create({
     color: "#8372A5",
   },
   flashcardContainer: {
-    height: 345,
+    height: 385,
     width: "100%",
     position: "relative",
     marginVertical: 4,
@@ -1615,7 +1620,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 6,
+    paddingVertical: 4,
+  },
+  flashcardFrontInfo: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 3,
+    marginTop: 8,
+    paddingHorizontal: 6,
+  },
+  flashcardFrontWord: {
+    fontFamily: fonts.vocab,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: colors.darkPurple,
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+  flashcardFrontDefinition: {
+    fontFamily: fonts.reading,
+    fontSize: 14.5,
+    lineHeight: 20,
+    color: colors.text,
+    textAlign: "center",
   },
   flashcardBackBody: {
     width: "100%",

@@ -59,9 +59,14 @@ export function ActivityScreen({ navigation }) {
 
   const scrollRef = useRef(null);
   const [showStory, setShowStory] = useState(false);
+  const [justAnswered, setJustAnswered] = useState(false);
 
   const slideAnim = useRef(new Animated.Value(320)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    setJustAnswered(false);
+  }, [session?.id, session?.index]);
 
   // Enable soft BGM focus mode during interactive activities
   useEffect(() => {
@@ -86,9 +91,9 @@ export function ActivityScreen({ navigation }) {
   const isCorrect = Boolean(answer?.correct);
   const feedbackDetails = answer && question ? getFeedbackDetails(question, isCorrect) : null;
 
-  // Animate bottom modal slide up whenever an answer is submitted
+  // Animate bottom modal slide up ONLY when an answer is newly submitted in real-time
   useEffect(() => {
-    if (answer) {
+    if (justAnswered && answer) {
       slideAnim.setValue(320);
       backdropAnim.setValue(0);
 
@@ -106,7 +111,7 @@ export function ActivityScreen({ navigation }) {
         }),
       ]).start();
     }
-  }, [answer?.choiceId]);
+  }, [justAnswered, answer?.choiceId]);
 
   const handleSelectStory = (storyId) => {
     if (session?.answers && session.answers.length > 0) {
@@ -402,6 +407,8 @@ export function ActivityScreen({ navigation }) {
       playErrorSfx();
     }
 
+    setJustAnswered(true);
+
     const next = await dispatch({
       type: "ANSWER",
       questionId: question.id,
@@ -432,10 +439,29 @@ export function ActivityScreen({ navigation }) {
     }
   };
 
+  const prevQuestion = () => {
+    if (session && session.index > 0) {
+      stopAudio();
+      setJustAnswered(false);
+      dispatch({ type: "NAVIGATE_QUESTION", index: session.index - 1 });
+    }
+  };
+
+  const handleReviewNext = () => {
+    stopAudio();
+    if (!session) return;
+    setJustAnswered(false);
+    if (session.index === total - 1) {
+      nextQuestion();
+    } else {
+      dispatch({ type: "NAVIGATE_QUESTION", index: session.index + 1 });
+    }
+  };
+
   const widgetProps = {
     question,
     selected: answer,
-    disabled: busy,
+    disabled: Boolean(answer) || busy,
     onAnswer: submitAnswer,
   };
 
@@ -458,19 +484,35 @@ export function ActivityScreen({ navigation }) {
       <Screen testID="screen-activity" scrollRef={scrollRef}>
         <View
           testID="activity-question-header"
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-          }}
+          style={styles.questionHeader}
         >
+          {session.index > 0 ? (
+            <Pressable
+              testID="activity-prev-question-btn"
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Previous question"
+              disabled={busy}
+              onPress={prevQuestion}
+              style={({ pressed }) => [
+                styles.prevQuestionBtn,
+                pressed && { opacity: 0.75, transform: [{ scale: 0.95 }] },
+              ]}
+            >
+              <Icon name="arrowLeft" size={14} color={colors.primary} />
+              <Text style={styles.prevQuestionBtnText}>Previous</Text>
+            </Pressable>
+          ) : (
+            <View style={{ width: 88 }} />
+          )}
+
           <Body
             testID="activity-question-index"
             style={{
               flex: 1,
               fontFamily: "Nunito_800ExtraBold",
               fontSize: 16,
+              textAlign: "center",
             }}
           >
             Question {session.index + 1} of {total}
@@ -601,11 +643,25 @@ export function ActivityScreen({ navigation }) {
               </>
             );
           })()}
+
+          {!justAnswered && answer && (
+            <View style={{ marginTop: 16, paddingBottom: 10 }}>
+              <Button
+                testID="activity-review-next-btn"
+                title={session.index === total - 1 ? "SEE MY RESULT" : "NEXT QUESTION"}
+                tone={isCorrect ? "mint" : "coral"}
+                arrow
+                disabled={busy}
+                onPress={handleReviewNext}
+                style={{ minHeight: 54, borderRadius: 20, width: "100%" }}
+              />
+            </View>
+          )}
         </View>
       </Screen>
 
-      {/* Full-screen backdrop and sliding Bottom Modal Sheet */}
-      {answer && feedbackDetails && (
+      {/* Full-screen backdrop and sliding Bottom Modal Sheet: ONLY when freshly answered */}
+      {justAnswered && answer && feedbackDetails && (
         <View style={styles.modalOverlay} pointerEvents="box-none">
           {/* Backdrop dimmer that blocks clicks to choices or background */}
           <Animated.View
@@ -1055,6 +1111,28 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 20,
     gap: 16,
+  },
+  questionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  prevQuestionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: "#F4EFFC",
+    borderWidth: 1.5,
+    borderColor: "#DECFFC",
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  prevQuestionBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13.5,
+    color: colors.primary,
   },
   storyQuestionPromptText: {
     fontFamily: "Nunito_800ExtraBold",
