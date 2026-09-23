@@ -878,11 +878,17 @@ if (isWeb && typeof window !== 'undefined' && window.speechSynthesis) {
 let lastSpeakTimestamp = 0;
 
 // Speak text using friendly teacher voice and calm, clear instructional pace
-export async function speak(text, language = 'en-PH', reportErrors = false) {
-  if (muted || !text || typeof text !== 'string') return;
+export async function speak(text, language = 'en-PH', reportErrors = false, onDone = null) {
+  if (muted || !text || typeof text !== 'string') {
+    if (onDone) onDone();
+    return;
+  }
 
   const cleanText = text.trim();
-  if (!cleanText) return;
+  if (!cleanText) {
+    if (onDone) onDone();
+    return;
+  }
 
   // Protect against mobile speech queue deadlock on rapid repeated taps
   const now = Date.now();
@@ -910,7 +916,10 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
   try {
     // Web Speech API execution (Chrome, Edge, Safari, Firefox - Desktop & Mobile)
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      if (muted || ticket !== currentTicket) return;
+      if (muted || ticket !== currentTicket) {
+        if (onDone) onDone();
+        return;
+      }
 
       const utterance = new SpeechSynthesisUtterance(cleanText);
       const femaleVoice = getBestFemaleVoice(language);
@@ -936,6 +945,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
         if (window._activeSpeechUtterance === utterance) {
           window._activeSpeechUtterance = null;
         }
+        if (onDone) onDone();
       };
 
       utterance.onerror = (e) => {
@@ -946,6 +956,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
         if (window._activeSpeechUtterance === utterance) {
           window._activeSpeechUtterance = null;
         }
+        if (onDone) onDone();
         if (e && e.error !== 'canceled' && e.error !== 'interrupted') {
           report();
         }
@@ -994,7 +1005,10 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
       }
     } catch {}
 
-    if (muted || ticket !== currentTicket) return;
+    if (muted || ticket !== currentTicket) {
+      if (onDone) onDone();
+      return;
+    }
 
     activeUtterance = true;
     duckBgm(true);
@@ -1002,6 +1016,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false) {
     const onFinishSpeech = () => {
       activeUtterance = null;
       duckBgm(false);
+      if (onDone) onDone();
     };
 
     Speech.speak(cleanText, {

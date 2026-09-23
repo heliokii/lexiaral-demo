@@ -92,6 +92,10 @@ export default function LevelsScreen({ navigation }) {
         {LEVELS.map((level) => {
           const unlocked = isLevelUnlocked(state, level.id);
           const result = latestAttempt(state, level.id);
+          const starsEarned =
+            result && result.total > 0
+              ? [1, 2, 3].filter((s) => result.score >= (result.total / 3) * s).length
+              : 0;
 
           const active =
             state.session?.level === level.id && state.session.phase !== "done";
@@ -150,11 +154,11 @@ export default function LevelsScreen({ navigation }) {
                   name={
                     !unlocked
                       ? "owl_sleeping"
-                      : level.stars === 3
+                      : starsEarned === 3
                         ? "owl_excited"
-                        : level.stars === 2
+                        : starsEarned === 2
                           ? "owl_cheering"
-                          : level.stars === 1
+                          : starsEarned === 1
                             ? "owl_happy"
                             : level.id === 1
                               ? "owl_reading"
@@ -189,29 +193,17 @@ export default function LevelsScreen({ navigation }) {
                     <Icon
                       name="star"
                       size={18}
-                      color={result || unlocked ? "#F5A623" : "#D9D3E6"}
+                      color={starsEarned >= 1 ? "#F5A623" : "#D9D3E6"}
                     />
                     <Icon
                       name="star"
                       size={18}
-                      color={
-                        result &&
-                        result.total > 0 &&
-                        result.score / result.total >= 0.5
-                          ? "#F5A623"
-                          : "#D9D3E6"
-                      }
+                      color={starsEarned >= 2 ? "#F5A623" : "#D9D3E6"}
                     />
                     <Icon
                       name="star"
                       size={18}
-                      color={
-                        result &&
-                        result.total > 0 &&
-                        result.score / result.total >= 0.8
-                          ? "#F5A623"
-                          : "#D9D3E6"
-                      }
+                      color={starsEarned >= 3 ? "#F5A623" : "#D9D3E6"}
                     />
                     {result && (
                       <Text style={styles.scoreText}>

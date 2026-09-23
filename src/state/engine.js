@@ -379,9 +379,7 @@ export function reduceState(state, action) {
     case 'SELECT_STORY': {
       const storyId = action.storyId;
       if (!storyId) return state;
-      const story =
-        (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
-      const questions = getQuestionsForStory(story);
+      const questions = generateSessionQuestions(3, { storyId });
       return {
         ...state,
         selectedStoryId: storyId,

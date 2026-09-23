@@ -372,7 +372,7 @@ runSuite('State Engine & User Flow Simulation', () => {
   assert(tamperedCaught, 'Tampered state correctly caught by validateSavedState');
 
   // 7. Test "Run" present tense vocabulary and content
-  const { WORDS, QUESTIONS } = require('../src/content');
+  const { WORDS, QUESTIONS, generateSessionQuestions } = require('../src/content');
   assert(Boolean(WORDS.run), 'Word "run" is present in WORDS catalog');
   assert(WORDS.run.word === 'run', 'Word "run" has correct word text');
   assert(WORDS.run.definition.toLowerCase().includes('move quickly'), 'Word "run" has present tense definition');
@@ -427,6 +427,31 @@ runSuite('State Engine & User Flow Simulation', () => {
   const preInvalidState = navState;
   navState = reduceState(navState, { type: 'NAVIGATE_QUESTION', index: 5 });
   assert(navState.session.index === 1, 'NAVIGATE_QUESTION rejects out-of-bounds target index');
+
+  // Verify Level 3 questions generated for story
+  const l3GeneratedQuestions = generateSessionQuestions(3, { storyId: 'story-cat' });
+  assert(Array.isArray(l3GeneratedQuestions) && l3GeneratedQuestions.length > 0, 'Level 3 session questions generated successfully');
+  assert(l3GeneratedQuestions.every(q => q.choices && q.choices.length > 0), 'All Level 3 questions have choices');
+
+  // Verify Demo Mode and Unlocks logic
+  const demoState = initialState('TestPupil', 0);
+  assert(isLevelUnlocked(demoState, 1) === true, 'Level 1 unlocked in demo mode');
+  assert(isLevelUnlocked(demoState, 2) === true, 'Level 2 unlocked in demo mode');
+  assert(isLevelUnlocked(demoState, 3) === true, 'Level 3 unlocked in demo mode');
+
+  const strictState = initialState('TestPupil', 75);
+  assert(isLevelUnlocked(strictState, 1) === true, 'Level 1 unlocked in 75% mode');
+  assert(isLevelUnlocked(strictState, 2) === false, 'Level 2 locked initially in 75% mode');
+  assert(isLevelUnlocked(strictState, 3) === false, 'Level 3 locked initially in 75% mode');
+
+  // Verify Stars Earned Tiers calculation
+  const calcStars = (score, total) =>
+    total > 0 ? [1, 2, 3].filter(s => score >= (total / 3) * s).length : 0;
+  assert(calcStars(0, 10) === 0, '0/10 earns 0 stars');
+  assert(calcStars(3, 10) === 0, '3/10 earns 0 stars (< 33%)');
+  assert(calcStars(4, 10) === 1, '4/10 earns 1 star (>= 33%)');
+  assert(calcStars(7, 10) === 2, '7/10 earns 2 stars (>= 66%)');
+  assert(calcStars(10, 10) === 3, '10/10 earns 3 stars (100%)');
 });
 
 // -------------------------------------------------------------

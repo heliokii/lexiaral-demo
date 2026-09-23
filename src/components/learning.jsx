@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -420,13 +420,19 @@ export function MatchingPairsQuestionWidget({
   const [matchedIds, setMatchedIds] = useState([]);
   const [mismatchPair, setMismatchPair] = useState(null);
 
-  const [wordItems] = useState(() => [...pairs]);
-  const [picItems] = useState(() => {
+  useEffect(() => {
+    setSelectedWordId(null);
+    setMatchedIds([]);
+    setMismatchPair(null);
+  }, [question?.id]);
+
+  const wordItems = useMemo(() => [...pairs], [question?.id, pairs]);
+  const picItems = useMemo(() => {
     if (pairs.length > 2) {
       return [...pairs.slice(1), pairs[0]];
     }
     return [...pairs].reverse();
-  });
+  }, [question?.id, pairs]);
 
   const isCompleted = selected != null || matchedIds.length === pairs.length;
 
@@ -697,8 +703,8 @@ export function ReviewFlashcard({ word }) {
             testID={`flashcard-sound-front-${word.id}`}
             accessible
             accessibilityRole="button"
-            accessibilityLabel={`Hear pronunciation of ${word.word}`}
-            onPress={() => pronounce(word)}
+            accessibilityLabel="Hear definition clue"
+            onPress={() => speak(word.definition, "en-US", true)}
             style={({ pressed }) => [
               styles.flashcardSpeakerBtn,
               pressed && { opacity: 0.7, transform: [{ scale: 0.94 }] },
@@ -833,7 +839,9 @@ export function InteractiveStoryReaderWidget({
       setIsReading(false);
     } else {
       setIsReading(true);
-      speak(story.text, "en-US", true);
+      speak(story.text, "en-US", true, () => {
+        setIsReading(false);
+      });
     }
   };
 

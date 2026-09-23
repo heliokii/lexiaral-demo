@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { LEVELS, QUESTIONS } from "../content";
 import { Art, Icon } from "../Art";
 import { useLearning } from "../state/LearningProvider";
-import { BADGES, bestAttempt, latestAttempt } from "../state/engine";
+import { BADGES, bestAttempt, isLevelUnlocked, latestAttempt } from "../state/engine";
 import {
   Body,
   Card,
@@ -76,7 +76,7 @@ export function ProgressScreen({ navigation }) {
           {LEVELS.map((level, idx) => {
             const latest = latestAttempt(state, level.id);
             const best = bestAttempt(state, level.id);
-            const unlocked = state.unlocked?.includes(level.id);
+            const unlocked = isLevelUnlocked(state, level.id);
 
             const active =
               state.session?.level === level.id &&
@@ -85,7 +85,7 @@ export function ProgressScreen({ navigation }) {
                 : null;
 
             const progress = active
-              ? active.answers.length / (QUESTIONS[level.id]?.length || 1)
+              ? active.answers.length / (active.questions?.length || QUESTIONS[level.id]?.length || 10)
               : latest
                 ? 1
                 : 0;

@@ -552,15 +552,15 @@ export function ActivityScreen({ navigation }) {
 
         <View style={styles.questionBodyWrapper}>
           {session.level === 1 && question.type === "matching" && (
-            <MatchingPairsQuestionWidget {...widgetProps} />
+            <MatchingPairsQuestionWidget key={question.id} {...widgetProps} />
           )}
 
           {session.level === 1 && question.type !== "matching" && (
-            <FlashcardQuestionWidget {...widgetProps} />
+            <FlashcardQuestionWidget key={question.id} {...widgetProps} />
           )}
 
           {session.level === 2 && (
-            <SentenceCompletionQuestionWidget {...widgetProps} />
+            <SentenceCompletionQuestionWidget key={question.id} {...widgetProps} />
           )}
 
           {session.level === 3 && (() => {

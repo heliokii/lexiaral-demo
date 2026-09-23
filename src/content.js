@@ -642,7 +642,7 @@ export function generateSessionQuestions(level, options = {}) {
   if (level === 3) {
     const storyId = options.storyId || CONTENT.story?.id || 'story-cat';
     const story = (STORIES || []).find((s) => s.id === storyId) || CONTENT.story;
-    return getQuestionsForStory(story);
+    return shuffleArray(getQuestionsForStory(story));
   }
 
   return QUESTIONS[level] || [];
