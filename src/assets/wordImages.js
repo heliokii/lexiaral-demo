@@ -47,7 +47,7 @@ export const WORD_IMAGES = {
   // Level 3 - Difficult (15 Words)
   happy: require('../../assets/words/difficult/D-1.png'),
   little: require('../../assets/words/difficult/D-2.png'),
-  floor: require('../../assets/Difficult/D-3 - Floor.jpg'),
+  floor: require('../../assets/words/difficult/D-3.jpg'),
   card: require('../../assets/words/difficult/d-4.png'),
   switch: require('../../assets/Difficult/D-5 - Switch.jpg'),
   bell: require('../../assets/Difficult/D-6 - Bell.jpg'),
