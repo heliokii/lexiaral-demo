@@ -6,11 +6,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CONTENT, validateContent } from '../content';
 import { configureAudio, initAudio, setBgmUserVolume } from '../audio';
+import { Art } from '../Art';
+import { Body, Button, Card, Title, colors } from '../components/ui';
 import {
   initialState,
   reduceState,
@@ -88,68 +90,56 @@ export function LearningProvider({ children }) {
   }, []);
 
   if (!state) {
+    if (loadError) {
+      return (
+        <View style={styles.errorContainer}>
+          <Art name="owl_thinking" width={130} height={130} />
+
+          <Text style={styles.brandTitle}>LEXIARAL</Text>
+
+          <Card style={styles.errorCard}>
+            <Title style={styles.errorTitle}>Unable to Load Progress</Title>
+            <Body style={styles.errorText}>{loadError}</Body>
+
+            <View style={{ gap: 10, width: '100%', marginTop: 8 }}>
+              <Button
+                title="TRY LOADING AGAIN"
+                tone="purple"
+                arrow
+                onPress={load}
+                style={{ minHeight: 50 }}
+              />
+              <Button
+                title="START FRESH"
+                secondary
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem(STORAGE_KEY);
+                  } catch {}
+                  const fresh = initialState();
+                  stateRef.current = fresh;
+                  configureAudio(fresh.audioEnabled);
+                  setBgmUserVolume(fresh.bgmVolume);
+                  setState(fresh);
+                }}
+                style={{ minHeight: 46 }}
+              />
+            </View>
+          </Card>
+        </View>
+      );
+    }
+
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 28,
-          backgroundColor: '#F4F8FF',
-          gap: 20,
-        }}
-      >
-        <Text style={{ fontSize: 38, fontWeight: '900', color: '#17437B' }}>
-          LEXIARAL
-        </Text>
-
-        <Text style={{ fontSize: 21 }}>Learn Words. Play. Grow.</Text>
-
-        {loadError ? (
-          <>
-            <Text accessibilityRole="alert" style={{ fontSize: 18 }}>
-              {loadError}
-            </Text>
-
-            <Text
-              accessibilityRole="button"
-              onPress={load}
-              style={{
-                padding: 20,
-                backgroundColor: '#17437B',
-                color: 'white',
-                fontSize: 20,
-                borderRadius: 16,
-              }}
-            >
-              TRY LOADING AGAIN
-            </Text>
-
-            <Text
-              accessibilityRole="button"
-              onPress={async () => {
-                await AsyncStorage.removeItem(STORAGE_KEY);
-                const fresh = initialState();
-                stateRef.current = fresh;
-                configureAudio(fresh.audioEnabled);
-                setState(fresh);
-              }}
-              style={{
-                padding: 16,
-                backgroundColor: '#EBE4FA',
-                color: '#6241A4',
-                fontSize: 17,
-                borderRadius: 16,
-                textAlign: 'center',
-                fontWeight: '700',
-              }}
-            >
-              START FRESH
-            </Text>
-          </>
-        ) : (
-          <ActivityIndicator size="large" color="#17437B" />
-        )}
+      <View style={styles.loadingContainer}>
+        <Art name="owl-reading" width={160} height={176} />
+        <Text style={styles.brandTitle}>LEXIARAL</Text>
+        <Text style={styles.tagline}>Learn Words. Play. Grow.</Text>
+        <ActivityIndicator
+          size="large"
+          color={colors.primary}
+          style={{ marginTop: 8 }}
+        />
       </View>
     );
   }
@@ -170,3 +160,62 @@ export function useLearning() {
 
   return context;
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#F2EEFD',
+    gap: 12,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#F2EEFD',
+    gap: 14,
+  },
+  brandTitle: {
+    fontFamily: 'Nunito_900Black',
+    fontSize: 34,
+    letterSpacing: 1.5,
+    color: colors.darkPurple,
+    textAlign: 'center',
+  },
+  tagline: {
+    fontFamily: 'Nunito_700Bold',
+    fontSize: 18,
+    color: colors.muted,
+    textAlign: 'center',
+  },
+  errorCard: {
+    width: '100%',
+    maxWidth: 420,
+    padding: 22,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderColor: '#DECFFC',
+    borderWidth: 1.5,
+    alignItems: 'center',
+    gap: 10,
+    shadowColor: '#5E4399',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  errorTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: colors.darkPurple,
+  },
+  errorText: {
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+    color: colors.muted,
+  },
+});

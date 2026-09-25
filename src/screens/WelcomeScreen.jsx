@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Art, Icon } from "../Art";
@@ -10,8 +10,14 @@ import { sanitizePupilInput } from "../utils/sanitizer";
 export function WelcomeScreen({ navigation }) {
   const { state, dispatch, busy } = useLearning();
   const [pupilInput, setPupilInput] = useState(
-    sanitizePupilInput(state?.pupilName || "", 20)
+    sanitizePupilInput(state?.pupilName || "", 20),
   );
+
+  useEffect(() => {
+    if (state?.pupilName) {
+      setPupilInput(sanitizePupilInput(state.pupilName, 20));
+    }
+  }, [state?.pupilName]);
 
   const handleInputChange = (text) => {
     const cleaned = sanitizePupilInput(text, 20);
@@ -43,17 +49,26 @@ export function WelcomeScreen({ navigation }) {
             <Text style={styles.backBtnText}>Back to Home</Text>
           </Pressable>
         )}
-        <Text testID="welcome-brand-text" style={styles.brand}>LEXIARAL</Text>
+        <Text testID="welcome-brand-text" style={styles.brand}>
+          LEXIARAL
+        </Text>
         <AnimatedLexi name="owl-reading" height={150} />
         <View style={{ gap: 4 }}>
-          <Title testID="welcome-title" style={styles.center}>Learn Words. Play. Grow.</Title>
-          <Body testID="welcome-subtitle" style={[styles.center, { fontSize: 16, lineHeight: 22 }]}>
+          <Title testID="welcome-title" style={styles.center}>
+            Learn Words. Play. Grow.
+          </Title>
+          <Body
+            testID="welcome-subtitle"
+            style={[styles.center, { fontSize: 16, lineHeight: 22 }]}
+          >
             English Vocabulary Game for Grade 3 Learners
           </Body>
         </View>
 
         <Card testID="welcome-pupil-card" style={styles.pupilCard}>
-          <Text testID="welcome-pupil-label" style={styles.pupilInputLabel}>Learner / Pupil ID:</Text>
+          <Text testID="welcome-pupil-label" style={styles.pupilInputLabel}>
+            Learner / Pupil ID:
+          </Text>
           <TextInput
             testID="welcome-pupil-input"
             value={pupilInput}
@@ -64,9 +79,6 @@ export function WelcomeScreen({ navigation }) {
             maxLength={20}
             autoCapitalize="words"
           />
-          <Body testID="welcome-pupil-hint" style={styles.pupilInputHint}>
-            Used for tracking research pre-test and post-test scores.
-          </Body>
         </Card>
 
         <Button
