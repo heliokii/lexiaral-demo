@@ -354,8 +354,18 @@ export function FlashcardQuestionWidget(props) {
           {word && !isListenQuestion && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Hear the word"
-              onPress={() => pronounce(word)}
+              accessibilityLabel={
+                question.type === "pictureToWord"
+                  ? "Hear the question"
+                  : "Hear the word"
+              }
+              onPress={() => {
+                if (question.type === "pictureToWord") {
+                  speak(word?.question_text || "What is this?");
+                } else {
+                  pronounce(word);
+                }
+              }}
               style={styles.speakerBtn}
             >
               <Icon name="sound" size={20} color={colors.primary} />

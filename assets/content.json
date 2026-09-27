@@ -27,7 +27,8 @@
       "story_context": "Tom has a clean mat in front of his house. His little cat likes to sit on the mat every afternoon. Tom cleans the mat w...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The little cat likes to sleep on the clean ____ every afternoon."
+      "sentence_blank": "The little cat likes to sleep on the clean ____ every afternoon.",
+      "question_text": "What is on the floor?"
     },
     {
       "id": "hat",
@@ -39,7 +40,8 @@
       "story_context": "Ben has a new red hat. He wears his hat when he goes outside to play. One afternoon, the wind blows his hat away. Ben q...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Ben wears his red ____ when he goes outside to play."
+      "sentence_blank": "Ben wears his red ____ when he goes outside to play.",
+      "question_text": "What do you wear on your head?"
     },
     {
       "id": "rat",
@@ -77,7 +79,8 @@
       "story_context": "Lia has a new blue pen that she uses at school. She keeps the pen inside her pencil case after writing. One day, her pe...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ is blue."
+      "sentence_blank": "The ____ is blue.",
+      "question_text": "What tool do you use to write?"
     },
     {
       "id": "sun",
@@ -89,7 +92,8 @@
       "story_context": "The sun comes up early in the morning. The children prepare to play outside with their friends. They run, laugh, and en...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The bright ____ shines in the sky while the children play outside."
+      "sentence_blank": "The bright ____ shines in the sky while the children play outside.",
+      "question_text": "What shines brightly in the sky?"
     },
     {
       "id": "sit",
@@ -114,7 +118,8 @@
       "story_context": "Ben is playing outside with his friends. Suddenly, he hears his mother calling him. Ben can run home as fast as he can so he will not be late for dinner.",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Tom can ____ fast to the playground to play with his friends."
+      "sentence_blank": "Tom can ____ fast to the playground to play with his friends.",
+      "question_text": "What does the boy do?"
     },
     {
       "id": "sad",
@@ -126,7 +131,8 @@
       "story_context": "Mark was playing with his best friend, Leo, at the park. They had fun running and playing together. After an hour, Leo'...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Mark felt ____ when his friend went home."
+      "sentence_blank": "Mark felt ____ when his friend went home.",
+      "question_text": "How does this face feel?"
     },
     {
       "id": "bag",
@@ -138,7 +144,8 @@
       "story_context": "Ana has a new red bag that her mother gave her. She puts her books, pencils, and lunch inside the bag. Every morning, A...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Ana has a new ____ for school."
+      "sentence_blank": "Ana has a new ____ for school.",
+      "question_text": "What do you carry your things in?"
     },
     {
       "id": "map",
@@ -150,7 +157,8 @@
       "story_context": "Ben wants to visit the park with his father. His father brings a map to help them find the way. Ben looks at the map ca...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "I look at the ____ carefully to find the way to the park."
+      "sentence_blank": "I look at the ____ carefully to find the way to the park.",
+      "question_text": "What drawing shows places and roads?"
     },
     {
       "id": "man",
@@ -201,7 +209,8 @@
       "story_context": "A man works in his garden every morning. One day, he decides to plant a small tree. He uses a shovel to dig a hole in t...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The man digs a hole to plant a seed. (____)"
+      "sentence_blank": "The man digs a hole to plant a seed. (____)",
+      "question_text": "What does the boy do?"
     },
     {
       "id": "egg",
@@ -226,7 +235,8 @@
       "story_context": "Ben likes to paint pictures after school. One afternoon, he draws a big house with a small garden. He takes his red pai...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Ben uses ____ paint to color the flower."
+      "sentence_blank": "Ben uses ____ paint to color the flower.",
+      "question_text": "What color is this?"
     },
     {
       "id": "hen",
@@ -264,7 +274,8 @@
       "story_context": "Mia helps her mother in the garden one morning. They pick fresh vegetables such as tomatoes, carrots, and beans. Mia pu...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Mia puts fresh vegetables in a ____."
+      "sentence_blank": "Mia puts fresh vegetables in a ____.",
+      "question_text": "What container is this?"
     },
     {
       "id": "moon",
@@ -276,7 +287,8 @@
       "story_context": "One clear evening, Ana sits outside with her family. She looks up and sees the bright moon in the sky. The moon shines ...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The bright ____ shines in the night sky."
+      "sentence_blank": "The bright ____ shines in the night sky.",
+      "question_text": "What shines in the night sky?"
     },
     {
       "id": "ball",
@@ -288,7 +300,8 @@
       "story_context": "Mark brings his red ball to the park after school. He plays with his friends near the trees. While kicking the ball, it...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The boy plays with a ____ in the park."
+      "sentence_blank": "The boy plays with a ____ in the park.",
+      "question_text": "What round toy do you play with?"
     },
     {
       "id": "book",
@@ -300,7 +313,8 @@
       "story_context": "Lara receives a new book from her teacher. The book has colorful pictures and an interesting story about animals. Every...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Lara reads a storybook before going to bed. (____)"
+      "sentence_blank": "Lara reads a storybook before going to bed. (____)",
+      "question_text": "What do you open and read?"
     },
     {
       "id": "bark",
@@ -312,7 +326,8 @@
       "story_context": "One afternoon, Carlo was playing near his house. Suddenly, he heard his dog bark near the gate. Carlo went to see what ...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The dog can ____."
+      "sentence_blank": "The dog can ____.",
+      "question_text": "What does the dog do?"
     },
     {
       "id": "nest",
@@ -324,7 +339,8 @@
       "story_context": "A small bird builds a nest in a tall tree near a house. It uses dry grass and small twigs to make the nest. Soon, the b...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The bird builds a ____ in a tall tree."
+      "sentence_blank": "The bird builds a ____ in a tall tree.",
+      "question_text": "Where do birds lay their eggs?"
     },
     {
       "id": "test",
@@ -336,7 +352,8 @@
       "story_context": "Mia has a test at school on Friday. She studies her lessons every afternoon to prepare. On the day of the test, her tea...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Mia studies her lessons before taking a ____."
+      "sentence_blank": "Mia studies her lessons before taking a ____.",
+      "question_text": "What is the student taking?"
     },
     {
       "id": "tell",
@@ -348,7 +365,8 @@
       "story_context": "Lia finds a book under her classroom table. She does not know who owns it, so she decides to tell her teacher. Lia give...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Lia will ____ her teacher about the lost book."
+      "sentence_blank": "Lia will ____ her teacher about the lost book.",
+      "question_text": "What does the boy do?"
     },
     {
       "id": "pencil",
@@ -360,7 +378,8 @@
       "story_context": "Ben is doing his schoolwork when his pencil falls under his chair. He looks around but cannot find it at first. His fri...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Ben uses a ____ to write his answers."
+      "sentence_blank": "Ben uses a ____ to write his answers.",
+      "question_text": "What tool do you write or draw with?"
     },
     {
       "id": "candle",
@@ -372,7 +391,8 @@
       "story_context": "One evening, the electricity goes out at Anna's house. The room becomes dark, so her mother lights a candle. Anna sits ...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Mother lights a ____ when the room becomes dark."
+      "sentence_blank": "Mother lights a ____ when the room becomes dark.",
+      "question_text": "What gives light when it burns?"
     },
     {
       "id": "nine",
@@ -384,7 +404,8 @@
       "story_context": "Lina helps her mother pick apples from the garden. They collect nine red apples and put them in a basket. Lina counts...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "There are ____ apples in the basket."
+      "sentence_blank": "There are ____ apples in the basket.",
+      "question_text": "What number is this?"
     },
     {
       "id": "bath",
@@ -396,7 +417,8 @@
       "story_context": "Ben plays outside with his friends in the afternoon. After playing, he gets tired and dirty. His mother tells him to ta...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "Ben takes a warm ____ after playing outside."
+      "sentence_blank": "Ben takes a warm ____ after playing outside.",
+      "question_text": "What does the boy take to get clean?"
     },
     {
       "id": "nuts",
@@ -408,7 +430,8 @@
       "story_context": "A little squirrel lives in a big tree near the forest. One morning, it finds some nuts under the tree. The squirrel pic...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The squirrel collects ____ under the tree."
+      "sentence_blank": "The squirrel collects ____ under the tree.",
+      "question_text": "What crunchy food is this?"
     },
     {
       "id": "road",
@@ -420,7 +443,8 @@
       "story_context": "Mark and his sister walk home from school. They walk along a quiet road near their house. Before crossing, Mark looks l...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The children walk carefully along the ____."
+      "sentence_blank": "The children walk carefully along the ____.",
+      "question_text": "What do cars drive on?"
     },
     {
       "id": "stop",
@@ -432,7 +456,8 @@
       "story_context": "Leo and his father are walking along the road. They see a red stop sign near the corner. His father tells Leo to stop a...",
       "introduced_level": 2,
       "difficulty": "average",
-      "sentence_blank": "The boy stops when the teacher says, “____!”"
+      "sentence_blank": "The boy stops when the teacher says, “____!”",
+      "question_text": "What does this hand sign mean?"
     },
     {
       "id": "happy",
@@ -444,7 +469,8 @@
       "story_context": "Leo receives a new book from his mother. He opens the book and reads the first page. He shares the book with his sister...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The boy is ____ because he received a new book from his mother."
+      "sentence_blank": "The boy is ____ because he received a new book from his mother.",
+      "question_text": "How does this face feel?"
     },
     {
       "id": "little",
@@ -456,7 +482,8 @@
       "story_context": "A little bird sits on a branch near the house. Every morning, the bird sings a sweet song. A child watches the bird fro...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "I see a ____ bird sitting quietly on a branch near our house."
+      "sentence_blank": "I see a ____ bird sitting quietly on a branch near our house.",
+      "question_text": "What word describes this small bird?"
     },
     {
       "id": "floor",
@@ -468,7 +495,8 @@
       "story_context": "Mia was reading a book in her room. Suddenly, the book slipped from her hands and fell on the floor. She looked at the ...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The toy is on the ____."
+      "sentence_blank": "The toy is on the ____.",
+      "question_text": "What part of the room do you walk on?"
     },
     {
       "id": "card",
@@ -480,7 +508,8 @@
       "story_context": "Anna wants to make something special for her mother's birthday. She gets a piece of paper and colorful crayons. She mak...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "Anna makes a birthday ____ for her mother."
+      "sentence_blank": "Anna makes a birthday ____ for her mother.",
+      "question_text": "What greeting item is this?"
     },
     {
       "id": "switch",
@@ -492,7 +521,8 @@
       "story_context": "One evening, Ben enters his room and notices that it is dark. He cannot see his books on the table. Ben walks to the wa...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "Ben turns on the light ____ when the room is dark."
+      "sentence_blank": "Ben turns on the light ____ when the room is dark.",
+      "question_text": "What turns the light on and off?"
     },
     {
       "id": "bell",
@@ -504,7 +534,8 @@
       "story_context": "The school bell rang early in the morning. The pupils quickly went to their classrooms. They placed their bags beside t...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "I hear the school ____."
+      "sentence_blank": "I hear the school ____.",
+      "question_text": "What makes a ringing sound?"
     },
     {
       "id": "rain",
@@ -516,7 +547,8 @@
       "story_context": "One afternoon, dark clouds covered the sky. A few minutes later, the rain began to fall. The children quickly went insi...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The ____ is falling."
+      "sentence_blank": "The ____ is falling.",
+      "question_text": "What is falling from the cloud?"
     },
     {
       "id": "rock",
@@ -528,7 +560,8 @@
       "story_context": "Ben was walking along a path with his father. He noticed a large rock beside the road. Ben stopped because he had never...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "I see a big ____."
+      "sentence_blank": "I see a big ____.",
+      "question_text": "What hard stones are these?"
     },
     {
       "id": "round",
@@ -540,7 +573,8 @@
       "story_context": "Ana received a new ball from her aunt. The ball was round and easy to roll. Ana went outside and played with her brothe...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The ball is ____."
+      "sentence_blank": "The ball is ____.",
+      "question_text": "What shape is this wooden board?"
     },
     {
       "id": "plant",
@@ -552,7 +586,8 @@
       "story_context": "Lia found a small plant growing near their window. She noticed that its leaves looked fresh and healthy. She asked her ...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The ____ is growing."
+      "sentence_blank": "The ____ is growing.",
+      "question_text": "What is growing in the pot?"
     },
     {
       "id": "green",
@@ -564,7 +599,8 @@
       "story_context": "Tom was walking around the school garden with his teacher. He noticed a green leaf on a small plant. He bent down and ...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The leaf is ____."
+      "sentence_blank": "The leaf is ____.",
+      "question_text": "What color is this?"
     },
     {
       "id": "black",
@@ -576,7 +612,8 @@
       "story_context": "Ben was getting ready for school one morning. He put his books inside his black bag. He also placed his pencils and not...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The bag is ____."
+      "sentence_blank": "The bag is ____.",
+      "question_text": "What color is this?"
     },
     {
       "id": "house",
@@ -588,7 +625,8 @@
       "story_context": "One afternoon, Ana walked with her mother around their neighborhood. As they walked, Ana noticed a small house with a r...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The ____ is big."
+      "sentence_blank": "The ____ is big.",
+      "question_text": "What building do people live in?"
     },
     {
       "id": "chair",
@@ -600,7 +638,8 @@
       "story_context": "Ben sees a new chair inside his classroom. The chair is beside his desk near the window. He sits on it and opens his bo...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The boy sits on a ____ while reading his book."
+      "sentence_blank": "The boy sits on a ____ while reading his book.",
+      "question_text": "What furniture do you sit on?"
     },
     {
       "id": "clock",
@@ -612,7 +651,8 @@
       "story_context": "There is a big clock on the wall of Mia's classroom. Every morning, Mia looks at the clock to check the time. When the ...",
       "introduced_level": 3,
       "difficulty": "difficult",
-      "sentence_blank": "The ____ tells us when it is time to go to school."
+      "sentence_blank": "The ____ tells us when it is time to go to school.",
+      "question_text": "What object tells the time?"
     }
   ],
   "stories": [

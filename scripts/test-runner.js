@@ -224,6 +224,25 @@ runSuite('Content & Curriculum Integrity', () => {
     const storyQuestions = getQuestionsForStory(story);
     assert(storyQuestions.length === 6, `Story ${story.id} provides exactly 6 questions (found ${storyQuestions.length})`);
   }
+
+  // Verify all 50 target vocabulary words have adaptive question_text
+  let allWordsHaveQuestions = true;
+  for (const word of CONTENT.words) {
+    if (!word.question_text || typeof word.question_text !== 'string' || word.question_text.trim() === '') {
+      allWordsHaveQuestions = false;
+      break;
+    }
+  }
+  assert(allWordsHaveQuestions, 'All 50 curriculum words have non-empty question_text');
+
+  // Verify client-specified and adaptive question prompts
+  assert(WORDS.cat?.question_text === 'What animal is this?', 'Word "cat" has question "What animal is this?"');
+  assert(WORDS.sit?.question_text === 'What does the girl do?', 'Word "sit" has question "What does the girl do?"');
+  assert(WORDS.run?.question_text === 'What does the boy do?', 'Word "run" has question "What does the boy do?"');
+  assert(WORDS.sad?.question_text === 'How does this face feel?', 'Word "sad" has question "How does this face feel?"');
+  assert(WORDS.nine?.question_text === 'What number is this?', 'Word "nine" has question "What number is this?"');
+  assert(WORDS.red?.question_text === 'What color is this?', 'Word "red" has question "What color is this?"');
+  assert(WORDS.man?.question_text === 'Who is in the picture?', 'Word "man" has question "Who is in the picture?"');
 });
 
 // -------------------------------------------------------------
