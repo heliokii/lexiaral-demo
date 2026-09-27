@@ -93,7 +93,7 @@ npm start
 - `App.jsx`: Main application container, navigation stack, and responsive frame.
 - `src/`: Core application logic.
   - `components/`: UI design system (`ui.jsx`) and activity components (`learning.jsx`).
-  - `screens/`: Dashboard screens (`DashboardScreens.jsx`), levels (`LevelsScreen.jsx`), and learning flows (`LearningScreens.jsx`).
+  - `screens/`: Modular screen components (`HomeScreen.jsx`, `LevelsScreen.jsx`, `ActivityScreen.jsx`, `ResultsScreen.jsx`, `ReviewScreen.jsx`, etc.).
   - `state/`: Learning state provider (`LearningProvider.jsx`) and reducer engine (`engine.js`).
   - `audio.js`: Audio handling and TTS logic.
   - `content.js`: ARAL curriculum data model and question generation logic.
