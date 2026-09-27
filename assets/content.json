@@ -14,7 +14,8 @@
       "story_context": "Mia has a small cat named Mimi. The cat likes to play with a ball every morning. After playing, the cat sits on a mat n...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ is sitting quietly on the soft mat near the door."
+      "sentence_blank": "The ____ is sitting quietly on the soft mat near the door.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "mat",
@@ -50,7 +51,8 @@
       "story_context": "A small rat lives near an old box. One morning, the rat sees some food near the box. It runs quickly toward the food. A...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "A small ____ runs quickly near the box beside the kitchen."
+      "sentence_blank": "A small ____ runs quickly near the box beside the kitchen.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "bat",
@@ -62,7 +64,8 @@
       "story_context": "A bat lives in a tall tree near a garden. During the day, it stays quiet inside the tree. At night, the bat flies aroun...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ flies around the trees when the sky becomes dark."
+      "sentence_blank": "The ____ flies around the trees when the sky becomes dark.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "pen",
@@ -98,7 +101,8 @@
       "story_context": "Nina goes to the reading corner in her classroom. Her teacher asks her to sit on a chair. Nina sits quietly and opens h...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "Please ____ on your chair and listen carefully to your teacher."
+      "sentence_blank": "Please ____ on your chair and listen carefully to your teacher.",
+      "question_text": "What does the girl do?"
     },
     {
       "id": "run",
@@ -158,7 +162,8 @@
       "story_context": "A kind man walks to a store one morning. On the way, he sees a child carrying several books. The child looks tired and ...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The kind ____ walks to the store to buy some food for his family."
+      "sentence_blank": "The kind ____ walks to the store to buy some food for his family.",
+      "question_text": "Who is in the picture?"
     },
     {
       "id": "dog",
@@ -170,7 +175,8 @@
       "story_context": "Dan has a friendly dog named Max. Every afternoon, Max runs around the yard. Dan plays with his dog after school. They ...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The friendly ____ runs around the yard and plays with the children."
+      "sentence_blank": "The friendly ____ runs around the yard and plays with the children.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "cow",
@@ -182,7 +188,8 @@
       "story_context": "Mia saw a big brown cow in the field near her house. The cow was eating green grass under the warm sun. Mia watched the...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ eats green grass in the field."
+      "sentence_blank": "The ____ eats green grass in the field.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "dig",
@@ -206,7 +213,8 @@
       "story_context": "A hen sits quietly in her nest. Beside her is a small egg. The farmer carefully checks the nest every morning. He makes...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The hen has an ____ in her nest near the farmer's house."
+      "sentence_blank": "The hen has an ____ in her nest near the farmer's house.",
+      "question_text": "What is this?"
     },
     {
       "id": "red",
@@ -230,7 +238,8 @@
       "story_context": "Lina visits her grandmother's farm one morning. She sees a brown hen walking near the small chicken house. The hen sits...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ walks around the farm looking for food."
+      "sentence_blank": "The ____ walks around the farm looking for food.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "pig",
@@ -242,7 +251,8 @@
       "story_context": "Leo visits his uncle's farm one morning. He sees a small pink pig near the fence. The pig is hungry, so Leo gives it so...",
       "introduced_level": 1,
       "difficulty": "easy",
-      "sentence_blank": "The ____ eats corn on the farm."
+      "sentence_blank": "The ____ eats corn on the farm.",
+      "question_text": "What animal is this?"
     },
     {
       "id": "basket",
@@ -1391,65 +1401,65 @@
           "category": "comprehension",
           "prompt": "What does Ana have?",
           "choices": [
-            "Sara",
-            "Mia",
-            "Lia",
-            "Anna"
+            "A new red bag",
+            "A new red hat",
+            "A new blue pen",
+            "A small cat"
           ],
-          "answer": "Sara",
-          "explanation": "The story explains: Sara has a new yellow bag for school."
+          "answer": "A new red bag",
+          "explanation": "The story says Ana has a new red bag."
         },
         {
           "id": "q-bag-2",
           "category": "comprehension",
           "prompt": "What color is Ana's bag?",
           "choices": [
+            "Red",
             "Yellow",
             "Blue",
-            "Red",
-            "Pink"
+            "Green"
           ],
-          "answer": "Yellow",
-          "explanation": "The story explains: Sara has a new yellow bag for school."
+          "answer": "Red",
+          "explanation": "Ana's bag is red."
         },
         {
           "id": "q-bag-3",
           "category": "comprehension",
           "prompt": "Who gave Ana the bag?",
           "choices": [
-            "Her books and pencil case",
-            "Her toys and shoes",
-            "Some apples and nuts",
-            "Her clothes"
+            "Her mother",
+            "Her father",
+            "Her teacher",
+            "Her friend"
           ],
-          "answer": "Her books and pencil case",
-          "explanation": "The story explains: She puts her books and pencil case inside the bag."
+          "answer": "Her mother",
+          "explanation": "Ana's mother gave her the bag."
         },
         {
           "id": "q-bag-4",
           "category": "comprehension",
           "prompt": "What does Ana put inside her bag?",
           "choices": [
-            "To school",
-            "To the park",
-            "To the market",
-            "To the church"
+            "Her books, pencils, and lunch",
+            "Only her toys",
+            "Only her clothes",
+            "A pair of shoes"
           ],
-          "answer": "To school",
-          "explanation": "The story explains: Every morning, she carries her bag to school."
+          "answer": "Her books, pencils, and lunch",
+          "explanation": "Ana puts her books, pencils, and lunch inside the bag."
         },
         {
           "id": "q-bag-5",
           "category": "comprehension",
           "prompt": "Why does Ana take good care of her bag?",
           "choices": [
-            "It holds all her school things neatly",
-            "It has wheels",
+            "It helps her carry her school things",
+            "It has many pockets",
             "It was a birthday gift",
-            "It has pictures"
+            "It has colorful pictures"
           ],
-          "answer": "It holds all her school things neatly",
-          "explanation": "The story explains: Sara likes her bag because it holds all her school things."
+          "answer": "It helps her carry her school things",
+          "explanation": "Ana takes care of her bag because it helps her carry her school things."
         }
       ]
     },
@@ -1595,7 +1605,7 @@
         {
           "id": "q15-5",
           "category": "comprehension",
-          "prompt": "What does the child say to the man?",
+          "prompt": "What does the child do to thank the man?",
           "choices": [
             "Smiles and thanks him",
             "Says goodbye",
@@ -1603,7 +1613,7 @@
             "Runs away"
           ],
           "answer": "Smiles and thanks him",
-          "explanation": "The story explains: Smiles and thanks him."
+          "explanation": "The child smiles and thanks the kind man."
         }
       ]
     },
@@ -1699,65 +1709,65 @@
           "category": "comprehension",
           "prompt": "What animal did Mia see?",
           "choices": [
-            "A black and white cow",
+            "A big brown cow",
             "A little horse",
             "A pink pig",
             "A friendly dog"
           ],
-          "answer": "A black and white cow",
-          "explanation": "The story explains: A large cow stands in the green field."
+          "answer": "A big brown cow",
+          "explanation": "Mia saw a big brown cow in the field near her house."
         },
         {
           "id": "q-cow-2",
           "category": "comprehension",
           "prompt": "What color was the cow?",
           "choices": [
-            "In the green field",
-            "Inside the barn",
-            "Near the river",
-            "On the road"
+            "Brown",
+            "Black and white",
+            "Pink",
+            "Yellow"
           ],
-          "answer": "In the green field",
-          "explanation": "The story explains: A large cow stands in the green field."
+          "answer": "Brown",
+          "explanation": "The cow in the field was big and brown."
         },
         {
           "id": "q-cow-3",
           "category": "comprehension",
           "prompt": "What was the cow eating?",
           "choices": [
-            "Fresh green grass",
+            "Green grass",
             "Corn and wheat",
             "Apples",
             "Bread"
           ],
-          "answer": "Fresh green grass",
-          "explanation": "The story explains: The cow eats fresh grass under the warm sun."
+          "answer": "Green grass",
+          "explanation": "The cow was eating green grass under the warm sun."
         },
         {
           "id": "q-cow-4",
           "category": "comprehension",
           "prompt": "Where did the cow rest?",
           "choices": [
-            "A farmer",
-            "A little boy",
-            "A teacher",
-            "A doctor"
+            "Under a small tree",
+            "Inside a barn",
+            "Near the river",
+            "On the road"
           ],
-          "answer": "A farmer",
-          "explanation": "The story explains: A farmer comes to give the cow fresh water."
+          "answer": "Under a small tree",
+          "explanation": "After eating, the cow walked to a small tree and rested under its shade."
         },
         {
           "id": "q-cow-5",
           "category": "comprehension",
           "prompt": "Why did Mia smile?",
           "choices": [
-            "Healthy and strong",
-            "Tired and sleepy",
-            "Afraid",
-            "Hungry"
+            "She enjoyed watching the gentle cow",
+            "She was tired and sleepy",
+            "She felt afraid of the cow",
+            "She was hungry"
           ],
-          "answer": "Healthy and strong",
-          "explanation": "The story explains: The cow gives milk that helps children grow strong."
+          "answer": "She enjoyed watching the gentle cow",
+          "explanation": "Mia smiled because she enjoyed watching the gentle cow."
         }
       ]
     },
@@ -1774,67 +1784,67 @@
         {
           "id": "q18-1",
           "category": "comprehension",
-          "prompt": "What does the dog see?",
+          "prompt": "Where does the man work?",
           "choices": [
-            "Something interesting under soil",
-            "A red hat",
-            "A little bird",
-            "A clean mat"
+            "In his garden",
+            "In a store",
+            "At school",
+            "Near the river"
           ],
-          "answer": "Something interesting under soil",
-          "explanation": "The story explains: Something interesting under soil."
+          "answer": "In his garden",
+          "explanation": "The man works in his garden every morning."
         },
         {
           "id": "q18-2",
           "category": "comprehension",
-          "prompt": "Where does the dog dig?",
+          "prompt": "What does the man decide to plant?",
           "choices": [
-            "Under a big tree",
-            "Inside its den",
-            "On the road",
-            "In the house"
+            "A small tree",
+            "Some flowers",
+            "A vegetable",
+            "A big rock"
           ],
-          "answer": "Under a big tree",
-          "explanation": "The story explains: Under a big tree."
+          "answer": "A small tree",
+          "explanation": "One day, he decides to plant a small tree."
         },
         {
           "id": "q18-3",
           "category": "comprehension",
-          "prompt": "What does the dog use to dig?",
+          "prompt": "What does the man use to dig a hole?",
           "choices": [
-            "Its paws",
-            "A small spade",
+            "A shovel",
+            "A spoon",
             "A stick",
-            "A stone"
+            "His hands"
           ],
-          "answer": "Its paws",
-          "explanation": "The story explains: Its paws."
+          "answer": "A shovel",
+          "explanation": "He uses a shovel to dig a hole in the soil."
         },
         {
           "id": "q18-4",
           "category": "comprehension",
-          "prompt": "What does the dog find?",
+          "prompt": "What does the man put into the hole?",
           "choices": [
-            "Its old toy",
-            "A shiny coin",
-            "A little egg",
-            "A bone"
+            "A seed",
+            "A rock",
+            "A toy",
+            "A small box"
           ],
-          "answer": "Its old toy",
-          "explanation": "The story explains: Its old toy."
+          "answer": "A seed",
+          "explanation": "After digging, he puts a seed into the hole and covers it with soil."
         },
         {
           "id": "q18-5",
           "category": "comprehension",
-          "prompt": "What does the dog do with the toy?",
+          "prompt": "Why is the man happy?",
           "choices": [
-            "Plays with it again",
-            "Buries it again",
-            "Gives it to Dan",
-            "Hides it in the den"
+            "The tree will make the garden beautiful",
+            "He found a toy",
+            "He can go home",
+            "It will rain soon"
           ],
-          "answer": "Plays with it again",
-          "explanation": "The story explains: Plays with it again."
+          "answer": "The tree will make the garden beautiful",
+          "explanation": "He is happy because he knows the tree will make the garden beautiful."
         }
       ]
     },
@@ -2007,13 +2017,13 @@
           "category": "comprehension",
           "prompt": "Where does Lina go?",
           "choices": [
-            "In the coop on the farm",
-            "In the kitchen",
-            "On the roof",
-            "Near the pond"
+            "To her grandmother's farm",
+            "To the market",
+            "To school",
+            "To the park"
           ],
-          "answer": "In the coop on the farm",
-          "explanation": "The story explains: A brown hen sits in her comfortable nest."
+          "answer": "To her grandmother's farm",
+          "explanation": "Lina visits her grandmother's farm one morning."
         },
         {
           "id": "q-hen-2",
@@ -2026,20 +2036,20 @@
             "A small chick"
           ],
           "answer": "A brown hen",
-          "explanation": "The story explains: A brown hen sits in her comfortable nest inside the coop."
+          "explanation": "She sees a brown hen walking near the small chicken house."
         },
         {
           "id": "q-hen-3",
           "category": "comprehension",
           "prompt": "What is the hen sitting on?",
           "choices": [
-            "Three white eggs",
-            "Five brown eggs",
-            "Two shiny rocks",
-            "Some seeds"
+            "Her eggs",
+            "Some seeds",
+            "A nest of twigs",
+            "A small rock"
           ],
-          "answer": "Three white eggs",
-          "explanation": "The story explains: Beside her are three white eggs."
+          "answer": "Her eggs",
+          "explanation": "The hen sits quietly on her eggs to keep them warm."
         },
         {
           "id": "q-hen-4",
@@ -2052,20 +2062,20 @@
             "To eat them"
           ],
           "answer": "To keep them warm until they hatch",
-          "explanation": "The story explains: The hen keeps her eggs warm every day."
+          "explanation": "The hen sits on her eggs to keep them warm until they hatch."
         },
         {
           "id": "q-hen-5",
           "category": "comprehension",
           "prompt": "What comes out of the eggs?",
           "choices": [
-            "Little chicks",
+            "Small chicks",
             "Small ducks",
             "Tiny birds",
             "Frogs"
           ],
-          "answer": "Little chicks",
-          "explanation": "The story explains: Soon, the eggs will hatch into little chicks."
+          "answer": "Small chicks",
+          "explanation": "After a few days, the eggs hatch into small chicks."
         }
       ]
     },
@@ -2398,59 +2408,59 @@
             "Nina"
           ],
           "answer": "Lara",
-          "explanation": "The story explains: Lara receives a colorful storybook from her aunt."
+          "explanation": "Lara receives a new book."
         },
         {
           "id": "q-book-2",
           "category": "comprehension",
           "prompt": "Who gives Lara the book?",
           "choices": [
+            "Her teacher",
             "Her aunt",
             "Her mother",
-            "Her teacher",
             "Her grandmother"
           ],
-          "answer": "Her aunt",
-          "explanation": "The story explains: Lara receives a colorful storybook from her aunt."
+          "answer": "Her teacher",
+          "explanation": "Lara receives a new book from her teacher."
         },
         {
           "id": "q-book-3",
           "category": "comprehension",
           "prompt": "What is the book about?",
           "choices": [
-            "Animals in the forest",
+            "Animals",
             "Cars and airplanes",
             "Plants and trees",
             "Stars in the sky"
           ],
-          "answer": "Animals in the forest",
-          "explanation": "The story explains: The book is filled with exciting stories about animals in the forest."
+          "answer": "Animals",
+          "explanation": "The book has an interesting story about animals."
         },
         {
           "id": "q-book-4",
           "category": "comprehension",
           "prompt": "When does Lara read the book?",
           "choices": [
-            "Every afternoon before dinner",
+            "Every afternoon",
             "Only in the morning",
             "Late at night",
             "During class"
           ],
-          "answer": "Every afternoon before dinner",
-          "explanation": "The story explains: Lara reads one story from the book every afternoon."
+          "answer": "Every afternoon",
+          "explanation": "Every afternoon, Lara sits in a quiet place and reads a few pages."
         },
         {
           "id": "q-book-5",
           "category": "comprehension",
           "prompt": "Why does Lara enjoy reading?",
           "choices": [
-            "The stories are fun and she learns new words",
+            "It helps her learn and imagine new things",
             "It has no words",
-            "Her aunt asked her to",
+            "Her teacher asked her to",
             "She has nothing else to do"
           ],
-          "answer": "The stories are fun and she learns new words",
-          "explanation": "The story explains: Lara enjoys reading because the stories make her imagine wonderful adventures."
+          "answer": "It helps her learn and imagine new things",
+          "explanation": "Lara enjoys reading because it helps her learn and imagine new things."
         }
       ]
     },
@@ -2546,65 +2556,65 @@
           "category": "comprehension",
           "prompt": "What animal builds the nest?",
           "choices": [
-            "A little brown bird",
-            "A bat",
-            "A hen",
-            "A duck"
+            "A small bird",
+            "A little squirrel",
+            "A brown hen",
+            "A bat"
           ],
-          "answer": "A little brown bird",
-          "explanation": "The story explains: A little brown bird builds a cozy nest on a tall mango branch."
+          "answer": "A small bird",
+          "explanation": "A small bird builds a nest in a tall tree near a house."
         },
         {
           "id": "q-nest-2",
           "category": "comprehension",
           "prompt": "Where does the bird build its nest?",
           "choices": [
-            "On a tall mango branch",
-            "Under a bench",
-            "In a den",
-            "On the ground"
+            "In a tall tree near a house",
+            "On a mango branch",
+            "Under the house",
+            "Beside the road"
           ],
-          "answer": "On a tall mango branch",
-          "explanation": "The story explains: A little brown bird builds a cozy nest on a tall mango branch."
+          "answer": "In a tall tree near a house",
+          "explanation": "It builds the nest in a tall tree near a house."
         },
         {
           "id": "q-nest-3",
           "category": "comprehension",
           "prompt": "What does the bird use to make the nest?",
           "choices": [
-            "Dry twigs, grass, and soft leaves",
+            "Dry grass and small twigs",
+            "Leaves and soft feathers",
             "Mud and stones",
-            "Paper and cloth",
-            "Feathers and seeds"
+            "Paper and string"
           ],
-          "answer": "Dry twigs, grass, and soft leaves",
-          "explanation": "The story explains: The bird collects dry twigs, grass, and soft leaves to make the nest."
+          "answer": "Dry grass and small twigs",
+          "explanation": "It uses dry grass and small twigs to make the nest."
         },
         {
           "id": "q-nest-4",
           "category": "comprehension",
           "prompt": "How many eggs does the bird lay?",
           "choices": [
-            "Three tiny blue eggs",
-            "Two white eggs",
-            "Four speckled eggs",
-            "One golden egg"
+            "Three small eggs",
+            "Two blue eggs",
+            "Five brown eggs",
+            "One big egg"
           ],
-          "answer": "Three tiny blue eggs",
-          "explanation": "The story explains: After finishing the nest, the bird lays three tiny blue eggs inside."
+          "answer": "Three small eggs",
+          "explanation": "The bird lays three small eggs inside the nest."
         },
         {
           "id": "q-nest-5",
           "category": "comprehension",
-          "prompt": "What happens after the eggs hatch?",
+          "prompt": "What comes out of the eggs?",
           "choices": [
-            "The mother bird feeds her hungry baby chicks",
-            "The chicks fly away immediately",
-            "The nest falls",
-            "The bird leaves"
+            "Three tiny birds",
+            "Little chicks",
+            "Small frogs",
+            "Tiny ducks"
           ],
-          "answer": "The mother bird feeds her hungry baby chicks",
-          "explanation": "The story explains: Soon, the eggs hatch, and the mother bird happily feeds her baby chicks."
+          "answer": "Three tiny birds",
+          "explanation": "After some days, the eggs hatch, and three tiny birds come out."
         }
       ]
     },
@@ -2621,67 +2631,67 @@
         {
           "id": "q30-1",
           "category": "comprehension",
-          "prompt": "Where did Lara go?",
+          "prompt": "When does Mia have a test?",
           "choices": [
-            "To school",
-            "To the park",
-            "To the library",
-            "To her friend's house"
+            "On Friday",
+            "On Monday",
+            "On Sunday",
+            "Today"
           ],
-          "answer": "To school",
-          "explanation": "The story explains: Lara went to school early one morning."
+          "answer": "On Friday",
+          "explanation": "Mia has a test at school on Friday."
         },
         {
           "id": "q30-2",
           "category": "comprehension",
-          "prompt": "What kind of test did they have?",
+          "prompt": "What does Mia do to prepare for the test?",
           "choices": [
-            "A reading test",
-            "A math test",
-            "A science quiz",
-            "A spelling contest"
+            "She studies her lessons every afternoon",
+            "She plays outside",
+            "She reads a storybook",
+            "She helps her mother"
           ],
-          "answer": "A reading test",
-          "explanation": "The story explains: They would have a reading test."
+          "answer": "She studies her lessons every afternoon",
+          "explanation": "She studies her lessons every afternoon to prepare."
         },
         {
           "id": "q30-3",
           "category": "comprehension",
-          "prompt": "How did Lara read the words?",
+          "prompt": "What does the teacher give each pupil?",
           "choices": [
-            "Carefully before answering",
-            "Very quickly",
-            "Without looking",
-            "Out loud to her friend"
+            "A sheet of paper",
+            "A new pencil",
+            "A small book",
+            "A red ball"
           ],
-          "answer": "Carefully before answering",
-          "explanation": "The story explains: Lara read each word carefully before answering."
+          "answer": "A sheet of paper",
+          "explanation": "Her teacher gives each pupil a sheet of paper."
         },
         {
           "id": "q30-4",
           "category": "comprehension",
-          "prompt": "What did Lara do before passing her paper?",
+          "prompt": "What does Mia do before writing her answers?",
           "choices": [
-            "Checked her answers",
-            "Erased everything",
-            "Gave it to a friend",
-            "Asked for another paper"
+            "She reads each question carefully",
+            "She talks to her friend",
+            "She draws a picture",
+            "She closes her eyes"
           ],
-          "answer": "Checked her answers",
-          "explanation": "The story explains: She checked her answers before passing her paper."
+          "answer": "She reads each question carefully",
+          "explanation": "Mia reads each question carefully before writing her answers."
         },
         {
           "id": "q30-5",
           "category": "comprehension",
-          "prompt": "How did Lara feel?",
+          "prompt": "What does Mia do when she finishes?",
           "choices": [
-            "Proud of herself",
-            "Tired and sleepy",
-            "Worried and sad",
-            "Angry at the test"
+            "She checks her work and submits her test",
+            "She goes home at once",
+            "She plays with her friend",
+            "She starts again"
           ],
-          "answer": "Proud of herself",
-          "explanation": "The story explains: Lara felt proud of herself after the test."
+          "answer": "She checks her work and submits her test",
+          "explanation": "When she finishes, she checks her work and submits her test to the teacher."
         }
       ]
     },
@@ -2698,67 +2708,67 @@
         {
           "id": "q35-1",
           "category": "comprehension",
-          "prompt": "What did Lina have?",
+          "prompt": "What did Lia find?",
           "choices": [
-            "An interesting story",
-            "A new drawing book",
-            "A box of pencils",
-            "A small pet"
+            "A book",
+            "A pencil",
+            "A bag",
+            "A ball"
           ],
-          "answer": "An interesting story",
-          "explanation": "The story explains: Lina had an interesting story to tell her classmates."
+          "answer": "A book",
+          "explanation": "Lia finds a book under her classroom table."
         },
         {
           "id": "q35-2",
           "category": "comprehension",
-          "prompt": "Whom did she tell the story to?",
+          "prompt": "Where did Lia find the book?",
           "choices": [
-            "Her classmates",
-            "Her parents",
-            "Her grandmother",
-            "The principal"
+            "Under her classroom table",
+            "Beside the door",
+            "In her bag",
+            "On the chair"
           ],
-          "answer": "Her classmates",
-          "explanation": "The story explains: To tell her classmates."
+          "answer": "Under her classroom table",
+          "explanation": "Lia finds a book under her classroom table."
         },
         {
           "id": "q35-3",
           "category": "comprehension",
-          "prompt": "Where did she stand?",
+          "prompt": "What did Lia decide to do with the book?",
           "choices": [
-            "In front of the class",
-            "Beside the window",
-            "At her desk",
-            "Behind the door"
+            "Give it to her teacher",
+            "Keep it at home",
+            "Hide it in her bag",
+            "Give it to a friend"
           ],
-          "answer": "In front of the class",
-          "explanation": "The story explains: She stood in front of the class."
+          "answer": "Give it to her teacher",
+          "explanation": "She decides to tell her teacher and gives the book to her."
         },
         {
           "id": "q35-4",
           "category": "comprehension",
-          "prompt": "What did the classmates do?",
+          "prompt": "What did the teacher say to Lia?",
           "choices": [
-            "Listened carefully and laughed",
-            "Ignored her",
-            "Started reading books",
-            "Walked outside"
+            "Thanked her for being honest",
+            "Told her to keep the book",
+            "Asked her to leave",
+            "Gave her a new book"
           ],
-          "answer": "Listened carefully and laughed",
-          "explanation": "The story explains: Her classmates listened carefully and laughed at the funny part."
+          "answer": "Thanked her for being honest",
+          "explanation": "The teacher thanks Lia for being honest."
         },
         {
           "id": "q35-5",
           "category": "comprehension",
-          "prompt": "Why did Lina smile?",
+          "prompt": "Why did Lia feel happy?",
           "choices": [
-            "Her classmates enjoyed her story",
-            "She was finished with school",
+            "She helped her classmate",
+            "She got a new book",
             "She won a prize",
-            "The bell rang"
+            "She finished her work"
           ],
-          "answer": "Her classmates enjoyed her story",
-          "explanation": "The story explains: Lina smiled because her classmates enjoyed her story."
+          "answer": "She helped her classmate",
+          "explanation": "Lia feels happy because she helped her classmate."
         }
       ]
     },
@@ -2775,67 +2785,67 @@
         {
           "id": "q-pencil-1",
           "category": "comprehension",
-          "prompt": "What is Ben using to write his answers?",
+          "prompt": "What was Ben doing when his pencil fell?",
           "choices": [
-            "A sharp yellow pencil",
-            "A blue pen",
-            "A red crayon",
-            "A marker"
+            "Doing his schoolwork",
+            "Playing outside",
+            "Eating his lunch",
+            "Cleaning his desk"
           ],
-          "answer": "A sharp yellow pencil",
-          "explanation": "The story explains: Ben sits at his desk holding a sharp yellow pencil."
+          "answer": "Doing his schoolwork",
+          "explanation": "Ben is doing his schoolwork when his pencil falls."
         },
         {
           "id": "q-pencil-2",
           "category": "comprehension",
-          "prompt": "Where does the pencil fall?",
+          "prompt": "Where did the pencil fall?",
           "choices": [
-            "Under his classmate's chair",
-            "In his bag",
-            "Outside the door",
-            "Under the teacher's table"
+            "Under his chair",
+            "On the table",
+            "Inside his bag",
+            "Near the door"
           ],
-          "answer": "Under his classmate's chair",
-          "explanation": "The story explains: Suddenly, the pencil rolls off the desk and drops under a chair."
+          "answer": "Under his chair",
+          "explanation": "His pencil falls under his chair."
         },
         {
           "id": "q-pencil-3",
           "category": "comprehension",
-          "prompt": "Who helps Ben look for the pencil?",
+          "prompt": "Who helped Ben look for the pencil?",
           "choices": [
-            "His friend Sam",
+            "His friend Ana",
             "His teacher",
-            "His sister",
-            "Carlo"
+            "His brother",
+            "His mother"
           ],
-          "answer": "His friend Sam",
-          "explanation": "The story explains: His kind friend Sam notices and helps Ben look for it."
+          "answer": "His friend Ana",
+          "explanation": "His friend Ana helps him look for the pencil."
         },
         {
           "id": "q-pencil-4",
           "category": "comprehension",
-          "prompt": "Where do they find the pencil?",
+          "prompt": "Where did they find the pencil?",
           "choices": [
-            "Near the leg of the chair",
-            "In the trash bin",
-            "In Sam's bag",
-            "On the floor mat"
+            "Beside Ben's school bag",
+            "Under the chair",
+            "On the teacher's desk",
+            "Near the window"
           ],
-          "answer": "Near the leg of the chair",
-          "explanation": "The story explains: Sam reaches down and finds the yellow pencil near the chair leg."
+          "answer": "Beside Ben's school bag",
+          "explanation": "They find the pencil beside Ben's school bag."
         },
         {
           "id": "q-pencil-5",
           "category": "comprehension",
-          "prompt": "What does Ben do after finding his pencil?",
+          "prompt": "What did Ben do after finding his pencil?",
           "choices": [
-            "Says thank you and continues his drawing",
-            "Gives it to Sam",
-            "Puts it away",
-            "Sharpens it again"
+            "He thanked Ana and continued writing his work",
+            "He went home",
+            "He played with Ana",
+            "He put it in his bag"
           ],
-          "answer": "Says thank you and continues his drawing",
-          "explanation": "The story explains: Ben smiles, thanks Sam warmly, and continues his drawing lesson."
+          "answer": "He thanked Ana and continued writing his work",
+          "explanation": "Ben picks it up, thanks Ana for helping him, and continues writing his work."
         }
       ]
     },
@@ -2855,64 +2865,64 @@
           "prompt": "Who are at home when the electricity goes out?",
           "choices": [
             "Anna and her mother",
-            "Mia and Leo",
-            "Lara and Ben",
-            "Sara and Tom"
+            "Anna and her father",
+            "Anna and her brother",
+            "Anna alone"
           ],
           "answer": "Anna and her mother",
-          "explanation": "The story explains: One evening, the electricity goes out at Anna's house."
+          "explanation": "One evening, the electricity goes out at Anna’s house while she is with her mother."
         },
         {
           "id": "q-candle-2",
           "category": "comprehension",
           "prompt": "What does Mother use to light the dark room?",
           "choices": [
-            "A white candle and matches",
-            "A flashlight",
+            "A candle",
             "A lamp",
-            "A phone"
+            "A flashlight",
+            "A big fire"
           ],
-          "answer": "A white candle and matches",
-          "explanation": "The story explains: Mother brings out a white candle and lights it with a match."
+          "answer": "A candle",
+          "explanation": "The room becomes dark, so her mother lights a candle."
         },
         {
           "id": "q-candle-3",
           "category": "comprehension",
           "prompt": "What does Anna read?",
           "choices": [
-            "A short story from her reader",
-            "A comic book",
-            "A letter",
-            "A poem"
+            "A small book",
+            "A long story",
+            "A newspaper",
+            "A letter"
           ],
-          "answer": "A short story from her reader",
-          "explanation": "The story explains: By the gentle light of the candle, Anna reads a short story."
+          "answer": "A small book",
+          "explanation": "Anna sits beside her mother and reads a small book."
         },
         {
           "id": "q-candle-4",
           "category": "comprehension",
           "prompt": "What does the candle give them?",
           "choices": [
-            "Warm yellow light to see",
-            "Smoke and heat",
-            "Loud sounds",
-            "Colors"
+            "Enough light to see",
+            "Warm water",
+            "New books",
+            "Clean air"
           ],
-          "answer": "Warm yellow light to see",
-          "explanation": "The story explains: The candle gives warm light so they can see comfortably inside the room."
+          "answer": "Enough light to see",
+          "explanation": "The candle gives them enough light to see."
         },
         {
           "id": "q-candle-5",
           "category": "comprehension",
-          "prompt": "Where does Mother put the candle after using it?",
+          "prompt": "What does Mother do with the candle after the electricity comes back?",
           "choices": [
-            "Blows it out and places it safely on the shelf",
-            "Leaves it burning",
-            "Throws it away",
-            "Puts it on the bed"
+            "She blows it out and puts it in a safe place",
+            "She keeps it burning all night",
+            "She throws it away",
+            "She gives it to Anna"
           ],
-          "answer": "Blows it out and places it safely on the shelf",
-          "explanation": "The story explains: When the electricity returns, Mother gently blows out the candle."
+          "answer": "She blows it out and puts it in a safe place",
+          "explanation": "After the electricity comes back, Mother blows out the candle and puts it in a safe place."
         }
       ]
     },
@@ -2929,20 +2939,20 @@
         {
           "id": "q26-1",
           "category": "comprehension",
-          "prompt": "What did Nina find?",
+          "prompt": "What did Lina and her mother pick?",
           "choices": [
-            "Some pencils",
-            "Nine notebooks",
-            "A toy car",
-            "A lost coin"
+            "Apples",
+            "Oranges",
+            "Pencils",
+            "Nuts"
           ],
-          "answer": "Some pencils",
-          "explanation": "The story explains: Nina found some pencils in her classroom."
+          "answer": "Apples",
+          "explanation": "Lina and her mother pick apples from the garden."
         },
         {
           "id": "q26-2",
           "category": "comprehension",
-          "prompt": "How many pencils were there?",
+          "prompt": "How many apples did they collect?",
           "choices": [
             "Nine",
             "Seven",
@@ -2950,46 +2960,46 @@
             "Ten"
           ],
           "answer": "Nine",
-          "explanation": "The story explains: She counted them and found nine pencils."
+          "explanation": "They collect nine red apples and put them in a basket."
         },
         {
           "id": "q26-3",
           "category": "comprehension",
-          "prompt": "Where did Nina put the pencils?",
+          "prompt": "Where did they put the apples?",
           "choices": [
-            "On the teacher's desk",
-            "Inside her bag",
-            "In her desk drawer",
-            "On the floor"
+            "In a basket",
+            "In a bag",
+            "On the table",
+            "In a box"
           ],
-          "answer": "On the teacher's desk",
-          "explanation": "The story explains: She placed the pencils neatly on the teacher's desk."
+          "answer": "In a basket",
+          "explanation": "They collect the apples and put them in a basket."
         },
         {
           "id": "q26-4",
           "category": "comprehension",
-          "prompt": "What did she tell her teacher?",
+          "prompt": "What does Lina do to make sure there are nine apples?",
           "choices": [
-            "About the pencils she found",
-            "She wanted to go home",
-            "She lost her book",
-            "She forgot her pencil"
+            "She counts the apples one by one",
+            "She asks her mother",
+            "She weighs the apples",
+            "She hides the apples"
           ],
-          "answer": "About the pencils she found",
-          "explanation": "The story explains: She told her teacher about them."
+          "answer": "She counts the apples one by one",
+          "explanation": "Lina counts the apples one by one to make sure there are nine."
         },
         {
           "id": "q26-5",
           "category": "comprehension",
-          "prompt": "Why did Nina feel proud?",
+          "prompt": "Why is Lina happy?",
           "choices": [
-            "She did the right thing",
+            "She helped her mother",
             "She won a prize",
             "She had new shoes",
             "She finished first"
           ],
-          "answer": "She did the right thing",
-          "explanation": "The story explains: Nina felt proud because she did the right thing."
+          "answer": "She helped her mother",
+          "explanation": "Lina is happy because she helped her mother."
         }
       ]
     },
@@ -3006,7 +3016,7 @@
         {
           "id": "q39-1",
           "category": "comprehension",
-          "prompt": "What did Leo do in the afternoon?",
+          "prompt": "What did Ben do in the afternoon?",
           "choices": [
             "Played outside with his friends",
             "Read a storybook",
@@ -3014,7 +3024,7 @@
             "Did his homework"
           ],
           "answer": "Played outside with his friends",
-          "explanation": "The story explains: Leo spent the afternoon playing outside with his friends."
+          "explanation": "Ben spent the afternoon playing outside with his friends."
         },
         {
           "id": "q39-2",
@@ -3045,7 +3055,7 @@
         {
           "id": "q39-4",
           "category": "comprehension",
-          "prompt": "What did Leo put on?",
+          "prompt": "What did Ben put on?",
           "choices": [
             "Clean clothes",
             "His school uniform",
@@ -3053,12 +3063,12 @@
             "His shoes"
           ],
           "answer": "Clean clothes",
-          "explanation": "The story explains: Leo washed his body carefully and changed his clothes."
+          "explanation": "After his bath, Ben puts on clean clothes."
         },
         {
           "id": "q39-5",
           "category": "comprehension",
-          "prompt": "What was Leo ready to do?",
+          "prompt": "What was Ben ready to do?",
           "choices": [
             "Eat dinner with his family",
             "Go to sleep",
@@ -3066,7 +3076,7 @@
             "Do his reading test"
           ],
           "answer": "Eat dinner with his family",
-          "explanation": "The story explains: He was ready to eat dinner with his family."
+          "explanation": "His mother told him to take a bath before eating dinner, so he was ready to eat dinner with his family."
         }
       ]
     },
@@ -3083,67 +3093,67 @@
         {
           "id": "q27-1",
           "category": "comprehension",
-          "prompt": "Where did Sam walk?",
+          "prompt": "What lives in the big tree?",
           "choices": [
-            "Around the garden",
-            "In the market",
-            "Along the river",
-            "Near the road"
+            "A little squirrel",
+            "A big bird",
+            "A small dog",
+            "A cat"
           ],
-          "answer": "Around the garden",
-          "explanation": "The story explains: Sam walked around the garden."
+          "answer": "A little squirrel",
+          "explanation": "A little squirrel lives in a big tree near the forest."
         },
         {
           "id": "q27-2",
           "category": "comprehension",
-          "prompt": "What did he see?",
+          "prompt": "What did the squirrel find?",
           "choices": [
-            "Some nuts on the ground",
-            "A small frog",
-            "A red hat",
-            "A big rock"
+            "Some nuts",
+            "Some apples",
+            "A ball",
+            "A red hat"
           ],
-          "answer": "Some nuts on the ground",
-          "explanation": "The story explains: Under a tree, he saw some nuts on the ground."
+          "answer": "Some nuts",
+          "explanation": "One morning, the squirrel finds some nuts under the tree."
         },
         {
           "id": "q27-3",
           "category": "comprehension",
           "prompt": "Where were the nuts?",
           "choices": [
-            "Under a tree",
+            "Under the tree",
             "On the roof",
             "Inside a pot",
             "Near the gate"
           ],
-          "answer": "Under a tree",
-          "explanation": "The story explains: Under a tree."
+          "answer": "Under the tree",
+          "explanation": "The squirrel finds the nuts under the tree."
         },
         {
           "id": "q27-4",
           "category": "comprehension",
-          "prompt": "Who helped Sam count them?",
+          "prompt": "Where did the squirrel carry the nuts?",
           "choices": [
-            "His sister",
-            "His mother",
-            "His teacher",
-            "His friend"
+            "To a small hole in the ground",
+            "To its nest in the tree",
+            "To the river",
+            "To a farm"
           ],
-          "answer": "His sister",
-          "explanation": "The story explains: His sister helped him count them."
+          "answer": "To a small hole in the ground",
+          "explanation": "The squirrel carries the nuts to a small hole in the ground."
         },
         {
           "id": "q27-5",
           "category": "comprehension",
-          "prompt": "Where did they keep the nuts?",
+          "prompt": "Why did the squirrel keep the nuts?",
           "choices": [
-            "In a safe place",
-            "On the floor",
-            "In the trash",
-            "Under the bed"
+            "It will have food when it gets hungry",
+            "It wanted to play with them",
+            "It wanted to give them away",
+            "It liked counting them"
           ],
-          "answer": "In a safe place",
-          "explanation": "The story explains: They kept the nuts in a safe place."
+          "answer": "It will have food when it gets hungry",
+          "explanation": "It keeps the nuts there for later, when it gets hungry."
         }
       ]
     },
@@ -3160,67 +3170,67 @@
         {
           "id": "q41-1",
           "category": "comprehension",
-          "prompt": "Who traveled with Ricky?",
+          "prompt": "Who walked home with Mark?",
           "choices": [
-            "His family",
-            "His classmates",
-            "His teacher",
-            "His neighbors"
+            "His sister",
+            "His father",
+            "His friend",
+            "His teacher"
           ],
-          "answer": "His family",
-          "explanation": "The story explains: Ricky traveled with his family."
+          "answer": "His sister",
+          "explanation": "Mark and his sister walk home from school."
         },
         {
           "id": "q41-2",
           "category": "comprehension",
-          "prompt": "What did they ride in?",
+          "prompt": "Where did Mark and his sister walk?",
           "choices": [
-            "Their red car",
-            "A school bus",
-            "A bicycle",
-            "A train"
+            "Along a quiet road near their house",
+            "Through a busy market",
+            "Up a mountain",
+            "Beside the river"
           ],
-          "answer": "Their red car",
-          "explanation": "The story explains: In their red car."
+          "answer": "Along a quiet road near their house",
+          "explanation": "They walk along a quiet road near their house."
         },
         {
           "id": "q41-3",
           "category": "comprehension",
-          "prompt": "Where did they drive?",
+          "prompt": "What did Mark do before crossing?",
           "choices": [
-            "Along the road",
-            "Through the grass",
-            "Up a steep mountain",
-            "Along the river"
+            "He looked left and right for cars",
+            "He ran across quickly",
+            "He called his mother",
+            "He closed his eyes"
           ],
-          "answer": "Along the road",
-          "explanation": "The story explains: They drove carefully along the road."
+          "answer": "He looked left and right for cars",
+          "explanation": "Before crossing, Mark looks left and right to check for cars."
         },
         {
           "id": "q41-4",
           "category": "comprehension",
-          "prompt": "What did Ricky see?",
+          "prompt": "What did Mark hold while crossing?",
           "choices": [
-            "Trees and houses",
-            "A big mill",
-            "A green frog",
-            "A barking dog"
+            "His sister's hand",
+            "His school bag",
+            "A red ball",
+            "His hat"
           ],
-          "answer": "Trees and houses",
-          "explanation": "The story explains: Ricky looked through the window and saw trees and houses."
+          "answer": "His sister's hand",
+          "explanation": "He holds his sister's hand as they cross the road."
         },
         {
           "id": "q41-5",
           "category": "comprehension",
-          "prompt": "Where did they eventually arrive?",
+          "prompt": "What did they do after reaching the other side?",
           "choices": [
-            "At the place they wanted to visit",
-            "Back home",
-            "At the school gate",
-            "At the hospital"
+            "Continued walking home safely",
+            "Went back to school",
+            "Stopped to play",
+            "Rode in a car"
           ],
-          "answer": "At the place they wanted to visit",
-          "explanation": "The story explains: Soon, they arrived at the place they wanted to visit."
+          "answer": "Continued walking home safely",
+          "explanation": "They continue walking home safely."
         }
       ]
     },
@@ -3237,67 +3247,67 @@
         {
           "id": "q24-1",
           "category": "comprehension",
-          "prompt": "Where were Carlo and his sister going?",
+          "prompt": "Who was walking with Leo?",
           "choices": [
-            "To school",
-            "To the market",
-            "To the park",
-            "To grandmother's house"
+            "His father",
+            "His mother",
+            "His sister",
+            "His teacher"
           ],
-          "answer": "To school",
-          "explanation": "The story explains: Carlo was walking to school with his sister."
+          "answer": "His father",
+          "explanation": "Leo and his father are walking along the road."
         },
         {
           "id": "q24-2",
           "category": "comprehension",
-          "prompt": "Who reminded them to stop?",
+          "prompt": "What did they see near the corner?",
           "choices": [
-            "Their mother",
-            "Their teacher",
-            "The police officer",
-            "Their father"
+            "A red stop sign",
+            "A green light",
+            "A small house",
+            "A big rock"
           ],
-          "answer": "Their mother",
-          "explanation": "The story explains: Their mother reminded them to stop at the corner."
+          "answer": "A red stop sign",
+          "explanation": "They see a red stop sign near the corner."
         },
         {
           "id": "q24-3",
           "category": "comprehension",
-          "prompt": "Where did Carlo stop?",
+          "prompt": "What did Leo's father tell him to do?",
           "choices": [
-            "At the corner",
-            "At the school gate",
-            "In the middle of the road",
-            "Under the tree"
+            "Stop and look for cars",
+            "Run across the road",
+            "Wait for a friend",
+            "Go back home"
           ],
-          "answer": "At the corner",
-          "explanation": "The story explains: Carlo stopped and looked carefully at the corner."
+          "answer": "Stop and look for cars",
+          "explanation": "His father tells Leo to stop and look for cars before crossing."
         },
         {
           "id": "q24-4",
           "category": "comprehension",
-          "prompt": "What did they do when the way was clear?",
+          "prompt": "What did Leo do before crossing?",
           "choices": [
-            "Crossed the street safely",
-            "Ran back home",
-            "Rode on a bus",
-            "Waited for a friend"
+            "He waited until the road was clear",
+            "He crossed right away",
+            "He called his mother",
+            "He played near the sign"
           ],
-          "answer": "Crossed the street safely",
-          "explanation": "The story explains: When the way was clear, they crossed the street safely."
+          "answer": "He waited until the road was clear",
+          "explanation": "Leo waits until the road is clear."
         },
         {
           "id": "q24-5",
           "category": "comprehension",
-          "prompt": "What did Carlo learn?",
+          "prompt": "What did Leo and his father do together?",
           "choices": [
-            "Stopping and looking keeps people safe",
-            "Running makes you fast",
-            "Always walk alone",
-            "Playing in the street is fun"
+            "Crossed the road safely",
+            "Walked back home",
+            "Sat on a bench",
+            "Bought some food"
           ],
-          "answer": "Stopping and looking keeps people safe",
-          "explanation": "The story explains: Stopping and looking carefully can help keep people safe."
+          "answer": "Crossed the road safely",
+          "explanation": "Then, they cross the road safely together."
         }
       ]
     },
@@ -3549,11 +3559,11 @@
           "choices": [
             "Anna's mother",
             "Anna's teacher",
-            "Anna's grandmother",
-            "Anna's sister"
+            "Anna's friend",
+            "Anna"
           ],
           "answer": "Anna's mother",
-          "explanation": "The story explains: Anna wants to make something special for her mother's birthday."
+          "explanation": "Anna wants to make something special for her mother's birthday."
         },
         {
           "id": "q-card-2",
@@ -3561,51 +3571,51 @@
           "prompt": "What does Anna make for her mother?",
           "choices": [
             "A colorful birthday card",
-            "A drawing of a cat",
-            "A box of cookies",
-            "A paper flower"
+            "A small cake",
+            "A paper flower",
+            "A new bag"
           ],
           "answer": "A colorful birthday card",
-          "explanation": "The story explains: She takes a clean sheet of folded paper to make a birthday card."
+          "explanation": "Anna makes a beautiful birthday card."
         },
         {
           "id": "q-card-3",
           "category": "comprehension",
-          "prompt": "What does Anna use to make the card colorful?",
+          "prompt": "What does Anna use to make the card?",
           "choices": [
-            "Bright crayons and stickers",
-            "Paint and glitter",
-            "Colored pencils",
-            "Watercolors"
+            "Paper and colorful crayons",
+            "Glue and stickers",
+            "Scissors and tape",
+            "Paint and brushes"
           ],
-          "answer": "Bright crayons and stickers",
-          "explanation": "The story explains: Anna draws blooming flowers using bright crayons and adds pretty stickers."
+          "answer": "Paper and colorful crayons",
+          "explanation": "She gets a piece of paper and colorful crayons."
         },
         {
           "id": "q-card-4",
           "category": "comprehension",
           "prompt": "What does Anna write inside the card?",
           "choices": [
-            "Happy Birthday Mom, I love you",
-            "Best Wishes",
-            "Thank you for the food",
-            "See you soon"
+            "A kind message",
+            "A short story",
+            "Her name only",
+            "A drawing"
           ],
-          "answer": "Happy Birthday Mom, I love you",
-          "explanation": "The story explains: Inside the card, Anna writes: Happy Birthday Mom, I love you!"
+          "answer": "A kind message",
+          "explanation": "She writes a kind message inside the card."
         },
         {
           "id": "q-card-5",
           "category": "comprehension",
-          "prompt": "How does Anna's mother feel when she receives the card?",
+          "prompt": "How does Anna's mother react to the card?",
           "choices": [
-            "Hugs Anna warmly with a joyful smile",
-            "Smiles and walks away",
-            "Puts it in a drawer",
-            "Asks who made it"
+            "She smiles and thanks Anna",
+            "She hugs Anna warmly",
+            "She puts the card away",
+            "She asks for another one"
           ],
-          "answer": "Hugs Anna warmly with a joyful smile",
-          "explanation": "The story explains: Her mother smiles with joyful tears and gives Anna a big, warm hug."
+          "answer": "She smiles and thanks Anna",
+          "explanation": "Her mother smiles and thanks Anna for the thoughtful gift."
         }
       ]
     },
@@ -3625,64 +3635,64 @@
           "prompt": "Who enters the room in the evening?",
           "choices": [
             "Ben",
-            "Carlo",
-            "Mark",
-            "Tom"
+            "Anna",
+            "Mia",
+            "Leo"
           ],
           "answer": "Ben",
-          "explanation": "The story explains: One evening, Ben enters his room and notices that it is dark."
+          "explanation": "One evening, Ben enters his room."
         },
         {
           "id": "q-switch-2",
           "category": "comprehension",
           "prompt": "Why is the room dark?",
           "choices": [
-            "The sun had set and the lamps were off",
-            "The curtains were closed",
-            "The bulbs were broken",
-            "The door was shut"
+            "It is evening and the light is off",
+            "The windows are closed",
+            "A curtain covers the light",
+            "The bulb is broken"
           ],
-          "answer": "The sun had set and the lamps were off",
-          "explanation": "The story explains: The room is dark because the sun has already set outside."
+          "answer": "It is evening and the light is off",
+          "explanation": "One evening, Ben enters his room and notices that it is dark."
         },
         {
           "id": "q-switch-3",
           "category": "comprehension",
           "prompt": "Where does Ben find the switch?",
           "choices": [
-            "On the wall beside the door",
-            "Near the window",
-            "Under the desk",
-            "Beside the bookshelf"
+            "On the wall",
+            "On the table",
+            "Beside his bed",
+            "Near the door"
           ],
-          "answer": "On the wall beside the door",
-          "explanation": "The story explains: Ben reaches out his hand and finds the light switch on the wall."
+          "answer": "On the wall",
+          "explanation": "Ben walks to the wall and finds the light switch."
         },
         {
           "id": "q-switch-4",
           "category": "comprehension",
           "prompt": "What happens when Ben flips the switch?",
           "choices": [
-            "The bright ceiling light turns on instantly",
-            "The fan turns on",
-            "A bell rings",
-            "Nothing happens"
+            "The light turns on",
+            "The door opens",
+            "The fan starts",
+            "The radio plays"
           ],
-          "answer": "The bright ceiling light turns on instantly",
-          "explanation": "The story explains: He flips the switch up, and the room is filled with bright light."
+          "answer": "The light turns on",
+          "explanation": "He flips the switch, and the light turns on."
         },
         {
           "id": "q-switch-5",
           "category": "comprehension",
           "prompt": "Why does Ben smile?",
           "choices": [
-            "He can clearly see his books and study comfortably",
+            "He can now see his books clearly",
+            "He found his toy",
             "He finished his work",
-            "His mother praised him",
-            "He found a toy"
+            "He can go outside"
           ],
-          "answer": "He can clearly see his books and study comfortably",
-          "explanation": "The story explains: Ben smiles because he can now see his desk and books clearly."
+          "answer": "He can now see his books clearly",
+          "explanation": "Ben smiles because he can now see his books clearly."
         }
       ]
     },
@@ -4317,65 +4327,65 @@
           "category": "comprehension",
           "prompt": "What does Ben see in his classroom?",
           "choices": [
-            "A new wooden chair at his desk",
-            "A soft armchair",
-            "A bench",
-            "A stool"
+            "A new chair",
+            "A new table",
+            "A big clock",
+            "A small bag"
           ],
-          "answer": "A new wooden chair at his desk",
-          "explanation": "The story explains: Ben arrives in his classroom and notices a new wooden chair at his desk."
+          "answer": "A new chair",
+          "explanation": "Ben sees a new chair inside his classroom."
         },
         {
           "id": "q-chair-2",
           "category": "comprehension",
           "prompt": "Where is the chair?",
           "choices": [
-            "Neatly tucked under his study desk",
-            "Near the whiteboard",
+            "Beside his desk near the window",
+            "Under his desk",
             "At the back of the room",
             "Beside the door"
           ],
-          "answer": "Neatly tucked under his study desk",
-          "explanation": "The story explains: The chair is placed neatly at his desk in the second row."
+          "answer": "Beside his desk near the window",
+          "explanation": "The chair is beside his desk near the window."
         },
         {
           "id": "q-chair-3",
           "category": "comprehension",
           "prompt": "What does Ben do while sitting on the chair?",
           "choices": [
-            "Sits upright and opens his English workbook",
-            "Leans back and naps",
-            "Plays with his pencil",
-            "Draws on the desk"
+            "He opens his book to read",
+            "He plays with his pencil",
+            "He draws on the desk",
+            "He takes a nap"
           ],
-          "answer": "Sits upright and opens his English workbook",
-          "explanation": "The story explains: Ben sits comfortably on the chair and opens his English workbook."
+          "answer": "He opens his book to read",
+          "explanation": "He sits on the chair and opens his book to read."
         },
         {
           "id": "q-chair-4",
           "category": "comprehension",
           "prompt": "Who does Ben listen to during class?",
           "choices": [
-            "His teacher, Mrs. Santos",
-            "His classmate Sam",
+            "His teacher",
+            "His classmate",
             "The principal",
             "His mother"
           ],
-          "answer": "His teacher, Mrs. Santos",
-          "explanation": "The story explains: He sits attentively, listening carefully to Mrs. Santos teach phonics."
+          "answer": "His teacher",
+          "explanation": "During class, Ben listens carefully to his teacher."
         },
         {
           "id": "q-chair-5",
           "category": "comprehension",
           "prompt": "What does Ben do with the chair after class?",
           "choices": [
-            "Pushes the chair neatly under the desk",
-            "Leaves it messy",
+            "Pushes it under his desk",
+            "Leaves it in the aisle",
             "Moves it outside",
             "Stacks it on the table"
           ],
-          "answer": "Pushes the chair neatly under the desk",
-          "explanation": "The story explains: When the bell rings, Ben stands up and pushes his chair neatly under his desk."
+          "answer": "Pushes it under his desk",
+          "explanation": "After class, he pushes the chair under his desk to keep the room neat."
         }
       ]
     },
@@ -4394,39 +4404,39 @@
           "category": "comprehension",
           "prompt": "Where is the clock?",
           "choices": [
-            "On the classroom wall above the board",
+            "On the wall of Mia's classroom",
             "On the teacher's desk",
             "Near the door",
             "On the window sill"
           ],
-          "answer": "On the classroom wall above the board",
-          "explanation": "The story explains: A large round clock hangs on the classroom wall above the whiteboard."
+          "answer": "On the wall of Mia's classroom",
+          "explanation": "There is a big clock on the wall of Mia's classroom."
         },
         {
           "id": "q-clock-2",
           "category": "comprehension",
           "prompt": "Who looks at the clock every morning?",
           "choices": [
-            "Mia and her classmates",
-            "The teacher only",
+            "Mia",
+            "The teacher",
             "The school principal",
             "The guard"
           ],
-          "answer": "Mia and her classmates",
-          "explanation": "The story explains: Every morning, Mia looks up at the clock as she enters the classroom."
+          "answer": "Mia",
+          "explanation": "Every morning, Mia looks at the clock to check the time."
         },
         {
           "id": "q-clock-3",
           "category": "comprehension",
           "prompt": "What does the clock tell Mia?",
           "choices": [
-            "When to start lessons and when recess begins",
+            "When it is time for class and recess",
             "The temperature outside",
             "What day it is",
             "Who is absent"
           ],
-          "answer": "When to start lessons and when recess begins",
-          "explanation": "The story explains: The clock tells the pupils when it is time to begin reading lessons."
+          "answer": "When it is time for class and recess",
+          "explanation": "The clock helps everyone know when it is time for class and recess."
         },
         {
           "id": "q-clock-4",
@@ -4434,25 +4444,25 @@
           "prompt": "What time does the teacher start the class?",
           "choices": [
             "Eight o'clock in the morning",
-            "Seven o'clock",
-            "Nine o'clock",
+            "Seven o’clock",
+            "Nine o’clock",
             "Eight-thirty"
           ],
           "answer": "Eight o'clock in the morning",
-          "explanation": "The story explains: At exactly eight o'clock, the teacher greets the pupils and starts class."
+          "explanation": "When the clock shows eight o’clock, her teacher starts the class."
         },
         {
           "id": "q-clock-5",
           "category": "comprehension",
           "prompt": "How does the clock help the pupils?",
           "choices": [
-            "It helps everyone stay on schedule and arrive on time",
+            "It tells them when it is time for class and recess",
             "It plays music",
             "It rings loudly",
             "It counts numbers"
           ],
-          "answer": "It helps everyone stay on schedule and arrive on time",
-          "explanation": "The story explains: The clock helps the children learn to value time and be prompt every day."
+          "answer": "It tells them when it is time for class and recess",
+          "explanation": "The clock helps everyone know when it is time for class and recess."
         }
       ]
     }

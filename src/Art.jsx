@@ -163,6 +163,12 @@ const shapes = {
     <path d="M17 6 H20 C20 9 18.5 11 17 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
     <path d="M12 15 V19 M8 21 H16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
   `,
+  community: `
+    <circle cx="9" cy="8" r="3.4" fill="currentColor"/>
+    <path d="M2.6 20 C2.6 15.9 5.4 13.2 9 13.2 C12.6 13.2 15.4 15.9 15.4 20 Z" fill="currentColor"/>
+    <circle cx="17.4" cy="9.4" r="2.5" fill="currentColor" opacity=".55"/>
+    <path d="M15 13.4 C18.5 12.8 21.4 15.2 21.4 19.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none" opacity=".55"/>
+  `,
 };
 
 export function Icon({ name, color = '#8F78D8', size = 24, style }) {

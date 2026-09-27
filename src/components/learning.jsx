@@ -335,13 +335,17 @@ export function FlashcardQuestionWidget(props) {
 
   const isListenQuestion = question.type === "listenAndChoose";
 
+  // Clue/meaning shown under the listen button so young learners know what the
+  // word they are hearing means before they pick an answer.
+  const clueText = word?.definition || "";
+
   return (
     <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
         <View style={styles.questionHeaderRow}>
           <Title style={styles.questionTitle}>
             {question.type === "pictureToWord"
-              ? "What is this?"
+              ? word?.question_text || "What is this?"
               : isListenQuestion
                 ? "Listen to the word"
                 : "Which picture matches this word?"}
@@ -377,6 +381,15 @@ export function FlashcardQuestionWidget(props) {
               </View>
             </Pressable>
             <Text style={styles.listenHeroText}>Tap to listen again</Text>
+            {clueText ? (
+              <Text
+                testID="listen-hero-clue"
+                accessibilityLabel={`Clue: ${clueText}`}
+                style={styles.listenHeroClue}
+              >
+                {clueText}
+              </Text>
+            ) : null}
           </View>
         ) : question.type === "pictureToWord" ? (
           <WordPicture word={word} height={205} />
@@ -1730,6 +1743,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.darkPurple,
     letterSpacing: 0.3,
+  },
+  listenHeroClue: {
+    fontFamily: fonts.reading,
+    fontSize: 14.5,
+    lineHeight: 20,
+    color: "#574E6B",
+    textAlign: "center",
+    paddingHorizontal: 22,
   },
   storyHeaderActions: {
     flexDirection: "row",
