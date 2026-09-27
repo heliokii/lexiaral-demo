@@ -119,7 +119,7 @@
       "introduced_level": 1,
       "difficulty": "easy",
       "sentence_blank": "Tom can ____ fast to the playground to play with his friends.",
-      "question_text": "What does the boy do?"
+      "question_text": "What is he doing?"
     },
     {
       "id": "sad",
@@ -210,7 +210,7 @@
       "introduced_level": 1,
       "difficulty": "easy",
       "sentence_blank": "The man digs a hole to plant a seed. (____)",
-      "question_text": "What does the boy do?"
+      "question_text": "What is the boy doing?"
     },
     {
       "id": "egg",
