@@ -238,8 +238,8 @@ runSuite('Content & Curriculum Integrity', () => {
   // Verify client-specified and adaptive question prompts
   assert(WORDS.cat?.question_text === 'What animal is this?', 'Word "cat" has question "What animal is this?"');
   assert(WORDS.sit?.question_text === 'What does the girl do?', 'Word "sit" has question "What does the girl do?"');
-  assert(WORDS.run?.question_text === 'What is the boy doing?', 'Word "run" has question "What is the boy doing?"');
-  assert(WORDS.dig?.question_text === 'What is he doing?', 'Word "dig" has question "What is he doing?"');
+  assert(WORDS.run?.question_text === 'What is he doing?', 'Word "run" has question "What is he doing?"');
+  assert(WORDS.dig?.question_text === 'What is the boy doing?', 'Word "dig" has question "What is the boy doing?"');
   assert(WORDS.sad?.question_text === 'How does this face feel?', 'Word "sad" has question "How does this face feel?"');
   assert(WORDS.nine?.question_text === 'What number is this?', 'Word "nine" has question "What number is this?"');
   assert(WORDS.red?.question_text === 'What color is this?', 'Word "red" has question "What color is this?"');
