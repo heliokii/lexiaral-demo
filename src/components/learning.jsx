@@ -325,7 +325,8 @@ export function AnswerChoices({
 
 export function FlashcardQuestionWidget(props) {
   const { question } = props;
-  const word = WORDS[question.wordId];
+  const wordKey = String(question?.wordId || question?.answerId || "").toLowerCase().trim();
+  const word = WORDS[wordKey] || (question?.wordId ? WORDS[question.wordId] : null);
 
   useEffect(() => {
     if (question.type === "listenAndChoose" && word) {
@@ -339,16 +340,19 @@ export function FlashcardQuestionWidget(props) {
   // word they are hearing means before they pick an answer.
   const clueText = word?.definition || "";
 
+  const questionTitle =
+    question.type === "pictureToWord"
+      ? word?.question_text || question.prompt || "What is this?"
+      : isListenQuestion
+        ? "Listen to the word"
+        : "Which picture matches this word?";
+
   return (
     <View style={{ gap: 10 }}>
       <Card style={styles.questionCard}>
         <View style={styles.questionHeaderRow}>
           <Title style={styles.questionTitle}>
-            {question.type === "pictureToWord"
-              ? word?.question_text || "What is this?"
-              : isListenQuestion
-                ? "Listen to the word"
-                : "Which picture matches this word?"}
+            {questionTitle}
           </Title>
 
           {word && !isListenQuestion && (
@@ -361,7 +365,7 @@ export function FlashcardQuestionWidget(props) {
               }
               onPress={() => {
                 if (question.type === "pictureToWord") {
-                  speak(word?.question_text || "What is this?");
+                  speak(questionTitle);
                 } else {
                   pronounce(word);
                 }
