@@ -1,8 +1,9 @@
 {
   "rewrites": [
-    { "source": "/:path*", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
-  "framework": "expo"
+  "framework": "expo",
+  "nodeVersion": "20.x"
 }
