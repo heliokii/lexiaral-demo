@@ -1,25 +1,29 @@
 import React, {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CONTENT, validateContent } from '../content';
 import { configureAudio, initAudio, setBgmUserVolume } from '../audio';
 import { Art } from '../Art';
-import { Body, Button, Card, Title, colors } from '../components/ui';
 import {
   initialState,
   reduceState,
   validateSavedState,
 } from './engine';
+import { LearningContext, useLearning } from './LearningContext';
 
-const LearningContext = createContext(null);
+export { useLearning };
+
+const colors = {
+  primary: '#6C47C7',
+  darkPurple: '#4A2F8A',
+  muted: '#766D88',
+};
 
 // Isolate progress for each content revision.
 const STORAGE_KEY = `LEXIARAL:progress:v1:${CONTENT.id}`;
@@ -97,21 +101,18 @@ export function LearningProvider({ children }) {
 
           <Text style={styles.brandTitle}>LEXIARAL</Text>
 
-          <Card style={styles.errorCard}>
-            <Title style={styles.errorTitle}>Unable to Load Progress</Title>
-            <Body style={styles.errorText}>{loadError}</Body>
+          <View style={styles.errorCard}>
+            <Text style={styles.errorTitle}>Unable to Load Progress</Text>
+            <Text style={styles.errorText}>{loadError}</Text>
 
             <View style={{ gap: 10, width: '100%', marginTop: 8 }}>
-              <Button
-                title="TRY LOADING AGAIN"
-                tone="purple"
-                arrow
+              <Pressable
                 onPress={load}
-                style={{ minHeight: 50 }}
-              />
-              <Button
-                title="START FRESH"
-                secondary
+                style={styles.retryBtn}
+              >
+                <Text style={styles.retryBtnText}>TRY LOADING AGAIN</Text>
+              </Pressable>
+              <Pressable
                 onPress={async () => {
                   try {
                     await AsyncStorage.removeItem(STORAGE_KEY);
@@ -122,10 +123,12 @@ export function LearningProvider({ children }) {
                   setBgmUserVolume(fresh.bgmVolume);
                   setState(fresh);
                 }}
-                style={{ minHeight: 46 }}
-              />
+                style={styles.freshBtn}
+              >
+                <Text style={styles.freshBtnText}>START FRESH</Text>
+              </Pressable>
             </View>
-          </Card>
+          </View>
         </View>
       );
     }
@@ -149,16 +152,6 @@ export function LearningProvider({ children }) {
       {children}
     </LearningContext.Provider>
   );
-}
-
-export function useLearning() {
-  const context = useContext(LearningContext);
-
-  if (!context) {
-    throw new Error('useLearning must be used inside LearningProvider.');
-  }
-
-  return context;
 }
 
 const styles = StyleSheet.create({
@@ -208,14 +201,44 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   errorTitle: {
+    fontFamily: 'Nunito_800ExtraBold',
     fontSize: 20,
     textAlign: 'center',
     color: colors.darkPurple,
   },
   errorText: {
+    fontFamily: 'Nunito_600SemiBold',
     fontSize: 14,
     lineHeight: 20,
     textAlign: 'center',
     color: colors.muted,
+  },
+  retryBtn: {
+    minHeight: 50,
+    backgroundColor: colors.primary,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+  },
+  retryBtnText: {
+    color: '#FFFFFF',
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 16,
+  },
+  freshBtn: {
+    minHeight: 46,
+    backgroundColor: 'rgba(255,255,255,.94)',
+    borderWidth: 1,
+    borderColor: '#E5DEF2',
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 18,
+  },
+  freshBtnText: {
+    color: colors.primary,
+    fontFamily: 'Nunito_800ExtraBold',
+    fontSize: 15,
   },
 });

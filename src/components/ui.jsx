@@ -18,7 +18,7 @@ import assets from '../assets.generated';
 import { CONTENT } from '../content';
 import { Icon } from '../Art';
 import { playTapSfx, stopAudio } from '../audio';
-import { useLearning } from '../state/LearningProvider';
+import { useLearning } from '../state/LearningContext';
 
 export const colors = {
   primary: '#6C47C7',
