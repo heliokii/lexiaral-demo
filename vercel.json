@@ -5,5 +5,7 @@
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
   "framework": "expo",
-  "nodeVersion": "20.x"
+  "nodeVersion": "20.x",
+  "cleanUrls": true,
+  "trailingSlash": false
 }
