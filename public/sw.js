@@ -3,13 +3,21 @@
  * Provides offline caching for Grade 3 ARAL learning app.
  */
 
-const CACHE_NAME = 'lexiaral-v1';
+const CACHE_NAME = 'lexiaral-v2';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
-  '/icon.png'
+  '/icon.png',
+  '/assets/tap-chime.mp3',
+  '/assets/answer-correct.mp3',
+  '/assets/answer-wrong.mp3',
+  '/assets/yehey-kids.mp3',
+  '/assets/bgm-cheerful.mp3',
+  '/assets/card-flip.mp3',
+  '/assets/card-swipe.mp3',
+  '/assets/card-shuffle.mp3',
 ];
 
 self.addEventListener('install', (event) => {

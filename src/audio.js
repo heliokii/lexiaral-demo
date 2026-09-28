@@ -121,12 +121,23 @@ async function getResolvedPath(type) {
   }
 }
 
+const WEB_SFX_PATHS = {
+  tap: '/assets/tap-chime.mp3',
+  correct: '/assets/answer-correct.mp3',
+  wrong: '/assets/answer-wrong.mp3',
+  yehey: '/assets/yehey-kids.mp3',
+  bgm: '/assets/bgm-cheerful.mp3',
+  cardFlip: '/assets/card-flip.mp3',
+  cardSwipe: '/assets/card-swipe.mp3',
+  cardShuffle: '/assets/card-shuffle.mp3',
+};
+
 // Reusable audio helper with instant fallback
 function playAudioClip(type, volume = 1.0, fallbackSynth) {
   if (muted) return null;
 
   if (isWeb) {
-    const path = resolvedPaths[type] || SFX_PATHS[type];
+    const path = WEB_SFX_PATHS[type] || resolvedPaths[type];
     if (!path) {
       if (fallbackSynth) fallbackSynth();
       return null;
@@ -138,12 +149,14 @@ function playAudioClip(type, volume = 1.0, fallbackSynth) {
         audio.volume = Math.max(0, Math.min(1, volume));
         const playPromise = audio.play();
         if (playPromise && playPromise.catch) {
-          playPromise.catch(() => {
+          playPromise.catch((err) => {
+            console.warn('[Audio] HTML5 Audio play error:', type, err);
             if (fallbackSynth) fallbackSynth();
           });
         }
         return audio;
-      } catch {
+      } catch (e) {
+        console.warn('[Audio] HTML5 Audio creation error:', type, e);
         if (fallbackSynth) fallbackSynth();
       }
     } else if (fallbackSynth) {
@@ -322,7 +335,7 @@ export function playTapSfx() {
     if (bgmActive && audio && audio.paused) {
       audio.play().catch(() => {});
     }
-    playMatchSfx();
+    playAudioClip('tap', 0.85);
   } else {
     if (bgmActive && nativeBgmPlayer && !nativeBgmPlayer.playing) {
       nativeBgmPlayer.play();
@@ -409,36 +422,7 @@ export function playCardShuffleSfx() {
 // Short, light chime for pair matches in vocabulary activities
 export function playMatchSfx() {
   if (muted) return;
-  if (isWeb) {
-    try {
-      const ctx = getAudioContext();
-      if (!ctx) return;
-      const now = ctx.currentTime;
-
-      const notes = [
-        { freq: 659.25, time: 0, duration: 0.14, gain: 0.4 },
-        { freq: 880.0, time: 0.06, duration: 0.22, gain: 0.5 },
-      ];
-
-      notes.forEach(({ freq, time, duration, gain: peakGain }) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + time);
-
-        gain.gain.setValueAtTime(0.001, now + time);
-        gain.gain.exponentialRampToValueAtTime(peakGain, now + time + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + time + duration);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + time);
-        osc.stop(now + time + duration + 0.02);
-      });
-    } catch {}
-  } else {
-    playAudioClip('tap', 0.85);
-  }
+  playAudioClip('tap', 0.85);
 }
 
 // Strict Global BGM Singleton & Cleanup Architecture
@@ -488,7 +472,7 @@ function getBgmAudio() {
 
   if (!window.__LEXIARAL_BGM_SINGLETON__) {
     try {
-      const path = resolvedPaths.bgm || SFX_PATHS.bgm;
+      const path = isWeb ? (WEB_SFX_PATHS.bgm || resolvedPaths.bgm) : (resolvedPaths.bgm || SFX_PATHS.bgm);
       const audio = new Audio(path);
       audio.loop = true;
       audio.preload = 'auto';
@@ -546,7 +530,16 @@ export function unlockAudioAndSpeech() {
 }
 
 function attachInteractionUnlock() {
-  unlockAudioAndSpeech();
+  if (typeof window === 'undefined') return;
+  const onTouch = () => {
+    unlockAudioAndSpeech();
+    ['touchstart', 'touchend', 'click', 'pointerdown'].forEach((evt) => {
+      window.removeEventListener(evt, onTouch, true);
+    });
+  };
+  ['touchstart', 'touchend', 'click', 'pointerdown'].forEach((evt) => {
+    window.addEventListener(evt, onTouch, { capture: true, once: true });
+  });
 }
 
 // Pause BGM when tab is inactive, resume single instance when returning (Web)
