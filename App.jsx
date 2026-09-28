@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -96,6 +97,52 @@ function HeaderAudioToggle() {
 }
 
 export default function App() {
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .catch(() => {});
+        });
+      }
+
+      try {
+        if (!document.querySelector('link[rel="manifest"]')) {
+          const manifestLink = document.createElement('link');
+          manifestLink.rel = 'manifest';
+          manifestLink.href = '/manifest.json';
+          document.head.appendChild(manifestLink);
+        }
+
+        const metaTags = [
+          { name: 'apple-mobile-web-app-capable', content: 'yes' },
+          { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+          { name: 'apple-mobile-web-app-title', content: 'LEXIARAL' },
+          { name: 'theme-color', content: '#BEA5DA' },
+        ];
+
+        metaTags.forEach(({ name, content }) => {
+          if (!document.querySelector(`meta[name="${name}"]`)) {
+            const meta = document.createElement('meta');
+            meta.name = name;
+            meta.content = content;
+            document.head.appendChild(meta);
+          }
+        });
+
+        if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+          const touchIcon = document.createElement('link');
+          touchIcon.rel = 'apple-touch-icon';
+          touchIcon.href = '/icon.png';
+          document.head.appendChild(touchIcon);
+        }
+      } catch (e) {
+        // Safe fallback in static / SSR contexts
+      }
+    }
+  }, []);
+
   const [fontsLoaded, fontError] = useFonts({
     Nunito_600SemiBold,
     Nunito_700Bold,

@@ -1,0 +1,24 @@
+{
+  "name": "LEXIARAL - Grade 3 ARAL English",
+  "short_name": "LEXIARAL",
+  "description": "Grade 3 ARAL English Vocabulary & Literacy Learning Application",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#BEA5DA",
+  "theme_color": "#8065CE",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
