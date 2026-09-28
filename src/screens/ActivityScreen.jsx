@@ -1027,7 +1027,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     letterSpacing: 0,
-    fontWeight: "700",
   },
   correctAnswerChipTextCorrect: {
     color: "#166F42",

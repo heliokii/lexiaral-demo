@@ -616,7 +616,7 @@ export function SentenceCompletionQuestionWidget(props) {
     <View style={{ gap: 10 }}>
       <Card style={styles.sentenceQuestionCard}>
         <View style={styles.questionHeaderRow}>
-          <Title style={[styles.questionTitle, { flex: 1, paddingRight: 8 }]}>
+          <Title style={styles.questionTitle}>
             {question.prompt || "Which word completes the sentence?"}
           </Title>
 
@@ -1185,6 +1185,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    width: "100%",
     gap: 10,
   },
   questionBadge: {
@@ -1203,8 +1204,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0EBF9",
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: 0,
   },
   questionTitle: {
+    flex: 1,
+    paddingRight: 8,
     color: colors.darkPurple,
     fontSize: 22,
     lineHeight: 28,
@@ -1424,7 +1428,6 @@ const styles = StyleSheet.create({
   },
   targetWord: {
     fontFamily: fonts.vocab,
-    fontWeight: "bold",
     color: colors.darkPurple,
     textDecorationLine: "underline",
     backgroundColor: "#EEE6FD",
@@ -1668,7 +1671,6 @@ const styles = StyleSheet.create({
   flashcardFrontWord: {
     fontFamily: fonts.vocab,
     fontSize: 22,
-    fontWeight: "bold",
     color: colors.darkPurple,
     textAlign: "center",
     letterSpacing: 0.5,
@@ -1691,7 +1693,6 @@ const styles = StyleSheet.create({
   flashcardBackWord: {
     fontFamily: fonts.vocab,
     fontSize: 34,
-    fontWeight: "bold",
     color: colors.darkPurple,
     textAlign: "center",
     letterSpacing: 0.5,
@@ -1716,7 +1717,6 @@ const styles = StyleSheet.create({
   flashcardExampleText: {
     fontFamily: fonts.reading,
     fontSize: 14.5,
-    fontStyle: "italic",
     lineHeight: 21,
     color: "#574E6B",
     textAlign: "center",
