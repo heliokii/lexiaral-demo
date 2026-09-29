@@ -36,6 +36,11 @@
       "expo-font",
       "expo-audio"
     ],
-    "owner": "kuroi017"
+    "owner": "kuroi017",
+    "extra": {
+      "eas": {
+        "projectId": "cd2045cf-c814-4678-a5f9-645f135d3a52"
+      }
+    }
   }
 }

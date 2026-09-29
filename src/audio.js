@@ -765,7 +765,7 @@ export function stopAudio() {
   Speech.stop().catch(() => {});
 }
 
-// Known friendly female voices suitable for early grade instruction
+// Known friendly female voices suitable for early grade instruction (prioritizing Philippine & US English)
 const PREFERRED_FEMALE_VOICES = [
   'microsoft zira',
   'zira',
@@ -777,16 +777,14 @@ const PREFERRED_FEMALE_VOICES = [
   'jenny',
   'aria',
   'samantha',
-  'victoria',
   'karen',
   'susan',
-  'hazel',
   'catherine',
   'linda',
   'eva',
 ];
 
-const DISQUALIFIED_MALE_VOICES = [
+const DISQUALIFIED_VOICES = [
   'david',
   'mark',
   'george',
@@ -802,11 +800,19 @@ const DISQUALIFIED_MALE_VOICES = [
   'male',
   'man',
   'boy',
+  'victoria', // British accent (sounds like Peppa Pig)
+  'hazel',    // British accent (sounds like Peppa Pig)
+  'en-gb',
+  'great britain',
+  'united kingdom',
+  'british',
 ];
 
-function isDisqualifiedMaleVoice(name) {
-  const lower = (name || '').toLowerCase();
-  return DISQUALIFIED_MALE_VOICES.some((m) => lower.includes(m));
+function isDisqualifiedVoice(voiceOrName) {
+  const name = typeof voiceOrName === 'string' ? voiceOrName : (voiceOrName?.name || '');
+  const lang = typeof voiceOrName === 'object' ? (voiceOrName?.lang || voiceOrName?.language || '') : '';
+  const lower = `${name} ${lang}`.toLowerCase();
+  return DISQUALIFIED_VOICES.some((m) => lower.includes(m));
 }
 
 // Resolves a high-quality, friendly voice for young learners (prioritizing Philippine English)
@@ -821,12 +827,8 @@ function getBestFemaleVoice(targetLang = 'en-PH') {
     // 1. Search for Philippine English voice (Android Google Speech, Samsung TTS, or Windows en-PH)
     const phVoice = voices.find((v) => {
       const l = (v.lang || '').toLowerCase().replace('_', '-');
-      const n = (v.name || '').toLowerCase();
-      const isPH = l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines') || n.includes('(ph)');
-      return isPH && !isDisqualifiedMaleVoice(n);
-    }) || voices.find((v) => {
-      const l = (v.lang || '').toLowerCase().replace('_', '-');
-      return l === 'en-ph' || l.startsWith('en-ph');
+      const isPH = l === 'en-ph' || l.startsWith('en-ph') || (v.name || '').toLowerCase().includes('philippines');
+      return isPH && !isDisqualifiedVoice(v);
     });
 
     if (phVoice) {
@@ -834,18 +836,20 @@ function getBestFemaleVoice(targetLang = 'en-PH') {
       return cachedFemaleVoice;
     }
 
-    // 2. Filter English voices
-    const englishVoices = voices.filter(
-      (v) => v.lang && (v.lang.toLowerCase().startsWith('en') || v.lang.includes('US'))
-    );
+    // 2. Filter English voices: strictly require US English and exclude British/UK/Peppa Pig voices
+    const usEnglishVoices = voices.filter((v) => {
+      const l = (v.lang || '').toLowerCase().replace('_', '-');
+      const isUS = l === 'en-us' || l.startsWith('en-us') || (v.name || '').toLowerCase().includes('us english');
+      return isUS && !isDisqualifiedVoice(v);
+    });
 
-    const candidates = englishVoices.length > 0 ? englishVoices : voices;
+    const candidates = usEnglishVoices.length > 0 ? usEnglishVoices : voices.filter((v) => !isDisqualifiedVoice(v));
 
-    // 3. Search for prioritized known friendly female voices (excluding any male indicators)
+    // 3. Search for prioritized known friendly female voices (excluding any male or British indicators)
     for (const pref of PREFERRED_FEMALE_VOICES) {
       const match = candidates.find((v) => {
         const n = (v.name || '').toLowerCase();
-        return n.includes(pref) && !isDisqualifiedMaleVoice(n);
+        return n.includes(pref) && !isDisqualifiedVoice(v);
       });
       if (match) {
         cachedFemaleVoice = match;
@@ -856,17 +860,17 @@ function getBestFemaleVoice(targetLang = 'en-PH') {
     // 4. Search for explicit female or woman label
     const explicitFemale = candidates.find((v) => {
       const n = (v.name || '').toLowerCase();
-      return (n.includes('female') || n.includes('woman')) && !isDisqualifiedMaleVoice(n);
+      return (n.includes('female') || n.includes('woman')) && !isDisqualifiedVoice(v);
     });
     if (explicitFemale) {
       cachedFemaleVoice = explicitFemale;
       return cachedFemaleVoice;
     }
 
-    // 5. Fallback: select any candidate that is definitely not a male voice
-    const nonMale = candidates.find((v) => !isDisqualifiedMaleVoice(v.name));
-    if (nonMale) {
-      cachedFemaleVoice = nonMale;
+    // 5. Fallback: select any candidate that is definitely not disqualified
+    const safeCandidate = candidates.find((v) => !isDisqualifiedVoice(v));
+    if (safeCandidate) {
+      cachedFemaleVoice = safeCandidate;
       return cachedFemaleVoice;
     }
 
@@ -994,15 +998,18 @@ export async function speak(text, language = 'en-PH', reportErrors = false, onDo
       const phVoice = (available || []).find((v) => {
         const l = (v.language || '').toLowerCase().replace('_', '-');
         const n = (v.name || '').toLowerCase();
-        return (l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines')) && !isDisqualifiedMaleVoice(n);
+        return (l === 'en-ph' || l.startsWith('en-ph') || n.includes('philippines')) && !isDisqualifiedVoice(v);
       });
 
       if (phVoice) {
         voiceIdentifier = phVoice.identifier;
       } else {
-        const eng = (available || []).filter(
-          (v) => v.language && (v.language.startsWith('en') || v.language.includes('US'))
-        );
+        // 2. Strict US English fallback, excluding British / Peppa Pig voices
+        const eng = (available || []).filter((v) => {
+          const l = (v.language || '').toLowerCase().replace('_', '-');
+          const isUS = l === 'en-us' || l.startsWith('en-us') || l.includes('us');
+          return isUS && !isDisqualifiedVoice(v);
+        });
         const female = eng.find((v) => {
           const n = (v.name || '').toLowerCase();
           return (
@@ -1012,7 +1019,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false, onDo
             n.includes('aria') ||
             n.includes('female')
           );
-        });
+        }) || eng.find((v) => !isDisqualifiedVoice(v));
         if (female) voiceIdentifier = female.identifier;
       }
     } catch {}
@@ -1034,7 +1041,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false, onDo
     Speech.speak(cleanText, {
       language: voiceIdentifier ? undefined : (language && language !== 'en-PH' ? language : 'en-US'),
       rate: 0.78,
-      pitch: 1.06,
+      pitch: 1.0,
       voice: voiceIdentifier,
       onStart: () => {
         duckBgm(true);
