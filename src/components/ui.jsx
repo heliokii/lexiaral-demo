@@ -44,11 +44,11 @@ export const colors = {
 
 export const fonts = {
   vocab: Platform.select({
-    web: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_900Black", sans-serif',
+    web: '"Nunito_900Black", "Century Gothic", "Tw Cen MT", "Apple Gothic", sans-serif',
     default: 'Nunito_900Black',
   }),
   reading: Platform.select({
-    web: '"Century Gothic", "Tw Cen MT", "Apple Gothic", "Nunito_700Bold", sans-serif',
+    web: '"Nunito_700Bold", "Century Gothic", "Tw Cen MT", "Apple Gothic", sans-serif',
     default: 'Nunito_700Bold',
   }),
   ui: 'Nunito_800ExtraBold',

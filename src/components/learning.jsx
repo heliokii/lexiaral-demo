@@ -3,6 +3,7 @@ import {
   Animated,
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -1428,6 +1429,7 @@ const styles = StyleSheet.create({
   },
   targetWord: {
     fontFamily: fonts.vocab,
+    fontWeight: Platform.select({ web: "700", default: undefined }),
     color: colors.darkPurple,
     textDecorationLine: "underline",
     backgroundColor: "#EEE6FD",
@@ -1671,6 +1673,7 @@ const styles = StyleSheet.create({
   flashcardFrontWord: {
     fontFamily: fonts.vocab,
     fontSize: 22,
+    fontWeight: Platform.select({ web: "700", default: undefined }),
     color: colors.darkPurple,
     textAlign: "center",
     letterSpacing: 0.5,
@@ -1693,6 +1696,7 @@ const styles = StyleSheet.create({
   flashcardBackWord: {
     fontFamily: fonts.vocab,
     fontSize: 34,
+    fontWeight: Platform.select({ web: "700", default: undefined }),
     color: colors.darkPurple,
     textAlign: "center",
     letterSpacing: 0.5,

@@ -992,7 +992,7 @@ export async function speak(text, language = 'en-PH', reportErrors = false, onDo
     };
 
     Speech.speak(cleanText, {
-      language: voiceIdentifier ? undefined : (language || 'en-PH'),
+      language: voiceIdentifier ? undefined : (language && language !== 'en-PH' ? language : 'en-US'),
       rate: 0.78,
       pitch: 1.06,
       voice: voiceIdentifier,
