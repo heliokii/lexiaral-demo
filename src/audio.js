@@ -132,12 +132,38 @@ const WEB_SFX_PATHS = {
   cardShuffle: '/assets/card-shuffle.mp3',
 };
 
+// Synchronous resolver for web audio assets (works on Metro dev server and production web bundles)
+function getWebAudioUri(type) {
+  if (resolvedPaths[type]) return resolvedPaths[type];
+
+  const source = SFX_PATHS[type];
+  if (typeof source === 'string' && source) {
+    resolvedPaths[type] = source;
+    return source;
+  }
+
+  if (source) {
+    try {
+      const asset = Asset.fromModule(source);
+      const uri = asset.uri || asset.localUri;
+      if (uri) {
+        resolvedPaths[type] = uri;
+        return uri;
+      }
+    } catch (e) {
+      console.warn('[Audio] Failed to resolve asset uri for', type, e);
+    }
+  }
+
+  return WEB_SFX_PATHS[type] || null;
+}
+
 // Reusable audio helper with instant fallback
 function playAudioClip(type, volume = 1.0, fallbackSynth) {
   if (muted) return null;
 
   if (isWeb) {
-    const path = WEB_SFX_PATHS[type] || resolvedPaths[type];
+    const path = getWebAudioUri(type);
     if (!path) {
       if (fallbackSynth) fallbackSynth();
       return null;
@@ -151,6 +177,20 @@ function playAudioClip(type, volume = 1.0, fallbackSynth) {
         if (playPromise && playPromise.catch) {
           playPromise.catch((err) => {
             console.warn('[Audio] HTML5 Audio play error:', type, err);
+            const fallbackPath = WEB_SFX_PATHS[type];
+            if (fallbackPath && fallbackPath !== path) {
+              try {
+                const fbAudio = new Audio(fallbackPath);
+                fbAudio.volume = Math.max(0, Math.min(1, volume));
+                const fbPromise = fbAudio.play();
+                if (fbPromise && fbPromise.catch) {
+                  fbPromise.catch(() => {
+                    if (fallbackSynth) fallbackSynth();
+                  });
+                }
+                return;
+              } catch {}
+            }
             if (fallbackSynth) fallbackSynth();
           });
         }
@@ -472,7 +512,7 @@ function getBgmAudio() {
 
   if (!window.__LEXIARAL_BGM_SINGLETON__) {
     try {
-      const path = isWeb ? (WEB_SFX_PATHS.bgm || resolvedPaths.bgm) : (resolvedPaths.bgm || SFX_PATHS.bgm);
+      const path = isWeb ? getWebAudioUri('bgm') : (resolvedPaths.bgm || SFX_PATHS.bgm);
       const audio = new Audio(path);
       audio.loop = true;
       audio.preload = 'auto';
