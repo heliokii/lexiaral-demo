@@ -36,11 +36,6 @@
       "expo-font",
       "expo-audio"
     ],
-    "extra": {
-      "eas": {
-        "projectId": "043c9f28-d739-4478-b97a-6c0e454becb9"
-      }
-    },
-    "owner": "klythompsonchi"
+    "owner": "kuroi017"
   }
 }
