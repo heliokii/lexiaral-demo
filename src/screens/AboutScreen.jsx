@@ -286,6 +286,40 @@ export function AboutScreen({ navigation }) {
           </View>
         </View>
       </Card>
+
+      {/* 4. Research Team & Proponents */}
+      <Card testID="about-research-team-card" style={styles.sectionCard}>
+        <View style={styles.cardHeaderRow}>
+          <View style={[styles.headerIconWrap, { backgroundColor: "#F3EFFC" }]}>
+            <Icon name="medal" size={18} color={colors.primary} />
+          </View>
+          <Text style={styles.sectionTitle}>Research Team & Proponents</Text>
+        </View>
+
+        <Text style={styles.proponentsSubtitle}>
+          Developed as an educational intervention study for Grade 3 English vocabulary mastery under the DepEd ARAL Program:
+        </Text>
+
+        <View style={styles.proponentsGrid}>
+          {[
+            "R.L. Bunag",
+            "E.P. Macasinag",
+            "K.N. Untalan",
+            "L.F. Valencia",
+          ].map((name) => (
+            <View key={name} style={styles.proponentBadge}>
+              <View style={styles.proponentDot} />
+              <Text style={styles.proponentName}>{name}</Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.copyrightBox}>
+          <Text style={styles.copyrightText}>
+            © 2026 ARAL Research Study · All Rights Reserved
+          </Text>
+        </View>
+      </Card>
     </Screen>
   );
 }
@@ -554,6 +588,50 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_600SemiBold",
     fontSize: 12,
     lineHeight: 17,
+    color: colors.muted,
+  },
+  proponentsSubtitle: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.text,
+  },
+  proponentsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  proponentBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    backgroundColor: "#F7F4FD",
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#EAE2FB",
+  },
+  proponentDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+  },
+  proponentName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13.5,
+    color: colors.darkPurple,
+  },
+  copyrightBox: {
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#F0EAF8",
+    alignItems: "center",
+  },
+  copyrightText: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11.5,
     color: colors.muted,
   },
 });
