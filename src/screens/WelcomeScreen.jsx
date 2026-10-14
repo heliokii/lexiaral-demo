@@ -52,7 +52,7 @@ export function WelcomeScreen({ navigation }) {
         <Text testID="welcome-brand-text" style={styles.brand}>
           LEXIARAL
         </Text>
-        <AnimatedLexi name="owl-reading" height={150} />
+        <AnimatedLexi name="owl-reading" height={120} />
         <View style={{ gap: 4 }}>
           <Title testID="welcome-title" style={styles.center}>
             Learn Words. Play. Grow.
@@ -63,6 +63,13 @@ export function WelcomeScreen({ navigation }) {
           >
             English Vocabulary Game for Grade 3 Learners
           </Body>
+        </View>
+
+        <View testID="welcome-researchers-badge" style={styles.researchersBadge}>
+          <Text style={styles.researchersBadgeLabel}>RESEARCHERS & PROPONENTS</Text>
+          <Text style={styles.researchersBadgeNames}>
+            R.L. Bunag · E.P. Macasinag · K.N. Untalan · L.F. Valencia
+          </Text>
         </View>
 
         <Card testID="welcome-pupil-card" style={styles.pupilCard}>
@@ -92,7 +99,7 @@ export function WelcomeScreen({ navigation }) {
         />
 
         <View testID="welcome-researchers-footer" style={styles.researchersFooter}>
-          <Text style={styles.researchersLabel}>RESEARCHERS & PROPONENTS</Text>
+          <Text style={styles.researchersLabel}>RESEARCH STUDY & INTERVENTION</Text>
           <Text style={styles.researchersNames}>
             R.L. Bunag · E.P. Macasinag · K.N. Untalan · L.F. Valencia
           </Text>
@@ -174,6 +181,29 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     color: colors.muted,
+  },
+  researchersBadge: {
+    alignItems: "center",
+    backgroundColor: "#F6F1FD",
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#E3D5F8",
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    marginVertical: 2,
+    gap: 3,
+  },
+  researchersBadgeLabel: {
+    fontFamily: "Nunito_900Black",
+    fontSize: 10,
+    letterSpacing: 0.9,
+    color: colors.primary,
+  },
+  researchersBadgeNames: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#4A356A",
+    textAlign: "center",
   },
   researchersFooter: {
     alignItems: "center",

@@ -3,7 +3,7 @@
  * Provides offline caching for Grade 3 ARAL learning app.
  */
 
-const CACHE_NAME = 'lexiaral-v2';
+const CACHE_NAME = 'lexiaral-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
