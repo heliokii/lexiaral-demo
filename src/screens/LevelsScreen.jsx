@@ -243,6 +243,16 @@ export default function LevelsScreen({ navigation }) {
         </View>
 
         <Encouragement />
+
+        <View testID="levels-researchers-footer" style={styles.researchersFooter}>
+          <Text style={styles.researchersLabel}>RESEARCHERS & PROPONENTS</Text>
+          <Text style={styles.researchersNames}>
+            R.L. Bunag · E.P. Macasinag · K.N. Untalan · L.F. Valencia
+          </Text>
+          <Text style={styles.researchersSub}>
+            Grade 3 ARAL Literacy Project · All Rights Reserved
+          </Text>
+        </View>
       </View>
     </Screen>
   );
@@ -384,5 +394,32 @@ const styles = StyleSheet.create({
   },
   chevronActive: {
     backgroundColor: colors.primary,
+  },
+  researchersFooter: {
+    alignItems: "center",
+    gap: 3,
+    marginTop: 8,
+    marginBottom: 16,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#EAE2FB",
+  },
+  researchersLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    letterSpacing: 0.8,
+    color: "#8E7DAA",
+  },
+  researchersNames: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#544170",
+    textAlign: "center",
+  },
+  researchersSub: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11,
+    color: "#998CAE",
+    textAlign: "center",
   },
 });

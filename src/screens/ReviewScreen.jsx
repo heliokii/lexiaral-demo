@@ -270,6 +270,16 @@ export function ReviewScreen() {
               <Text style={styles.allWordsBtnText}>Study All 50 Words</Text>
               <Icon name="arrow" size={16} color={colors.primary} />
             </Pressable>
+
+            <View testID="review-researchers-footer" style={styles.researchersFooter}>
+              <Text style={styles.researchersLabel}>RESEARCHERS & PROPONENTS</Text>
+              <Text style={styles.researchersNames}>
+                R.L. Bunag · E.P. Macasinag · K.N. Untalan · L.F. Valencia
+              </Text>
+              <Text style={styles.researchersSub}>
+                Grade 3 ARAL Literacy Project · All Rights Reserved
+              </Text>
+            </View>
           </View>
         </View>
       </Screen>
@@ -669,6 +679,33 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
     color: colors.primary,
+  },
+  researchersFooter: {
+    alignItems: "center",
+    gap: 3,
+    marginTop: 14,
+    marginBottom: 8,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#EAE2FB",
+  },
+  researchersLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    letterSpacing: 0.8,
+    color: "#8E7DAA",
+  },
+  researchersNames: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#544170",
+    textAlign: "center",
+  },
+  researchersSub: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11,
+    color: "#998CAE",
+    textAlign: "center",
   },
 });
 
