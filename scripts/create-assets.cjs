@@ -24,166 +24,210 @@ function svg(body, viewBox = '0 0 300 300') {
   </svg>`;
 }
 
-function owl(mode = 'reading') {
-  const cheering = mode === 'cheering';
-  const thinking = mode === 'thinking';
+// Four-point twinkle star centred on (cx, cy).
+function star(cx, cy, r, fill = '#F7CD5D') {
+  return `<path d="M${cx} ${cy - r} Q${cx} ${cy} ${cx + r} ${cy}
+    Q${cx} ${cy} ${cx} ${cy + r} Q${cx} ${cy} ${cx - r} ${cy}
+    Q${cx} ${cy} ${cx} ${cy - r} Z" fill="${fill}"/>`;
+}
 
-  const eyes = thinking
-    ? `
-      <ellipse cx="116" cy="119" rx="12" ry="16" fill="#59402E"/>
-      <ellipse cx="183" cy="119" rx="12" ry="16" fill="#59402E"/>
-      <circle cx="112" cy="113" r="4" fill="white"/>
-      <circle cx="179" cy="113" r="4" fill="white"/>
-    `
-    : `
-      <path d="M102 123 Q115 100 128 123
-        M169 123 Q182 100 195 123"
-        stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
-    `;
+const OWL = {
+  feather: '#B98A5E',
+  wing: '#A7774D',
+  line: '#8A6343',
+  cream: '#FFF1D9',
+  eye: '#4A3426',
+};
 
-  const wings = cheering
-    ? `
-      <path d="M76 150 Q35 146 35 115 Q47 111 57 128
-        Q28 81 44 76 Q57 75 69 103 Q54 67 71 69
-        Q91 91 99 143 Z"
-        fill="#C89760" stroke="#936747" stroke-width="4"/>
-      <path d="M218 150 Q257 143 267 107 Q256 100 244 122
-        Q273 69 256 69 Q245 71 232 99 Q247 61 231 63
-        Q211 82 201 143 Z"
-        fill="#C89760" stroke="#936747" stroke-width="4"/>
-    `
-    : `
-      <path d="M83 151 Q47 163 58 207 Q64 224 79 217
-        L105 184 Z"
-        fill="#C89760" stroke="#936747" stroke-width="4"/>
-      <path d="M215 148 Q244 140 255 116 Q269 119 257 143
-        Q276 131 277 143 Q267 168 244 180
-        Q269 175 264 188 Q244 211 215 199 Z"
-        fill="#C89760" stroke="#936747" stroke-width="4"/>
-    `;
+const wingDownLeft = `
+  <path d="M86 196 C62 206 58 240 78 256 C94 246 102 224 98 200 Z"
+    fill="${OWL.wing}" stroke="${OWL.line}" stroke-width="3" stroke-linejoin="round"/>`;
 
-  const book = mode === 'reading'
-    ? `
-      <path d="M83 187 Q115 177 147 196 L147 258
-        Q113 238 83 247 Z"
-        fill="#83D6C5" stroke="#4B988D" stroke-width="4"/>
-      <path d="M147 196 Q179 178 211 187 L211 247
-        Q178 238 147 258 Z"
-        fill="#5EBDAA" stroke="#4B988D" stroke-width="4"/>
-      <path d="M147 198 L147 253" stroke="#F0FFF9" stroke-width="4"/>
-      <path d="M96 199 Q113 195 130 203
-        M96 210 Q111 205 129 214"
-        stroke="#D8F5E8" stroke-width="3" stroke-linecap="round"/>
-      <path d="M76 204 Q99 196 103 210 Q102 223 78 224"
-        fill="#D4A977" stroke="#936747" stroke-width="4"/>
-    `
-    : `
-      <path d="M126 231 Q149 239 172 231"
-        stroke="#E1C595" stroke-width="4" stroke-linecap="round"/>
-    `;
+const wingDownRight = `
+  <path d="M214 196 C238 206 242 240 222 256 C206 246 198 224 202 200 Z"
+    fill="${OWL.wing}" stroke="${OWL.line}" stroke-width="3" stroke-linejoin="round"/>`;
 
-  return svg(`
-    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+// Raised right wing. AnimatedLexi pivots it around the shoulder at (214, 204).
+const wingWave = `
+  <path d="M210 202 C232 188 250 160 256 128 C266 132 270 144 266 158
+    C277 156 279 168 270 177 C262 196 240 210 214 214 Z"
+    fill="${OWL.wing}" stroke="${OWL.line}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M238 178 L257 161 M234 194 L260 178"
+    stroke="${OWL.line}" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
 
-    <path d="M118 259 L107 274 M118 263 L122 275
-      M176 259 L166 275 M176 263 L185 274"
-      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+const wingWaveLeft = `<g transform="translate(300 0) scale(-1 1)">${wingWave}</g>`;
 
-    ${wings}
+const wingChin = `
+  <path d="M212 200 C196 196 180 186 174 170 C182 162 196 166 206 174
+    C216 182 222 194 218 206 Z"
+    fill="${OWL.wing}" stroke="${OWL.line}" stroke-width="3" stroke-linejoin="round"/>`;
 
-    <path d="M76 105 L68 49 L111 69
-      Q147 43 190 66 L220 40 L223 103
-      Q240 126 233 170
-      Q237 253 151 263
-      Q67 259 67 177 Q60 135 76 105 Z"
-      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+const book = `
+  <path d="M100 214 Q125 206 150 220 L150 262 Q125 250 100 258 Z"
+    fill="#8FD9C6" stroke="#4E9E8E" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M150 220 Q175 206 200 214 L200 258 Q175 250 150 262 Z"
+    fill="#6CC7B2" stroke="#4E9E8E" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M150 222 V258" stroke="#F0FFF9" stroke-width="2.5"/>
+  <path d="M112 226 Q124 222 138 228 M112 238 Q124 234 138 240
+    M162 228 Q176 222 188 226 M162 240 Q176 234 188 238"
+    stroke="#E4F8F0" stroke-width="2.5" stroke-linecap="round"/>`;
 
-    <path d="M88 99 Q111 71 146 96
-      Q182 70 209 99
-      Q228 130 208 161
-      Q183 183 148 174
-      Q109 187 86 159
-      Q67 131 88 99 Z"
-      fill="#FFF1D0"/>
+const EYES = {
+  closed: `
+    <path d="M104 124 Q120 104 136 124 M164 124 Q180 104 196 124"
+      stroke="${OWL.eye}" stroke-width="7" stroke-linecap="round"/>`,
+  open: `
+    <ellipse cx="120" cy="118" rx="13" ry="15" fill="${OWL.eye}"/>
+    <ellipse cx="180" cy="118" rx="13" ry="15" fill="${OWL.eye}"/>
+    <circle cx="124" cy="112" r="4.5" fill="#FFFFFF"/>
+    <circle cx="184" cy="112" r="4.5" fill="#FFFFFF"/>
+    <circle cx="116" cy="124" r="2" fill="#FFFFFF"/>
+    <circle cx="176" cy="124" r="2" fill="#FFFFFF"/>`,
+  sad: `
+    <ellipse cx="120" cy="124" rx="10" ry="12" fill="${OWL.eye}"/>
+    <ellipse cx="180" cy="124" rx="10" ry="12" fill="${OWL.eye}"/>
+    <circle cx="123" cy="120" r="3.5" fill="#FFFFFF"/>
+    <circle cx="183" cy="120" r="3.5" fill="#FFFFFF"/>
+    <path d="M104 106 L132 96 M168 96 L196 106"
+      stroke="${OWL.eye}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M110 142 Q104 152 110 156 Q116 152 110 142 Z" fill="#9FD3F2"/>`,
+  sleeping: `
+    <path d="M104 120 Q120 132 136 120 M164 120 Q180 132 196 120"
+      stroke="${OWL.eye}" stroke-width="6" stroke-linecap="round"/>`,
+};
 
-    <ellipse cx="149" cy="211" rx="57" ry="43" fill="#FFF1D0"/>
+const POSES = {
+  reading: { eyes: 'closed', left: wingDownLeft, right: '', wave: true, book: true, sparkles: true },
+  happy: { eyes: 'closed', left: wingDownLeft, right: '', wave: true },
+  excited: { eyes: 'open', left: wingWaveLeft, right: wingWave, mouth: true, sparkles: true },
+  cheering: { eyes: 'closed', left: wingWaveLeft, right: wingWave, mouth: true, sparkles: true },
+  thinking: { eyes: 'open', left: wingDownLeft, right: wingDownRight, front: wingChin, extra: 'question' },
+  sad: { eyes: 'sad', left: wingDownLeft, right: wingDownRight },
+  sleeping: { eyes: 'sleeping', left: wingDownLeft, right: wingDownRight, extra: 'zzz' },
+};
 
-    <path d="M93 66 L101 53 M128 60 L137 46
-      M172 58 L181 47"
-      stroke="#936747" stroke-width="4" stroke-linecap="round"/>
+function owlSparkles() {
+  return `${star(44, 72, 13)}${star(24, 102, 7)}${star(262, 46, 9)}`;
+}
 
-    ${eyes}
+// Everything except the waving wing and sparkles, so AnimatedLexi can animate those layers.
+function owlBody(mode) {
+  const pose = POSES[mode];
 
-    <ellipse cx="93" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
-    <ellipse cx="208" cy="140" rx="12" ry="7" fill="#EFABA2" opacity=".8"/>
+  return `
+    <ellipse cx="150" cy="281" rx="74" ry="9" fill="#A89CD3" opacity=".18"/>
 
-    <path d="M139 132 Q149 124 159 132 L149 147 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3"/>
+    <ellipse cx="126" cy="271" rx="14" ry="7" fill="#F2A649"/>
+    <ellipse cx="174" cy="271" rx="14" ry="7" fill="#F2A649"/>
 
-    ${cheering ? `
-      <path d="M139 149 Q149 169 160 149"
-        fill="#9B5B38" stroke="#9B5B38" stroke-width="3"/>
+    <ellipse cx="150" cy="214" rx="68" ry="56"
+      fill="${OWL.feather}" stroke="${OWL.line}" stroke-width="3"/>
+    <ellipse cx="150" cy="228" rx="46" ry="38" fill="${OWL.cream}"/>
+    <path d="M134 216 l6 6 l6 -6 M154 216 l6 6 l6 -6 M144 234 l6 6 l6 -6"
+      stroke="#E3C9A4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    ${pose.book ? '' : pose.left}
+    ${pose.right}
+
+    <path d="M70 70 C62 50 60 34 64 22 C82 30 100 40 112 50
+      Q150 36 188 50 C200 40 218 30 236 22
+      C240 34 238 50 230 70 C248 92 252 120 244 148
+      C232 186 196 202 150 202 C104 202 68 186 56 148
+      C48 120 52 92 70 70 Z"
+      fill="${OWL.feather}" stroke="${OWL.line}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M72 64 C68 50 68 40 70 32 C82 38 94 46 102 54 Z
+      M228 64 C232 50 232 40 230 32 C218 38 206 46 198 54 Z" fill="#D2A679"/>
+    <ellipse cx="116" cy="62" rx="22" ry="8" fill="#FFFFFF" opacity=".2"
+      transform="rotate(-14 116 62)"/>
+
+    <path d="M150 92 C132 66 80 70 78 118 C76 156 112 178 150 182
+      C188 178 224 156 222 118 C220 70 168 66 150 92 Z"
+      fill="${OWL.cream}"/>
+
+    ${EYES[pose.eyes]}
+
+    <ellipse cx="100" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
+    <ellipse cx="200" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
+
+    ${pose.mouth ? `
+      <path d="M138 154 Q150 172 162 154 Z" fill="#C25B4E"/>
+      <path d="M143 162 Q150 168 157 162" stroke="#F49A9A" stroke-width="3" stroke-linecap="round"/>
     ` : ''}
 
-    <path d="M78 163 Q148 188 222 162 L210 189
-      Q155 211 89 186 Z"
-      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
+    <path d="M141 134 Q150 128 159 134 Q156 146 150 152 Q144 146 141 134 Z"
+      fill="#F2A649" stroke="#C77F2F" stroke-width="2.5" stroke-linejoin="round"/>
 
-    <path d="M93 185 L76 205 L103 201 L111 187"
-      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
+    <path d="M70 176 Q150 214 230 176 Q232 190 222 198 Q150 230 78 198 Q68 190 70 176 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M98 198 L84 230 L116 214 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M186 203 C180 195 170 203 186 213 C202 203 192 195 186 203 Z" fill="#F7D5E6"/>
 
-    <path d="M184 181
-      C177 172 168 181 184 190
-      C200 179 191 172 184 181 Z"
-      fill="#F5D8E4"/>
+    ${pose.book ? `${book}${pose.left}` : ''}
+    ${pose.front || ''}
 
-    ${book}
-
-    <path d="M44 71 L35 57 M54 65 L51 48 M32 81 L20 77"
-      stroke="#F5CC65" stroke-width="6" stroke-linecap="round"/>
-
-    ${thinking ? `
-      <text x="238" y="65" fill="#A397BC"
+    ${pose.extra === 'question' ? `
+      <text x="236" y="70" fill="#A397BC"
         font-family="sans-serif" font-weight="bold" font-size="43">?</text>
     ` : ''}
-  `);
+    ${pose.extra === 'zzz' ? `
+      <text x="250" y="78" fill="#A397BC" font-family="sans-serif" font-weight="bold" font-size="22">z</text>
+      <text x="264" y="52" fill="#A397BC" font-family="sans-serif" font-weight="bold" font-size="30">Z</text>
+    ` : ''}
+  `;
+}
+
+function owl(mode) {
+  const pose = POSES[mode];
+  return svg(`${owlBody(mode)}${pose.wave ? wingWave : ''}${pose.sparkles ? owlSparkles() : ''}`);
+}
+
+function cloud(x, y, s) {
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <circle cx="0" cy="0" r="22"/><circle cx="26" cy="-10" r="28"/>
+    <circle cx="56" cy="0" r="22"/><rect x="0" y="0" width="56" height="22"/>
+  </g>`;
+}
+
+function tree(x, groundY, r, fill) {
+  return `<path d="M${x} ${groundY} V${groundY - r - 4}" stroke="#B89A7A" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="${x}" cy="${groundY - r - 8}" r="${r}" fill="${fill}"/>`;
 }
 
 const landscape = svg(`
   <defs>
     <linearGradient id="sky" x1="195" y1="0" x2="195" y2="844"
       gradientUnits="userSpaceOnUse">
-      <stop stop-color="#DFEAFF"/>
-      <stop offset=".48" stop-color="#F5F1FF"/>
-      <stop offset="1" stop-color="#EBE3FC"/>
+      <stop stop-color="#EEE8FF"/>
+      <stop offset=".5" stop-color="#F7F4FF"/>
+      <stop offset="1" stop-color="#F1ECFC"/>
     </linearGradient>
   </defs>
 
   <rect width="390" height="844" fill="url(#sky)"/>
 
-  <g fill="#FFFFFF" opacity=".55">
-    <path d="M-20 90 Q-4 66 18 76 Q24 40 52 58
-      Q70 59 77 84 Q104 80 111 100 H-20 Z"/>
-    <path d="M257 62 Q270 35 292 48 Q307 16 330 42
-      Q352 39 360 62 Q382 56 399 78 H257 Z"/>
-    <path d="M105 173 Q114 153 133 158 Q143 133 165 151
-      Q185 146 194 170 H105 Z"/>
-    <path d="M228 583 Q242 552 262 571 Q287 553 301 585 H228 Z"/>
+  <g fill="#FFFFFF" opacity=".8">
+    ${cloud(26, 92, 1)}
+    ${cloud(292, 58, 0.8)}
+    ${cloud(232, 196, 0.55)}
+    ${cloud(40, 560, 0.5)}
   </g>
 
-  <g opacity=".7">
-    <path d="M0 699 Q87 661 173 700 Q282 624 390 660
-      V844 H0 Z" fill="#D2E9CE"/>
-    <path d="M0 727 Q98 668 194 738 Q283 689 390 716
-      V844 H0 Z" fill="#E8E1F7"/>
-    <path d="M0 782 Q125 709 254 778 Q331 739 390 768
-      V844 H0 Z" fill="#D8CFF0"/>
-    <path d="M0 819 Q148 754 390 819 V844 H0 Z" fill="#C6B7E6"/>
-    <path d="M275 678 Q238 699 220 718 Q297 704 323 739
-      Q280 709 300 682 Z" fill="#FFF3D6"/>
-  </g>
+  ${star(178, 120, 6, '#D9CCF7')}
+  ${star(352, 252, 5, '#D9CCF7')}
+  ${star(28, 330, 4, '#D9CCF7')}
+  ${star(330, 520, 5, '#D9CCF7')}
 
-  <g transform="translate(298 622)">
+  <path d="M0 690 Q100 640 200 680 Q300 630 390 660 V844 H0 Z" fill="#CFEBD9"/>
+  ${tree(62, 672, 14, '#B9E2CD')}
+  <path d="M0 730 Q110 690 210 735 Q300 700 390 720 V844 H0 Z" fill="#E3DAF7"/>
+  <path d="M302 690 Q270 730 286 760 Q300 790 250 844 H302 Q332 800 316 765 Q304 735 314 690 Z"
+    fill="#FFF6E2"/>
+
+  ${tree(262, 692, 16, '#A8DCC4')}
+  ${tree(366, 688, 12, '#BFE6D3')}
+
+  <g transform="translate(278 622)">
     <path d="M0 35 L29 11 L58 35" fill="#F2AAB7"/>
     <path d="M7 33 H51 V70 H7 Z" fill="#FFF4DC"/>
     <path d="M21 45 Q29 35 37 45 V70 H21 Z" fill="#B7A3DA"/>
@@ -193,26 +237,29 @@ const landscape = svg(`
     <path d="M31 1 L47 7 L31 12" fill="#F5BCC8"/>
   </g>
 
+  <path d="M0 790 Q130 740 260 790 Q330 765 390 780 V844 H0 Z" fill="#D5C9F1"/>
+  <path d="M0 825 Q170 790 390 828 V844 H0 Z" fill="#C6B7E6"/>
+
   <g stroke="#7EBCAC" stroke-width="4" stroke-linecap="round">
-    <path d="M27 806 L23 741 M365 803 L368 737"/>
+    <path d="M27 810 L23 738 M365 807 L368 734"/>
   </g>
 
   <g fill="#9ED3BE">
-    <ellipse cx="16" cy="765" rx="10" ry="28"
-      transform="rotate(-29 16 765)"/>
-    <ellipse cx="36" cy="770" rx="10" ry="31"
-      transform="rotate(25 36 770)"/>
-    <ellipse cx="357" cy="762" rx="10" ry="30"
-      transform="rotate(-25 357 762)"/>
-    <ellipse cx="379" cy="761" rx="10" ry="34"
-      transform="rotate(20 379 761)"/>
+    <ellipse cx="14" cy="764" rx="11" ry="31"
+      transform="rotate(-29 14 764)"/>
+    <ellipse cx="37" cy="770" rx="11" ry="34"
+      transform="rotate(25 37 770)"/>
+    <ellipse cx="356" cy="761" rx="11" ry="33"
+      transform="rotate(-25 356 761)"/>
+    <ellipse cx="380" cy="760" rx="11" ry="37"
+      transform="rotate(20 380 760)"/>
   </g>
 
   <g fill="#DCC9EC">
-    <ellipse cx="46" cy="800" rx="9" ry="23"
-      transform="rotate(32 46 800)"/>
-    <ellipse cx="345" cy="802" rx="9" ry="23"
-      transform="rotate(-32 345 802)"/>
+    <ellipse cx="48" cy="802" rx="10" ry="25"
+      transform="rotate(32 48 802)"/>
+    <ellipse cx="343" cy="804" rx="10" ry="25"
+      transform="rotate(-32 343 804)"/>
   </g>
 `, '0 0 390 844');
 
@@ -234,7 +281,13 @@ const medal = svg(`
 `);
 
 // Save all generated SVGs to the output directory.
-const assets = { owl_reading: owl('reading'), owl_cheering: owl('cheering'), owl_thinking: owl('thinking'), landscape, medal };
+const assets = { landscape, medal };
+for (const mode of Object.keys(POSES)) assets[`owl_${mode}`] = owl(mode);
+
+// Separate layers used by AnimatedLexi (body / waving wing / sparkles).
+assets.owl_reading_body = svg(owlBody('reading'));
+assets.owl_wave_wing = svg(wingWave);
+assets.owl_sparkles = svg(owlSparkles());
 
 for (const [name, content] of Object.entries(assets)) {
   fs.writeFileSync(path.join(output, `${name}.svg`), content);

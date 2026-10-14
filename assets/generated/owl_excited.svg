@@ -1,80 +1,80 @@
 <svg xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 300 300" fill="none">
+    
+    <ellipse cx="150" cy="281" rx="74" ry="9" fill="#A89CD3" opacity=".18"/>
 
-    <!-- Shadow -->
-    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+    <ellipse cx="126" cy="271" rx="14" ry="7" fill="#F2A649"/>
+    <ellipse cx="174" cy="271" rx="14" ry="7" fill="#F2A649"/>
 
-    <!-- Feet (jumping position - lifted) -->
-    <path d="M114 265 L106 278 M120 268 L124 279
-      M172 265 L164 278 M178 268 L186 277"
-      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="150" cy="214" rx="68" ry="56"
+      fill="#B98A5E" stroke="#8A6343" stroke-width="3"/>
+    <ellipse cx="150" cy="228" rx="46" ry="38" fill="#FFF1D9"/>
+    <path d="M134 216 l6 6 l6 -6 M154 216 l6 6 l6 -6 M144 234 l6 6 l6 -6"
+      stroke="#E3C9A4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-    <!-- Both wings spread wide in excitement -->
-    <path d="M76 130 Q30 110 18 75 Q34 70 48 95
-      Q30 62 48 57 Q64 58 76 88 Q60 55 80 60
-      Q100 80 96 128 Z"
-      fill="#C89760" stroke="#936747" stroke-width="4"/>
-    <path d="M218 128 Q264 108 278 72 Q262 65 248 92
-      Q268 58 250 54 Q234 55 222 86 Q238 52 220 57
-      Q200 78 202 126 Z"
-      fill="#C89760" stroke="#936747" stroke-width="4"/>
+    <g transform="translate(300 0) scale(-1 1)">
+  <path d="M210 202 C232 188 250 160 256 128 C266 132 270 144 266 158
+    C277 156 279 168 270 177 C262 196 240 210 214 214 Z"
+    fill="#A7774D" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M238 178 L257 161 M234 194 L260 178"
+    stroke="#8A6343" stroke-width="2" stroke-linecap="round" opacity=".55"/></g>
+    
+  <path d="M210 202 C232 188 250 160 256 128 C266 132 270 144 266 158
+    C277 156 279 168 270 177 C262 196 240 210 214 214 Z"
+    fill="#A7774D" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M238 178 L257 161 M234 194 L260 178"
+    stroke="#8A6343" stroke-width="2" stroke-linecap="round" opacity=".55"/>
 
-    <!-- Body (shifted slightly up - jumping) -->
-    <path d="M76 95 L68 39 L111 59
-      Q147 33 190 56 L220 30 L223 93
-      Q240 116 233 160
-      Q237 243 151 253
-      Q67 249 67 167 Q60 125 76 95 Z"
-      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+    <path d="M70 70 C62 50 60 34 64 22 C82 30 100 40 112 50
+      Q150 36 188 50 C200 40 218 30 236 22
+      C240 34 238 50 230 70 C248 92 252 120 244 148
+      C232 186 196 202 150 202 C104 202 68 186 56 148
+      C48 120 52 92 70 70 Z"
+      fill="#B98A5E" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M72 64 C68 50 68 40 70 32 C82 38 94 46 102 54 Z
+      M228 64 C232 50 232 40 230 32 C218 38 206 46 198 54 Z" fill="#D2A679"/>
+    <ellipse cx="116" cy="62" rx="22" ry="8" fill="#FFFFFF" opacity=".2"
+      transform="rotate(-14 116 62)"/>
 
-    <!-- Face cream patch -->
-    <path d="M88 89 Q111 61 146 86
-      Q182 60 209 89
-      Q228 120 208 151
-      Q183 173 148 164
-      Q109 177 86 149
-      Q67 121 88 89 Z"
-      fill="#FFF1D0"/>
+    <path d="M150 92 C132 66 80 70 78 118 C76 156 112 178 150 182
+      C188 178 224 156 222 118 C220 70 168 66 150 92 Z"
+      fill="#FFF1D9"/>
 
-    <!-- Belly -->
-    <ellipse cx="149" cy="201" rx="57" ry="43" fill="#FFF1D0"/>
+    
+    <ellipse cx="120" cy="118" rx="13" ry="15" fill="#4A3426"/>
+    <ellipse cx="180" cy="118" rx="13" ry="15" fill="#4A3426"/>
+    <circle cx="124" cy="112" r="4.5" fill="#FFFFFF"/>
+    <circle cx="184" cy="112" r="4.5" fill="#FFFFFF"/>
+    <circle cx="116" cy="124" r="2" fill="#FFFFFF"/>
+    <circle cx="176" cy="124" r="2" fill="#FFFFFF"/>
 
-    <!-- Ear tufts perked up excited -->
-    <path d="M90 58 L96 41 M127 50 L133 34 M170 48 L178 32"
-      stroke="#936747" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="100" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
+    <ellipse cx="200" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
 
-    <!-- Big wide excited eyes -->
-    <ellipse cx="114" cy="107" rx="16" ry="18" fill="#59402E"/>
-    <ellipse cx="183" cy="107" rx="16" ry="18" fill="#59402E"/>
-    <circle cx="110" cy="101" r="5" fill="white"/>
-    <circle cx="179" cy="101" r="5" fill="white"/>
-    <!-- Sparkle in eyes -->
-    <circle cx="121" cy="104" r="2" fill="white"/>
-    <circle cx="190" cy="104" r="2" fill="white"/>
+    
+      <path d="M138 154 Q150 172 162 154 Z" fill="#C25B4E"/>
+      <path d="M143 162 Q150 168 157 162" stroke="#F49A9A" stroke-width="3" stroke-linecap="round"/>
+    
 
-    <!-- Rosy excited cheeks -->
-    <ellipse cx="90" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
-    <ellipse cx="208" cy="131" rx="14" ry="8" fill="#EFABA2" opacity=".9"/>
+    <path d="M141 134 Q150 128 159 134 Q156 146 150 152 Q144 146 141 134 Z"
+      fill="#F2A649" stroke="#C77F2F" stroke-width="2.5" stroke-linejoin="round"/>
 
-    <!-- Excited chirping owl beak (open upper & lower mandible) -->
-    <path d="M137 122 Q149 114 161 122 L149 136 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M141 135 Q149 144 157 135 Z"
-      fill="#D98A32" stroke="#B97D37" stroke-width="2"/>
+    <path d="M70 176 Q150 214 230 176 Q232 190 222 198 Q150 230 78 198 Q68 190 70 176 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M98 198 L84 230 L116 214 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M186 203 C180 195 170 203 186 213 C202 203 192 195 186 203 Z" fill="#F7D5E6"/>
 
-    <!-- Purple scarf/chest -->
-    <path d="M78 153 Q148 178 222 152 L210 179
-      Q155 201 89 176 Z"
-      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
-    <path d="M93 175 L76 195 L103 191 L111 177"
-      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
+    
+    
 
-    <!-- Excited big sparkles all around -->
-    <path d="M44 61 L35 47 M54 55 L51 38 M32 71 L20 67"
-      stroke="#F5CC65" stroke-width="8" stroke-linecap="round"/>
-    <path d="M244 45 L252 30 M258 62 L270 55 M240 68 L253 72"
-      stroke="#F5CC65" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="34" cy="35" r="4" fill="#FFD86B"/>
-    <circle cx="260" cy="40" r="5" fill="#FFD86B"/>
-
+    
+    
+  <path d="M44 59 Q44 72 57 72
+    Q44 72 44 85 Q44 72 31 72
+    Q44 72 44 59 Z" fill="#F7CD5D"/><path d="M24 95 Q24 102 31 102
+    Q24 102 24 109 Q24 102 17 102
+    Q24 102 24 95 Z" fill="#F7CD5D"/><path d="M262 37 Q262 46 271 46
+    Q262 46 262 55 Q262 46 253 46
+    Q262 46 262 37 Z" fill="#F7CD5D"/>
   </svg>

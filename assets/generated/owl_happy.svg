@@ -1,82 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 300 300" fill="none">
+    
+    <ellipse cx="150" cy="281" rx="74" ry="9" fill="#A89CD3" opacity=".18"/>
 
-    <!-- Shadow -->
-    <ellipse cx="150" cy="278" rx="79" ry="10" fill="#A89CD3" opacity=".16"/>
+    <ellipse cx="126" cy="271" rx="14" ry="7" fill="#F2A649"/>
+    <ellipse cx="174" cy="271" rx="14" ry="7" fill="#F2A649"/>
 
-    <!-- Feet -->
-    <path d="M118 259 L107 274 M118 263 L122 275
-      M176 259 L166 275 M176 263 L185 274"
-      stroke="#CC914E" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="150" cy="214" rx="68" ry="56"
+      fill="#B98A5E" stroke="#8A6343" stroke-width="3"/>
+    <ellipse cx="150" cy="228" rx="46" ry="38" fill="#FFF1D9"/>
+    <path d="M134 216 l6 6 l6 -6 M154 216 l6 6 l6 -6 M144 234 l6 6 l6 -6"
+      stroke="#E3C9A4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 
-    <!-- Left wing resting softly -->
-    <path d="M83 151 Q47 163 58 207 Q64 224 79 217 L105 184 Z"
-      fill="#C89760" stroke="#936747" stroke-width="4"/>
+    
+  <path d="M86 196 C62 206 58 240 78 256 C94 246 102 224 98 200 Z"
+    fill="#A7774D" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+    
 
-    <!-- Right wing cheerfully waving -->
-    <path d="M215 148 Q244 140 255 116 Q269 119 257 143
-      Q276 131 277 143 Q267 168 244 180
-      Q269 175 264 188 Q244 211 215 199 Z"
-      fill="#C89760" stroke="#936747" stroke-width="4"/>
+    <path d="M70 70 C62 50 60 34 64 22 C82 30 100 40 112 50
+      Q150 36 188 50 C200 40 218 30 236 22
+      C240 34 238 50 230 70 C248 92 252 120 244 148
+      C232 186 196 202 150 202 C104 202 68 186 56 148
+      C48 120 52 92 70 70 Z"
+      fill="#B98A5E" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M72 64 C68 50 68 40 70 32 C82 38 94 46 102 54 Z
+      M228 64 C232 50 232 40 230 32 C218 38 206 46 198 54 Z" fill="#D2A679"/>
+    <ellipse cx="116" cy="62" rx="22" ry="8" fill="#FFFFFF" opacity=".2"
+      transform="rotate(-14 116 62)"/>
 
-    <!-- Body -->
-    <path d="M76 105 L68 49 L111 69
-      Q147 43 190 66 L220 40 L223 103
-      Q240 126 233 170
-      Q237 253 151 263
-      Q67 259 67 177 Q60 135 76 105 Z"
-      fill="#D4AE7C" stroke="#936747" stroke-width="4"/>
+    <path d="M150 92 C132 66 80 70 78 118 C76 156 112 178 150 182
+      C188 178 224 156 222 118 C220 70 168 66 150 92 Z"
+      fill="#FFF1D9"/>
 
-    <!-- Face cream patch -->
-    <path d="M88 99 Q111 71 146 96
-      Q182 70 209 99
-      Q228 130 208 161
-      Q183 183 148 174
-      Q109 187 86 159
-      Q67 131 88 99 Z"
-      fill="#FFF1D0"/>
+    
+    <path d="M104 124 Q120 104 136 124 M164 124 Q180 104 196 124"
+      stroke="#4A3426" stroke-width="7" stroke-linecap="round"/>
 
-    <!-- Belly -->
-    <ellipse cx="149" cy="211" rx="57" ry="43" fill="#FFF1D0"/>
+    <ellipse cx="100" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
+    <ellipse cx="200" cy="146" rx="13" ry="8" fill="#F4A9A8" opacity=".75"/>
 
-    <!-- Ear tufts -->
-    <path d="M93 66 L101 53 M128 60 L137 46
-      M172 58 L181 47"
-      stroke="#936747" stroke-width="4" stroke-linecap="round"/>
+    
 
-    <!-- Happy arched closed eyes (^ ^) -->
-    <path d="M101 124 Q115 99 129 124"
-      stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
-    <path d="M169 124 Q183 99 197 124"
-      stroke="#59402E" stroke-width="8" stroke-linecap="round"/>
+    <path d="M141 134 Q150 128 159 134 Q156 146 150 152 Q144 146 141 134 Z"
+      fill="#F2A649" stroke="#C77F2F" stroke-width="2.5" stroke-linejoin="round"/>
 
-    <!-- Rosy blushing cheeks -->
-    <ellipse cx="93" cy="138" rx="13" ry="8" fill="#EFABA2" opacity=".85"/>
-    <ellipse cx="207" cy="138" rx="13" ry="8" fill="#EFABA2" opacity=".85"/>
+    <path d="M70 176 Q150 214 230 176 Q232 190 222 198 Q150 230 78 198 Q68 190 70 176 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M98 198 L84 230 L116 214 Z"
+      fill="#8F78D8" stroke="#6F58B8" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M186 203 C180 195 170 203 186 213 C202 203 192 195 186 203 Z" fill="#F7D5E6"/>
 
-    <!-- Owl Beak (Proper avian anatomy: no human nose or mouth) -->
-    <path d="M138 128 Q149 120 160 128 Q157 143 149 148 Q141 143 138 128 Z"
-      fill="#E7A34F" stroke="#B97D37" stroke-width="3.5" stroke-linejoin="round"/>
-    <path d="M143 131 Q149 126 155 131"
-      stroke="#FFF2D6" stroke-width="2" stroke-linecap="round"/>
+    
+    
 
-    <!-- Purple scarf/chest -->
-    <path d="M78 163 Q148 188 222 162 L210 189
-      Q155 211 89 186 Z"
-      fill="#9980E0" stroke="#7560B6" stroke-width="4"/>
-    <path d="M93 185 L76 205 L103 201 L111 187"
-      fill="#9980E0" stroke="#7560B6" stroke-width="3"/>
-
-    <!-- Scarf heart detail -->
-    <path d="M149 193 C144 186 135 189 135 196 C135 204 149 213 149 213 C149 213 163 204 163 196 C163 189 154 186 149 193 Z"
-      fill="#F5D8E4"/>
-
-    <!-- Gold sparkles and star burst -->
-    <path d="M44 71 L35 57 M54 65 L51 48 M32 81 L20 77"
-      stroke="#F5CC65" stroke-width="6" stroke-linecap="round"/>
-    <path d="M236 48 L240 38 L244 48 L254 48 L246 55 L249 65 L240 59 L231 65 L234 55 L226 48 Z"
-      fill="#FFD86B" stroke="#E5B842" stroke-width="1.5"/>
-    <circle cx="258" cy="74" r="3.5" fill="#FFD86B"/>
-    <circle cx="222" cy="36" r="2.5" fill="#FFD86B"/>
-
+    
+    
+  
+  <path d="M210 202 C232 188 250 160 256 128 C266 132 270 144 266 158
+    C277 156 279 168 270 177 C262 196 240 210 214 214 Z"
+    fill="#A7774D" stroke="#8A6343" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M238 178 L257 161 M234 194 L260 178"
+    stroke="#8A6343" stroke-width="2" stroke-linecap="round" opacity=".55"/>
   </svg>
