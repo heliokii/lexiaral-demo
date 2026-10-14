@@ -29,5 +29,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
+  "engines": {
+    "node": "24.x"
+  },
   "private": true
 }
